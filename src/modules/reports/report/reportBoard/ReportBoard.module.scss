@@ -1,0 +1,376 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-print' as print;
+@use 'core/theme/common-style' as common;
+@use 'core/theme/common-table' as table;
+
+.root {
+  position: relative;
+}
+
+.modalOverlay {
+  overflow-y: auto;
+  padding: 16px 0;
+}
+
+.modal {
+  margin: auto 0;
+  overflow: visible;
+}
+
+.tableCustom {
+  margin-top: 0px;
+  margin-bottom: 160px;
+  table-layout: fixed;
+  @include font.text(colors.$color-font-heading, 14px);
+
+  @include table.table-cell-width('Export', 7%);
+  @include table.table-cell-width('Date', 6%);
+  @include table.table-cell-width('User', 8%);
+  @include table.table-cell-width('Project', 13%);
+  @include table.table-cell-width('Client', 14%);
+  @include table.table-cell-width('Description of activity', 15%);
+  @include table.table-cell-width('Task ID', 12%);
+  @include table.table-cell-width('Hours', 7%);
+  @include table.table-cell-width('Actions', 9%);
+
+  @include responsive.screen-sm-plus {
+    thead th:not(:last-child) {
+      overflow: hidden;
+      padding-right: 12px;
+      text-overflow: ellipsis;
+    }
+
+    tbody tr td[data-th='Actions'] {
+      display: table-cell;
+      padding-right: 12px;
+    }
+
+    tbody tr td[data-th='Actions'] > .btnBox {
+      justify-content: flex-end;
+    }
+  }
+
+  td[data-th='User'],
+  td[data-th='Client'],
+  td[data-th='Description of activity'],
+  td[data-th='Project'],
+  td[data-th='Task ID'] {
+    @include common.long-names-break(15px);
+  }
+
+  td[data-th='Hours'],
+  th[data-th='Hours'] {
+    text-align: right;
+    padding-right: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @include print.print-without-table-cell('Export');
+  @include print.print-without-table-cell('Actions');
+
+  tbody tr td {
+    padding: 12px 0px;
+  }
+
+  // Checkboxes, text and row actions share one centre line.
+  th,
+  td {
+    vertical-align: middle;
+  }
+
+  tbody {
+    font-size: 14px;
+  }
+
+
+  tbody tr td:first-child {
+    padding-right: 0px;
+  }
+
+  // The selection column holds only the checkbox box; the shared first-cell indent would push it into Date.
+  @include responsive.screen-lg {
+    thead tr th[data-th='Export']:first-child,
+    tbody tr td[data-th='Export']:first-child {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  @include responsive.screen-md-minus {
+    th:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:last-child),
+    td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:last-child) {
+      display: none;
+    }
+
+    thead tr th:nth-child(3) {
+      border-radius: 0px 8px 8px 0px;
+    }
+
+    @include table.table-cell-width('Export', 10%);
+    @include table.table-cell-width('Date', 15%);
+    @include table.table-cell-width('Client', 27.5%);
+    @include table.table-cell-width('Project', 27.5%);
+    @include table.table-cell-width('Actions', 20%);
+  }
+
+  @include responsive.screen-xs {
+    th:nth-child(n + 4),
+    td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) {
+      display: none;
+    }
+
+    thead tr th {
+      padding: 16px 0px;
+    }
+
+    thead tr th:nth-child(3) {
+      border-radius: 0px 8px 8px 0px;
+    }
+
+    tbody tr td:first-child {
+      padding-left: 25px;
+    }
+
+    @include table.table-cell-width('Export', 20%);
+    @include table.table-cell-width('Date', 26%);
+    @include table.table-cell-width('Client', 40%);
+
+    th[data-th='Actions'],
+    td[data-th='Actions'] {
+      display: none;
+    }
+  }
+
+  @include print.print-display {
+    @include table.table-cell-width('Date', 7%);
+    @include table.table-cell-width('User', 10%);
+    @include table.table-cell-width('Project', 17%);
+    @include table.table-cell-width('Client', 17%);
+    @include table.table-cell-width('Description of activity', 30%);
+    @include table.table-cell-width('Task ID', 10%);
+    @include table.table-cell-width('Hours', 10%);
+  }
+}
+
+.tableCustomPl {
+  @include table.table-cell-width('Export', 9%);
+  @include table.table-cell-width('Date', 6%);
+  @include table.table-cell-width('User', 8%);
+  @include table.table-cell-width('Project', 13%);
+  @include table.table-cell-width('Client', 12%);
+  @include table.table-cell-width('Description of activity', 15%);
+  @include table.table-cell-width('Task ID', 12%);
+  @include table.table-cell-width('Hours', 7%);
+
+  tbody tr td:first-child {
+    padding-right: 0px;
+  }
+}
+
+
+.totalTimeHeaderMobile {
+  @include flex.flex-container(space-between, center);
+  width: 100%;
+
+  p {
+    margin-right: 15px;
+    font-weight: 600;
+  }
+
+  @include responsive.screen-sm-plus {
+    p {
+      display: none;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+.btnBox {
+  @include flex.flex-container($gap: 4px);
+
+  @include responsive.screen-xs {
+    margin: 30px 0 0 auto;
+    gap: 40px;
+  }
+}
+
+.emptyBtnBox {
+  width: 20px;
+}
+
+.btnBoxMobile {
+  position: static;
+  padding-left: 0;
+  pointer-events: auto;
+
+  .btnBox {
+    pointer-events: auto;
+
+    @include responsive.screen-xs {
+      margin: 0 0 15px;
+      gap: 20px;
+    }
+  }
+
+  @include responsive.screen-sm-plus {
+    display: none;
+  }
+}
+// The selection bar spans the screen, but its content sits in the page container so it lines up with
+// the table. The page scroller keeps 7px on the right for its scrollbar (none on phones); the same
+// right padding here puts both containers on one axis. Nested under .root to outrank the shared
+// Snackbar padding whatever the stylesheet order.
+.root .selectionSnackbar {
+  padding-left: 0;
+  padding-right: 7px;
+
+  @include responsive.screen-xs {
+    padding-right: 0;
+  }
+}
+
+.snackbarContent {
+  width: 100%;
+  padding: 0 12px;
+  @include flex.flex-container(space-between, center, row, $gap: 16px);
+  @include common.container;
+
+  @include responsive.screen-xs {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.selectContainer {
+  @include flex.flex-container(flex-start, center, row wrap, $gap: 16px);
+  position: relative;
+
+  @include responsive.screen-md-minus {
+    margin: 0;
+  }
+}
+
+.selectedItemsCount {
+  @include font.text(colors.$color-font-heading, 14px);
+  font-variant-numeric: tabular-nums;
+}
+
+.descriptionLink {
+  font-size: inherit;
+}
+
+// Two lines at most; the full text stays in the cell's title.
+.descriptionClamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.results {
+  transition: opacity 150ms ease-out;
+}
+
+.refreshing {
+  opacity: 0.6;
+}
+
+// Column widths for the full table (≥1200px); narrower layouts keep their own column sets.
+@include responsive.screen-lg {
+  .colSelect {
+    width: 48px;
+  }
+  .colDate {
+    width: 96px;
+  }
+  .colClient {
+    width: 150px;
+  }
+  .colProject {
+    width: 180px;
+  }
+  .colUser {
+    width: 150px;
+  }
+  .colTask {
+    width: 96px;
+  }
+  .colHours {
+    width: 96px;
+  }
+  .colActions {
+    width: 80px;
+  }
+}
+
+.hoursHeader {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.hoursHeaderTotal {
+  @include font.text(colors.$color-font-heading, 13px, 600);
+  font-variant-numeric: tabular-nums;
+}
+
+.rowAction {
+  @include flex.flex-center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+
+  &:hover:not(:disabled) {
+    background-color: colors.$color-primary-lightest;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 1px;
+  }
+}
+
+// The shared Checkbox draws a 24px box offset from a zero-size anchor. From 1200px (the colgroup
+// layout) it gets a real 24px box so the cell's vertical centring centres the visible square; below
+// 1200px the original anchor offsets stay. The two ranges must not overlap, or both offsets add up.
+.checkboxCell {
+  display: inline-block;
+}
+
+@include responsive.screen-md-minus {
+  .checkboxTH {
+    margin: 7px 0px 0px 26px;
+  }
+
+  .checkbox {
+    margin: 7px 0px 0px 14px;
+  }
+}
+
+@include responsive.screen-lg {
+  .checkboxCell {
+    position: relative;
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin-left: 12px;
+
+    > * {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+    }
+  }
+}

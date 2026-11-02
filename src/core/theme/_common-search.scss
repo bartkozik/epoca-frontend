@@ -1,0 +1,172 @@
+@use 'common-colors' as colors;
+@use 'common-responsive' as responsive;
+@use 'common-form' as form;
+@use 'common-flex' as flex;
+@use 'common-font' as font;
+@use 'common-scrollbar' as scrollbar;
+@use 'common-style' as common;
+
+@mixin search-styles($dropDownHight: 230px) {
+  .label {
+    @include form.form-label;
+  }
+
+  .input input {
+    cursor: pointer;
+    background-color: transparent;
+  }
+
+  .inputContainer {
+    position: relative;
+  }
+
+  .settingsDropdown {
+    position: absolute;
+    z-index: 5;
+    width: 100%;
+    top: 11px;
+    left: 16px;
+    cursor: pointer;
+
+    &:hover .dropdownMenu {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  .dropdownToLeftMobile {
+    @include responsive.screen-xs {
+      left: -140px;
+    }
+
+    @include responsive.screen-max(361px) {
+      left: 16px;
+    }
+  }
+
+  .dropdownToLeftEdge {
+    @include responsive.screen-sm-plus {
+      left: -169px;
+    }
+  }
+
+  .settingsBtn {
+    @include flex.flex-container(center, center);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+    &:hover,
+    &:active {
+      color: colors.$color-primary-lightest;
+    }
+  }
+
+  .inputText {
+    @include font.text(colors.$color-black, 16px, font.$font-w-small);
+  }
+
+  .dropdownMenu {
+    height: calc(100% - 10px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    @include scrollbar.vertical-scrollbar($margin-right: 0px);
+
+    &List {
+      text-align: left;
+      width: 100%;
+      height: $dropDownHight;
+      overflow-y: scroll;
+      overflow-x: hidden;
+
+      &Item {
+        @include font.text(colors.$color-black, 12px, font.$font-w-small);
+        list-style-type: none;
+        margin-top: 4px;
+        margin-right: 15px;
+        padding: 8px 0;
+        cursor: pointer;
+        @include flex.flex-container(space-between, center);
+        border-bottom: solid 1px colors.$color-option-list-border;
+        @include common.long-names-break(0px);
+
+        &:hover,
+        &:active {
+          color: colors.$color-primary-light;
+        }
+      }
+    }
+  }
+
+  .customCheckbox {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 35px;
+
+    input[type='checkbox'] {
+      position: absolute;
+      opacity: 0;
+      height: 0;
+      width: 0;
+    }
+
+    input[type='checkbox']:checked ~ .checkmark {
+      background-color: colors.$color-white;
+      &:after {
+        @include select-round-checkbox;
+      }
+    }
+  }
+
+  .checkmark {
+    position: absolute;
+    top: -10px;
+    left: -20px;
+    height: 16px;
+    width: 16px;
+    background-color: colors.$color-white;
+    border: solid 1px colors.$color-border;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: colors.$color-white;
+      &:after {
+        @include select-round-checkbox;
+      }
+    }
+  }
+
+  .dropdownMenuListItem:hover {
+    color: colors.$color-primary-light;
+
+    .checkmark:after {
+      @include select-round-checkbox;
+    }
+  }
+}
+
+@mixin select-round-checkbox($width: 15px, $height: 15px) {
+  content: '';
+  position: absolute;
+  width: $width;
+  height: $height;
+  border-radius: 50%;
+  background: colors.$color-primary;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin square-checkbox($width: 18px, $height: 18px) {
+  content: '';
+  position: absolute;
+  width: $width;
+  height: $height;
+  border-radius: 3px;
+  background: colors.$color-primary;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

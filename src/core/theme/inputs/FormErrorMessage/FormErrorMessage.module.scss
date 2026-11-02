@@ -1,0 +1,23 @@
+@use 'core/theme/common-colors' as colors;
+
+.box {
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  column-gap: 0.4rem;
+
+  .icon {
+    color: colors.$color-primary;
+    background-color: colors.$color-border;
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    font-size: 8px;
+    text-align: center;
+  }
+
+  .message {
+    color: colors.$color-primary-light;
+    font-size: 10px;
+  }
+}

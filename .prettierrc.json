@@ -1,0 +1,10 @@
+{
+  "endOfLine": "lf",
+  "trailingComma": "all",
+  "printWidth": 120,
+  "tabWidth": 2,
+  "singleQuote": true,
+  "semi": true,
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+  "importOrder": ["^react", "^axios$", "^clsx$", "^date-fns$", "^qs$", "^yup$", "^@?\\w", "^\\.", "^\\.\\./"]
+}

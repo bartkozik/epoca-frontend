@@ -1,0 +1,62 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+@use 'core/theme/common-table' as table;
+
+.root {
+  @include flex.flex-container(flex-end, flex-end, column);
+  width: 100%;
+
+  @include responsive.screen-xs {
+    padding-top: 25px;
+    padding-left: 0;
+  }
+}
+
+.addProjectButton {
+  margin-bottom: 16px;
+
+  @include responsive.screen-xs {
+    margin-bottom: 20px;
+  }
+}
+
+.tableCustom {
+  @include table.table-cell-width('Name', 70%);
+  @include table.table-with-only-first-column-mobile;
+  @include table.sticky-table-head-position;
+
+  td[data-th='Name'] {
+    @include common.long-names-break;
+
+    @include responsive.screen-xs {
+      width: 100%;
+      padding-right: 10px;
+    }
+  }
+
+  td[data-th='Action'] {
+    @include responsive.screen-xs {
+      margin: 100px 0 0 auto;
+    }
+
+    @include responsive.screen-mobile-xl {
+      margin-top: -30px;
+    }
+
+    @include responsive.screen-xs {
+      @include flex.flex-container(flex-start, flex-start, column);
+      margin-left: -23px;
+      margin-top: -13px;
+    }
+  }
+}
+
+.btnBox {
+  @include flex.flex-container($gap: 30px);
+  margin-top: 5px;
+
+  @include responsive.screen-xs {
+    margin: -5px 0 8px 22px;
+  }
+}

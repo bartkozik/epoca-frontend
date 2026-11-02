@@ -1,0 +1,65 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-scrollbar' as scrollbar;
+@use 'core/theme/common-style' as common;
+
+.root {
+  margin: 0 0 40px -17px;
+  position: relative;
+
+  @include responsive.screen-lg {
+    display: none;
+  }
+}
+
+.moreListContent {
+  @include font.text(colors.$color-font-heading, 12px);
+  @include common.long-names-break;
+}
+
+.moreListItems {
+  @include common.dropdown(colors.$color-white);
+  top: 42px;
+  left: 16px;
+  width: 520px;
+  padding: 14px 19px 16px 16px;
+  max-height: min(420px, 60dvh);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  z-index: 3;
+  @include scrollbar.vertical-scrollbar();
+
+  li {
+    margin: 15px 0px;
+  }
+
+  ul > li > span {
+    @include font.text(colors.$color-primary, 12px, font.$font-w-medium);
+  }
+
+  @include responsive.screen-sm-plus {
+    li:first-child {
+      display: none;
+    }
+  }
+
+  @include responsive.screen-xs {
+    width: 300px;
+  }
+
+  @include responsive.screen-mobile {
+    left: -30px;
+    width: 260px;
+  }
+}
+
+.icon {
+  transition: transform 0.3s;
+  margin-left: -11px;
+}
+
+.arrow {
+  transform: scaleY(-1);
+}

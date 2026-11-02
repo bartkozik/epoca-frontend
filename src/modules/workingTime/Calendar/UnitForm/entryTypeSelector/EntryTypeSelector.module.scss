@@ -1,0 +1,62 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container($flex-flow: column, $gap: 6px);
+}
+
+.label {
+  @include font.text(colors.$color-font-heading, 16px);
+}
+
+.options {
+  @include flex.flex-container($align-items: center, $inline: true, $gap: 2px);
+  background: colors.$color-primary-lightest;
+  border: 1px solid colors.$color-border;
+  border-radius: 10px;
+  padding: 3px;
+  width: fit-content;
+}
+
+.option {
+  @include flex.flex-container(center, center, $inline: true, $gap: 7px);
+  @include font.text(colors.$color-font-heading, 14px);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  min-width: 118px;
+  padding: 8px 12px;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+
+  &:hover:not(.selected) {
+    background: colors.$color-white;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 1px;
+  }
+}
+
+.icon {
+  @include flex.flex-center;
+  color: colors.$color-primary;
+
+  svg g,
+  svg path {
+    fill: currentColor;
+  }
+}
+
+.selected {
+  background: colors.$color-button;
+  color: colors.$color-white;
+
+  .icon {
+    color: colors.$color-white;
+  }
+}

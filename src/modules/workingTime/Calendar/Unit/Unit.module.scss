@@ -1,0 +1,201 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+
+@mixin unitMixin {
+  @include flex.flex-container($align-items: flex-start, $flex-flow: column, $justify-content: space-between);
+  background-size: auto;
+  color: colors.$color-white;
+  padding: 21px 7px 0px;
+  border-radius: 0.5rem;
+  min-height: 168px;
+  background-blend-mode: multiply;
+}
+
+@mixin title {
+  @include font.text(colors.$color-white, 14px);
+  text-align: left;
+  @include common.one-line-long-names-break;
+  display: block;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+@mixin flexWrapperHiddenOverflow($grow: 0, $shrink: 0, $width: 100%, $maxWidth: 100%) {
+  display: flex;
+  flex-grow: $grow;
+  flex-shrink: $shrink;
+  width: $width;
+  max-width: $maxWidth;
+  overflow: hidden;
+}
+
+.root {
+  @include unitMixin;
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  @include responsive.screen-lg {
+    max-width: 151px;
+  }
+}
+
+.draft {
+  @include unitMixin;
+  padding: 0px 7px 0px;
+}
+
+.unitHeader {
+  @include flex.flex-container(flex-start, flex-start, column, $gap: 10px);
+  margin: 8px 0 10px;
+  max-height: calc(100% - 50px);
+  max-width: calc(100% - 2px);
+  width: calc(100% - 2px);
+  height: calc(100% - 50px);
+  overflow: hidden;
+  text-align: left;
+}
+
+.draftHeader {
+  gap: 7px;
+  max-height: calc(100% - 32px);
+  height: calc(100% - 32px);
+}
+
+.unitTitleWrapper {
+  @include flexWrapperHiddenOverflow;
+  height: 18px;
+  max-height: 18px;
+}
+
+.unitTitle {
+  @include title;
+  opacity: 0.75;
+}
+
+.unitProjectNameWrapper {
+  @include flexWrapperHiddenOverflow;
+  max-height: 34px;
+}
+
+.unitProjectName {
+  @include font.text(colors.$color-white, 14px);
+  @include common.long-names-break(0);
+  line-height: 16px;
+  max-width: 100%;
+  max-height: 100%;
+  line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  word-wrap: break-word;
+
+  @include responsive.screen-min(320px) {
+    width: 100%;
+  }
+}
+
+.unitDescriptionWrapper {
+  @include flexWrapperHiddenOverflow(2, 1);
+}
+
+.unitDescription {
+  @include font.text(colors.$color-white, 14px, font.$font-w-medium);
+  @include common.long-names-break(0);
+  line-height: 1.5;
+  width: 100%;
+  max-height: 100%;
+  height: 100%;
+  min-height: 21px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
+.unitFooter {
+  @include flex.flex-container(space-between, center, row nowrap, false, 5px);
+  width: 100%;
+  height: 38px;
+  min-width: 0;
+}
+
+.unitFooterTime {
+  @include flex.flex-container(space-between, center);
+  flex: 0 0 auto;
+  min-width: 0;
+  white-space: nowrap;
+
+  svg {
+    margin-right: 3px;
+    width: 16px;
+    height: 16px;
+    transform: scale(0.8);
+
+    path {
+      fill: colors.$color-white;
+    }
+  }
+}
+
+.noteBadge {
+  @include font.text(colors.$color-white, 11px, font.$font-w-medium);
+  background: rgba(colors.$color-black, 0.18);
+  border: 1px solid colors.$color-white;
+  border-radius: 6px;
+  line-height: 14px;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+.taskIdTooltip {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.unitEditButton {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+}
+
+.taskIdBadge {
+  flex: 0 0 auto;
+  padding: 2px 4px;
+  border: 1px solid colors.$color-white;
+  border-radius: 6px;
+  background: rgba(colors.$color-black, 0.18);
+  white-space: nowrap;
+  cursor: help;
+  line-height: 14px;
+  @include font.text(colors.$color-white, 10px, font.$font-w-medium);
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-white;
+    outline-offset: 2px;
+  }
+}
+
+.taskIdTooltipContent {
+  display: inline-flex;
+  flex-flow: column;
+  gap: 4px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+
+  strong {
+    font-weight: font.$font-w-medium;
+  }
+}

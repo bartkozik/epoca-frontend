@@ -1,0 +1,62 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+@mixin avatar {
+  min-width: 0;
+
+  > img {
+    flex-shrink: 0;
+  }
+
+  > span {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+@mixin role-select {
+  width: 153px;
+
+  // Keep a label for assistive technology without repeating the column heading.
+  > label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  input {
+    min-height: 44px;
+  }
+}
+
+@mixin mobile-role {
+  flex: 0 0 auto;
+  display: none;
+
+  @include responsive.screen-xs {
+    display: block;
+  }
+}
+
+@mixin actions {
+  @include flex.flex-container($gap: 12px);
+  flex-shrink: 0;
+
+  > button {
+    flex-direction: column;
+    min-width: 60px;
+    min-height: 64px;
+    padding: 0;
+
+    > span {
+      margin-left: 0;
+      margin-top: 5px;
+    }
+  }
+}

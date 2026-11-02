@@ -1,0 +1,204 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-print' as print;
+
+.root {
+  @include flex.flex-container(center, center, column);
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+
+  &:hover:not(:disabled) {
+    .outlined {
+      background: colors.$color-icon-button-hover;
+
+      svg path {
+        fill: colors.$color-white;
+      }
+
+      &.colorGray {
+        border-color: colors.$color-primary-dark;
+      }
+    }
+
+    .contained {
+      background: colors.$color-icon-button-hover;
+    }
+
+    .label {
+      color: colors.$color-primary-light;
+    }
+
+    .raw {
+      opacity: 0.8;
+    }
+  }
+
+  &:active:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    .contained {
+      &.colorPrimary {
+        background: colors.$color-icon-button-active;
+      }
+    }
+
+    .outlined {
+      &.colorPrimary {
+        background: colors.$color-border-active;
+      }
+
+      &.colorGray {
+        border-color: colors.$color-primary-dark;
+      }
+    }
+  }
+
+  @include responsive.screen-xs {
+    @include flex.flex-center;
+  }
+
+  @include print.no-print;
+}
+
+.maxWidth {
+  width: 100%;
+}
+
+.icon {
+  @include flex.flex-center;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.label {
+  @include font.text(colors.$color-primary, 12px);
+  margin-top: 5px;
+  text-transform: capitalize;
+
+  @include responsive.screen-xs {
+    margin-left: 10px;
+  }
+
+  &Large {
+    font-size: 14px;
+
+    @include responsive.screen-sm-minus {
+      font-size: 12px;
+    }
+  }
+}
+
+//Variants and colors
+.contained {
+  &.colorPrimary {
+    background: colors.$color-primary;
+
+    svg path {
+      fill: colors.$color-white;
+    }
+  }
+
+  &.colorWhite {
+    background: colors.$color-white;
+
+    svg path {
+      fill: colors.$color-font-heading;
+    }
+  }
+
+  &.colorBlack {
+    background: colors.$color-black;
+
+    svg path {
+      fill: colors.$color-white;
+    }
+  }
+}
+
+.outlined {
+  &.colorPrimary {
+    background-color: transparent;
+    border: 1px solid colors.$color-border;
+
+    svg path {
+      fill: colors.$color-primary;
+    }
+  }
+
+  &.colorWhite {
+    background-color: transparent;
+    border: 1px solid colors.$color-white;
+
+    svg path {
+      fill: colors.$color-white;
+    }
+  }
+
+  &.colorBlack {
+    background-color: transparent;
+    border: 1px solid colors.$color-black;
+
+    svg path {
+      fill: colors.$color-black;
+    }
+  }
+
+  &.colorGray {
+    background-color: transparent;
+    border: 1px solid colors.$color-border-text-input-active;
+    border-left: none;
+
+    svg path {
+      fill: colors.$color-border-active;
+    }
+  }
+}
+
+.raw {
+  border: none;
+  border-radius: 0;
+
+  &.colorPrimary {
+    svg path {
+      fill: colors.$color-primary;
+    }
+  }
+
+  &.colorPrimaryLightest {
+    background-color: colors.$color-primary-lightest;
+
+    svg path {
+      fill: colors.$color-primary;
+    }
+  }
+
+  &.colorWhite {
+    svg path {
+      fill: colors.$color-white;
+    }
+  }
+
+  &.colorBlack {
+    svg path {
+      fill: colors.$color-black;
+    }
+  }
+}
+
+//Sizes
+.sizeSmall {
+  width: fit-content;
+  height: fit-content;
+}
+
+.sizeMedium {
+  height: 40px;
+  width: 40px;
+}
+
+.sizeLarge {
+  width: 48px;
+  height: 48px;
+}

@@ -1,0 +1,5 @@
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-center;
+}

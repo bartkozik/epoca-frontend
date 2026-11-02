@@ -1,0 +1,26 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.header {
+  @include flex.flex-container(space-between);
+  max-height: 50px;
+  margin-top: 45px;
+
+  @include responsive.screen-md-minus {
+    @include flex.flex-container(center, flex-start, column, $gap: 15px);
+    max-height: none;
+    margin-top: 45px;
+    padding-left: 0px;
+    margin-bottom: 43px;
+  }
+}
+
+.itemsBoard {
+  @include flex.flex-center-column;
+  margin-top: 34px;
+  position: relative;
+
+  @include responsive.screen-sm-minus {
+    margin-top: 31px;
+  }
+}

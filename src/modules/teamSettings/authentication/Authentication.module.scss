@@ -1,0 +1,52 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, flex-start, column);
+  padding-left: 52px;
+  width: 100%;
+
+  @include responsive.screen-xs {
+    padding: 29px 0px;
+  }
+}
+
+.ssoForm {
+  @include flex.flex-container(flex-start, flex-start, column);
+  width: 483px;
+
+  @include responsive.screen-xs {
+    max-width: 85vw;
+  }
+}
+
+.inputsContainer {
+  @include flex.flex-container(flex-start, stretch, column);
+  width: 100%;
+}
+
+.infoContainer {
+  @include font.text(colors.$color-font-heading);
+  @include flex.flex-container(flex-start, flex-start, column);
+  margin-bottom: 20px;
+
+  h3 {
+    margin-bottom: 6px;
+  }
+
+  span {
+    @include font.text(colors.$color-font-heading, 16px);
+    text-align: left;
+  }
+}
+
+.infoText {
+  @include font.text(colors.$color-placeholder);
+}
+
+.maxBottomMargin,
+.inputsContainer > * {
+  margin-bottom: 26px;
+}

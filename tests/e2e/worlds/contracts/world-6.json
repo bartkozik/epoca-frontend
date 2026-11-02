@@ -1,0 +1,1043 @@
+{
+  "name": "world-6",
+  "parent": "world-5",
+  "clock": "2026-08-27T10:00:00.000+02:00",
+  "locale": "pl-PL",
+  "timeZone": "Europe/Warsaw",
+  "organization": {
+    "id": "10000000-0000-4000-8000-000000000001",
+    "slug": "epoca-e2e",
+    "name": "Epoca E2E"
+  },
+  "actors": {
+    "manager": {
+      "userId": "20000000-0000-4000-8000-000000000002",
+      "email": "manager@example.test",
+      "firstName": "Manager",
+      "lastName": "User",
+      "organizationRoles": [
+        "Manager"
+      ],
+      "projectRoles": {
+        "40000000-0000-4000-8000-000000000002": "Owner"
+      },
+      "archived": false
+    },
+    "owner": {
+      "userId": "20000000-0000-4000-8000-000000000001",
+      "email": "owner@example.test",
+      "firstName": "Owner",
+      "lastName": "User",
+      "organizationRoles": [
+        "Owner"
+      ],
+      "projectRoles": {},
+      "archived": false
+    },
+    "pm": {
+      "userId": "20000000-0000-4000-8000-000000000003",
+      "email": "pm@example.test",
+      "firstName": "Project",
+      "lastName": "Manager",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "projectRoles": {
+        "40000000-0000-4000-8000-000000000001": "Owner"
+      },
+      "archived": false
+    },
+    "user": {
+      "userId": "20000000-0000-4000-8000-000000000004",
+      "email": "user@example.test",
+      "firstName": "Regular",
+      "lastName": "User",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "projectRoles": {
+        "40000000-0000-4000-8000-000000000001": "Member"
+      },
+      "archived": false
+    }
+  },
+  "users": [
+    {
+      "id": "20000000-0000-4000-8000-000000000001",
+      "email": "owner@example.test",
+      "firstName": "Owner",
+      "lastName": "User",
+      "organizationRoles": [
+        "Owner"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000001",
+          "type": "MailAddress",
+          "value": "owner@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000002",
+      "email": "manager@example.test",
+      "firstName": "Manager",
+      "lastName": "User",
+      "organizationRoles": [
+        "Manager"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000002",
+          "type": "MailAddress",
+          "value": "manager@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000003",
+      "email": "pm@example.test",
+      "firstName": "Project",
+      "lastName": "Manager",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000003",
+          "type": "MailAddress",
+          "value": "pm@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000004",
+      "email": "user@example.test",
+      "firstName": "Regular",
+      "lastName": "User",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000004",
+          "type": "MailAddress",
+          "value": "user@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000005",
+      "email": "archived@example.test",
+      "firstName": "Archived",
+      "lastName": "User",
+      "organizationRoles": [
+        "External"
+      ],
+      "archived": true,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000005",
+          "type": "MailAddress",
+          "value": "archived@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000006",
+      "email": "person06@example.test",
+      "firstName": "Person",
+      "lastName": "06",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000006",
+          "type": "MailAddress",
+          "value": "person06@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000007",
+      "email": "person07@example.test",
+      "firstName": "Person",
+      "lastName": "07",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000007",
+          "type": "MailAddress",
+          "value": "person07@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000008",
+      "email": "person08@example.test",
+      "firstName": "Person",
+      "lastName": "08",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000008",
+          "type": "MailAddress",
+          "value": "person08@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000009",
+      "email": "person09@example.test",
+      "firstName": "Person",
+      "lastName": "09",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000009",
+          "type": "MailAddress",
+          "value": "person09@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000010",
+      "email": "person10@example.test",
+      "firstName": "Person",
+      "lastName": "10",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000010",
+          "type": "MailAddress",
+          "value": "person10@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000011",
+      "email": "person11@example.test",
+      "firstName": "Person",
+      "lastName": "11",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000011",
+          "type": "MailAddress",
+          "value": "person11@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000012",
+      "email": "person12@example.test",
+      "firstName": "Person",
+      "lastName": "12",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000012",
+          "type": "MailAddress",
+          "value": "person12@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000013",
+      "email": "person13@example.test",
+      "firstName": "Person",
+      "lastName": "13",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000013",
+          "type": "MailAddress",
+          "value": "person13@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000014",
+      "email": "person14@example.test",
+      "firstName": "Person",
+      "lastName": "14",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000014",
+          "type": "MailAddress",
+          "value": "person14@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000015",
+      "email": "person15@example.test",
+      "firstName": "Person",
+      "lastName": "15",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000015",
+          "type": "MailAddress",
+          "value": "person15@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000016",
+      "email": "person16@example.test",
+      "firstName": "Person",
+      "lastName": "16",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000016",
+          "type": "MailAddress",
+          "value": "person16@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000017",
+      "email": "person17@example.test",
+      "firstName": "Person",
+      "lastName": "17",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000017",
+          "type": "MailAddress",
+          "value": "person17@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000018",
+      "email": "person18@example.test",
+      "firstName": "Person",
+      "lastName": "18",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000018",
+          "type": "MailAddress",
+          "value": "person18@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000019",
+      "email": "person19@example.test",
+      "firstName": "Person",
+      "lastName": "19",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000019",
+          "type": "MailAddress",
+          "value": "person19@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000020",
+      "email": "person20@example.test",
+      "firstName": "Person",
+      "lastName": "20",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000020",
+          "type": "MailAddress",
+          "value": "person20@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000021",
+      "email": "person21@example.test",
+      "firstName": "Person",
+      "lastName": "21",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000021",
+          "type": "MailAddress",
+          "value": "person21@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000022",
+      "email": "person22@example.test",
+      "firstName": "Person",
+      "lastName": "22",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000022",
+          "type": "MailAddress",
+          "value": "person22@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000023",
+      "email": "person23@example.test",
+      "firstName": "Person",
+      "lastName": "23",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000023",
+          "type": "MailAddress",
+          "value": "person23@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000024",
+      "email": "person24@example.test",
+      "firstName": "Person",
+      "lastName": "24",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000024",
+          "type": "MailAddress",
+          "value": "person24@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000025",
+      "email": "person25@example.test",
+      "firstName": "Person",
+      "lastName": "25",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000025",
+          "type": "MailAddress",
+          "value": "person25@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000026",
+      "email": "person26@example.test",
+      "firstName": "Person",
+      "lastName": "26",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000026",
+          "type": "MailAddress",
+          "value": "person26@example.test",
+          "main": true
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "texture": "/static/media/texture7.oldhash123.png",
+      "color": "#2e7d32",
+      "logo": "",
+      "id": "30000000-0000-4000-8000-000000000001",
+      "name": "Internal Client",
+      "type": "Internal",
+      "archivedAt": null
+    },
+    {
+      "texture": "",
+      "color": "",
+      "logo": "https://static.e2e.test/clients/external-logo.png",
+      "id": "30000000-0000-4000-8000-000000000002",
+      "name": "External Client",
+      "type": "External",
+      "archivedAt": null
+    },
+    {
+      "texture": "",
+      "color": "",
+      "logo": "",
+      "id": "30000000-0000-4000-8000-000000000003",
+      "name": "Archived Client",
+      "type": "External",
+      "archivedAt": "2026-06-30T22:00:00.000Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": "40000000-0000-4000-8000-000000000001",
+      "clientId": "30000000-0000-4000-8000-000000000001",
+      "name": "Alpha Project",
+      "description": "Alpha project description",
+      "archivedAt": null,
+      "ownerIds": [
+        "20000000-0000-4000-8000-000000000003"
+      ],
+      "memberIds": [
+        "20000000-0000-4000-8000-000000000004"
+      ]
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000002",
+      "clientId": "30000000-0000-4000-8000-000000000002",
+      "name": "Beta Project",
+      "description": "Beta project description",
+      "archivedAt": null,
+      "ownerIds": [
+        "20000000-0000-4000-8000-000000000002"
+      ],
+      "memberIds": []
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000003",
+      "clientId": "30000000-0000-4000-8000-000000000001",
+      "name": "Large Project",
+      "description": "Project with more than twenty people",
+      "archivedAt": null,
+      "ownerIds": [
+        "20000000-0000-4000-8000-000000000001"
+      ],
+      "memberIds": [
+        "20000000-0000-4000-8000-000000000006",
+        "20000000-0000-4000-8000-000000000007",
+        "20000000-0000-4000-8000-000000000008",
+        "20000000-0000-4000-8000-000000000009",
+        "20000000-0000-4000-8000-000000000010",
+        "20000000-0000-4000-8000-000000000011",
+        "20000000-0000-4000-8000-000000000012",
+        "20000000-0000-4000-8000-000000000013",
+        "20000000-0000-4000-8000-000000000014",
+        "20000000-0000-4000-8000-000000000015",
+        "20000000-0000-4000-8000-000000000016",
+        "20000000-0000-4000-8000-000000000017",
+        "20000000-0000-4000-8000-000000000018",
+        "20000000-0000-4000-8000-000000000019",
+        "20000000-0000-4000-8000-000000000020",
+        "20000000-0000-4000-8000-000000000021",
+        "20000000-0000-4000-8000-000000000022",
+        "20000000-0000-4000-8000-000000000023",
+        "20000000-0000-4000-8000-000000000024",
+        "20000000-0000-4000-8000-000000000025",
+        "20000000-0000-4000-8000-000000000026"
+      ]
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000004",
+      "clientId": "30000000-0000-4000-8000-000000000003",
+      "name": "Archived Project",
+      "description": "Archived project description",
+      "archivedAt": "2026-06-30T22:00:00.000Z",
+      "ownerIds": [
+        "20000000-0000-4000-8000-000000000001"
+      ],
+      "memberIds": [
+        "20000000-0000-4000-8000-000000000005"
+      ]
+    }
+  ],
+  "workUnits": [
+    {
+      "id": "50000000-0000-4000-8000-000000000001",
+      "userId": "20000000-0000-4000-8000-000000000004",
+      "projectId": "40000000-0000-4000-8000-000000000001",
+      "entryType": "Worklog",
+      "date": "2026-07-15",
+      "duration": "PT7H59M36S",
+      "description": "Precyzyjne godziny",
+      "taskId": null,
+      "state": "Active",
+      "createdAt": "2026-07-15T08:00:00.000Z",
+      "modifiedAt": "2026-07-15T08:00:00.000Z"
+    },
+    {
+      "id": "50000000-0000-4000-8000-000000000002",
+      "userId": "20000000-0000-4000-8000-000000000005",
+      "projectId": "40000000-0000-4000-8000-000000000004",
+      "entryType": "Worklog",
+      "date": "2026-07-10",
+      "duration": "PT30M",
+      "description": "Historyczne godziny",
+      "taskId": null,
+      "state": "Active",
+      "createdAt": "2026-07-10T08:00:00.000Z",
+      "modifiedAt": "2026-07-11T08:00:00.000Z"
+    },
+    {
+      "id": "50000000-0000-4000-8000-000000000003",
+      "userId": "20000000-0000-4000-8000-000000000004",
+      "projectId": "40000000-0000-4000-8000-000000000001",
+      "entryType": "Note",
+      "date": "2026-07-14",
+      "duration": "PT2H",
+      "description": "Legacy past note",
+      "taskId": null,
+      "state": "Active",
+      "createdAt": "2026-07-14T08:00:00.000Z",
+      "modifiedAt": "2026-07-14T08:00:00.000Z"
+    },
+    {
+      "id": "50000000-0000-4000-8000-000000000004",
+      "userId": "20000000-0000-4000-8000-000000000004",
+      "projectId": "40000000-0000-4000-8000-000000000001",
+      "entryType": "Note",
+      "date": "2026-07-16",
+      "duration": "PT3H",
+      "description": "Legacy future note",
+      "taskId": null,
+      "state": "Active",
+      "createdAt": "2026-07-15T08:00:00.000Z",
+      "modifiedAt": "2026-07-15T08:00:00.000Z"
+    },
+    {
+      "id": "50000000-0000-4000-8000-000000000005",
+      "userId": "20000000-0000-4000-8000-000000000004",
+      "projectId": "40000000-0000-4000-8000-000000000001",
+      "entryType": "Worklog",
+      "date": "2026-07-13",
+      "duration": "PT1H",
+      "description": "Task ID worklog",
+      "taskId": "CT-513, CT-426",
+      "state": "Active",
+      "createdAt": "2026-07-13T08:00:00.000Z",
+      "modifiedAt": "2026-07-13T08:00:00.000Z"
+    }
+  ],
+  "oauthIntegration": {
+    "clients": [
+      {
+        "clientId": "epoca_oauth_client_v1_active",
+        "name": "Active reporting client",
+        "status": "Active",
+        "scopes": [
+          "organization:read",
+          "projects:read"
+        ],
+        "projectAccess": {
+          "mode": "SelectedProjects",
+          "projectIds": [
+            "40000000-0000-4000-8000-000000000001"
+          ]
+        },
+        "version": 5,
+        "policyVersion": 3,
+        "secretVersion": 2,
+        "serviceAccount": {
+          "userId": "70000000-0000-4000-8000-000000000001",
+          "displayName": "Integration Active reporting client"
+        },
+        "createdAt": "2026-08-01T08:00:00Z",
+        "createdBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "modifiedAt": "2026-08-20T09:00:00Z",
+        "modifiedBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "secretRotatedAt": "2026-08-15T10:00:00Z",
+        "secretRotatedBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "expiresAt": null,
+        "revokedAt": null,
+        "revokedBy": null,
+        "lastUsedAt": "2026-08-26T12:00:00Z"
+      },
+      {
+        "clientId": "epoca_oauth_client_v1_expired",
+        "name": "Expired reporting client",
+        "status": "Expired",
+        "scopes": [
+          "organization:read",
+          "projects:read"
+        ],
+        "projectAccess": {
+          "mode": "SelectedProjects",
+          "projectIds": [
+            "40000000-0000-4000-8000-000000000001"
+          ]
+        },
+        "version": 5,
+        "policyVersion": 3,
+        "secretVersion": 2,
+        "serviceAccount": {
+          "userId": "70000000-0000-4000-8000-000000000002",
+          "displayName": "Integration Expired reporting client"
+        },
+        "createdAt": "2026-08-01T08:00:00Z",
+        "createdBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "modifiedAt": "2026-08-20T09:00:00Z",
+        "modifiedBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "secretRotatedAt": "2026-08-15T10:00:00Z",
+        "secretRotatedBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "expiresAt": "2026-08-20T08:00:00Z",
+        "revokedAt": null,
+        "revokedBy": null,
+        "lastUsedAt": "2026-08-19T12:00:00Z"
+      },
+      {
+        "clientId": "epoca_oauth_client_v1_revoked",
+        "name": "Revoked reporting client",
+        "status": "Revoked",
+        "scopes": [
+          "organization:read",
+          "projects:read"
+        ],
+        "projectAccess": {
+          "mode": "SelectedProjects",
+          "projectIds": [
+            "40000000-0000-4000-8000-000000000001"
+          ]
+        },
+        "version": 5,
+        "policyVersion": 3,
+        "secretVersion": 2,
+        "serviceAccount": {
+          "userId": "70000000-0000-4000-8000-000000000003",
+          "displayName": "Integration Revoked reporting client"
+        },
+        "createdAt": "2026-08-01T08:00:00Z",
+        "createdBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "modifiedAt": "2026-08-20T09:00:00Z",
+        "modifiedBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "secretRotatedAt": "2026-08-15T10:00:00Z",
+        "secretRotatedBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "expiresAt": null,
+        "revokedAt": "2026-08-21T08:00:00Z",
+        "revokedBy": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "lastUsedAt": null
+      }
+    ],
+    "auditEvents": [
+      {
+        "clientId": "epoca_oauth_client_v1_active",
+        "id": "80000000-0000-4000-8000-000000000001",
+        "occurredAt": "2026-08-01T08:00:00Z",
+        "actorType": "Human",
+        "actorUserId": "20000000-0000-4000-8000-000000000001",
+        "actor": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "eventType": "Create",
+        "outcome": "Success",
+        "metadata": {
+          "version": 1,
+          "scopes": [
+            "organization:read",
+            "projects:read"
+          ]
+        }
+      },
+      {
+        "clientId": "epoca_oauth_client_v1_expired",
+        "id": "80000000-0000-4000-8000-000000000002",
+        "occurredAt": "2026-08-20T09:00:00Z",
+        "actorType": "System",
+        "actorUserId": null,
+        "actor": null,
+        "eventType": "Update",
+        "outcome": "Success",
+        "metadata": {
+          "expiresAt": "2026-08-20T08:00:00Z",
+          "version": 5
+        }
+      },
+      {
+        "clientId": "epoca_oauth_client_v1_revoked",
+        "id": "80000000-0000-4000-8000-000000000003",
+        "occurredAt": "2026-08-21T08:00:00Z",
+        "actorType": "Human",
+        "actorUserId": "20000000-0000-4000-8000-000000000001",
+        "actor": {
+          "userId": "20000000-0000-4000-8000-000000000001",
+          "displayName": "Owner User"
+        },
+        "eventType": "Revoke",
+        "outcome": "Success",
+        "metadata": {
+          "version": 5
+        }
+      }
+    ],
+    "staleVersion": {
+      "clientId": "epoca_oauth_client_v1_active",
+      "attemptedVersion": 4,
+      "currentVersion": 5
+    }
+  },
+  "failures": [
+    {
+      "key": "conflict",
+      "method": "PATCH",
+      "status": 409,
+      "errorType": "revision-conflict"
+    },
+    {
+      "key": "expired-result",
+      "method": "PATCH",
+      "status": 410,
+      "errorType": "expired-result"
+    },
+    {
+      "key": "network-drop",
+      "method": "POST",
+      "status": 0,
+      "errorType": "network-drop"
+    },
+    {
+      "key": "oauth-bad-request",
+      "method": "POST",
+      "status": 400,
+      "errorType": "invalid-policy"
+    },
+    {
+      "key": "oauth-conflict",
+      "method": "PATCH",
+      "status": 409,
+      "errorType": "stale-version"
+    },
+    {
+      "key": "oauth-forbidden",
+      "method": "POST",
+      "status": 403,
+      "errorType": "operation-not-permitted"
+    },
+    {
+      "key": "oauth-server-error",
+      "method": "POST",
+      "status": 500,
+      "errorType": "service-unavailable"
+    },
+    {
+      "key": "oauth-timeout",
+      "method": "POST",
+      "status": 0,
+      "errorType": "timeout"
+    },
+    {
+      "key": "unsupported-fingerprint",
+      "method": "POST",
+      "status": 409,
+      "errorType": "unsupported-fingerprint"
+    }
+  ],
+  "capabilities": [
+    "auth:anonymous",
+    "auth:saml",
+    "corrections:seeded-data",
+    "failures:controlled",
+    "idempotency:retry",
+    "multi-search:initial-selections",
+    "oauth-clients:public-metadata",
+    "oauth-clients:runtime-secret",
+    "oauth-clients:stale-version",
+    "organization:empty",
+    "organization:people",
+    "projects:large-membership",
+    "projects:read",
+    "projects:user-details",
+    "reports:archived",
+    "reports:long-filters",
+    "reports:precise-duration",
+    "session:owner",
+    "work-units:legacy-notes",
+    "work-units:task-ids"
+  ],
+  "allIds": [
+    "10000000-0000-4000-8000-000000000001",
+    "20000000-0000-4000-8000-000000000001",
+    "20000000-0000-4000-8000-000000000002",
+    "20000000-0000-4000-8000-000000000003",
+    "20000000-0000-4000-8000-000000000004",
+    "20000000-0000-4000-8000-000000000005",
+    "20000000-0000-4000-8000-000000000006",
+    "20000000-0000-4000-8000-000000000007",
+    "20000000-0000-4000-8000-000000000008",
+    "20000000-0000-4000-8000-000000000009",
+    "20000000-0000-4000-8000-000000000010",
+    "20000000-0000-4000-8000-000000000011",
+    "20000000-0000-4000-8000-000000000012",
+    "20000000-0000-4000-8000-000000000013",
+    "20000000-0000-4000-8000-000000000014",
+    "20000000-0000-4000-8000-000000000015",
+    "20000000-0000-4000-8000-000000000016",
+    "20000000-0000-4000-8000-000000000017",
+    "20000000-0000-4000-8000-000000000018",
+    "20000000-0000-4000-8000-000000000019",
+    "20000000-0000-4000-8000-000000000020",
+    "20000000-0000-4000-8000-000000000021",
+    "20000000-0000-4000-8000-000000000022",
+    "20000000-0000-4000-8000-000000000023",
+    "20000000-0000-4000-8000-000000000024",
+    "20000000-0000-4000-8000-000000000025",
+    "20000000-0000-4000-8000-000000000026",
+    "30000000-0000-4000-8000-000000000001",
+    "30000000-0000-4000-8000-000000000002",
+    "30000000-0000-4000-8000-000000000003",
+    "40000000-0000-4000-8000-000000000001",
+    "40000000-0000-4000-8000-000000000002",
+    "40000000-0000-4000-8000-000000000003",
+    "40000000-0000-4000-8000-000000000004",
+    "50000000-0000-4000-8000-000000000001",
+    "50000000-0000-4000-8000-000000000002",
+    "50000000-0000-4000-8000-000000000003",
+    "50000000-0000-4000-8000-000000000004",
+    "50000000-0000-4000-8000-000000000005",
+    "60000000-0000-4000-8000-000000000001",
+    "60000000-0000-4000-8000-000000000002",
+    "60000000-0000-4000-8000-000000000003",
+    "60000000-0000-4000-8000-000000000004",
+    "60000000-0000-4000-8000-000000000005",
+    "60000000-0000-4000-8000-000000000006",
+    "60000000-0000-4000-8000-000000000007",
+    "60000000-0000-4000-8000-000000000008",
+    "60000000-0000-4000-8000-000000000009",
+    "60000000-0000-4000-8000-000000000010",
+    "60000000-0000-4000-8000-000000000011",
+    "60000000-0000-4000-8000-000000000012",
+    "60000000-0000-4000-8000-000000000013",
+    "60000000-0000-4000-8000-000000000014",
+    "60000000-0000-4000-8000-000000000015",
+    "60000000-0000-4000-8000-000000000016",
+    "60000000-0000-4000-8000-000000000017",
+    "60000000-0000-4000-8000-000000000018",
+    "60000000-0000-4000-8000-000000000019",
+    "60000000-0000-4000-8000-000000000020",
+    "60000000-0000-4000-8000-000000000021",
+    "60000000-0000-4000-8000-000000000022",
+    "60000000-0000-4000-8000-000000000023",
+    "60000000-0000-4000-8000-000000000024",
+    "60000000-0000-4000-8000-000000000025",
+    "60000000-0000-4000-8000-000000000026",
+    "70000000-0000-4000-8000-000000000001",
+    "70000000-0000-4000-8000-000000000002",
+    "70000000-0000-4000-8000-000000000003",
+    "80000000-0000-4000-8000-000000000001",
+    "80000000-0000-4000-8000-000000000002",
+    "80000000-0000-4000-8000-000000000003",
+    "epoca_oauth_client_v1_active",
+    "epoca_oauth_client_v1_expired",
+    "epoca_oauth_client_v1_revoked"
+  ]
+}

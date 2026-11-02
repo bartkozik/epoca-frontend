@@ -1,0 +1,18 @@
+@use '../common-team-users' as users;
+@use 'core/theme/common-flex' as flex;
+
+.avatar {
+  @include users.avatar;
+}
+
+.statusInput {
+  @include users.role-select;
+}
+
+.statusMobileView {
+  @include users.mobile-role;
+}
+
+.btnBox {
+  @include users.actions;
+}

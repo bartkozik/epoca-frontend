@@ -1,0 +1,31 @@
+@use 'core/theme/common-colors' as colors;
+
+:export {
+  colorSuccess: colors.$color-green;
+  colorClientDefault: colors.$color-client-default;
+
+  colorClientRed: colors.$color-client-01;
+  colorClientCoral: colors.$color-client-02;
+  colorClientOrange: colors.$color-client-03;
+  colorClientLime: colors.$color-client-04;
+  colorClientGreen: colors.$color-client-05;
+  colorClientTeal: colors.$color-client-06;
+  colorClientBlue: colors.$color-client-07;
+  colorClientPurple: colors.$color-client-08;
+  colorClientDeepRed: colors.$color-client-09;
+  colorClientBrightOrange: colors.$color-client-10;
+  colorClientLightGreen: colors.$color-client-11;
+  colorClientTurquoise: colors.$color-client-12;
+  colorClientNavy: colors.$color-client-13;
+  colorClientViolet: colors.$color-client-14;
+  colorClientMagenta: colors.$color-client-15;
+  colorClientBrown: colors.$color-client-16;
+  colorClientTan: colors.$color-client-17;
+  colorClientBeige: colors.$color-client-18;
+  colorClientGold: colors.$color-client-19;
+  colorClientOlive: colors.$color-client-20;
+  colorClientPeach: colors.$color-client-21;
+  colorClientYellow: colors.$color-client-22;
+  colorClientIndigo: colors.$color-client-23;
+  colorClientBlack: colors.$color-client-24;
+}

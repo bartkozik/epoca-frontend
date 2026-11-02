@@ -1,0 +1,18 @@
+@use 'common-flex' as flex;
+@use 'common-font' as font;
+@use 'common-colors' as color;
+
+@mixin form {
+  @include flex.flex-container($flex-flow: column, $gap: 30px);
+
+  > div:last-child {
+    @include flex.flex-container(flex-end, flex-end, $gap: 20px);
+  }
+}
+
+@mixin form-label {
+  @include font.text(color.$color-font-heading, 16px);
+  display: block;
+  margin-bottom: 6px;
+  text-align: left;
+}

@@ -1,0 +1,22 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+
+.select {
+  @include font.text(colors.$color-font-heading, 13px);
+  align-self: center;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+  background-color: colors.$color-white;
+  cursor: pointer;
+
+  &:hover {
+    border-color: colors.$color-border-hover;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-primary;
+    outline-offset: 1px;
+  }
+}

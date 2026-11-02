@@ -1,0 +1,63 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.modal {
+  max-width: 520px;
+  text-align: left;
+
+  > button:first-child {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    right: 5px;
+    top: 3px;
+  }
+}
+
+.modalTitle {
+  @include font.text(colors.$color-font-heading, 22px, font.$font-w-medium);
+  line-height: 1.35;
+  margin: 0 32px 16px 0;
+  text-align: left;
+}
+
+.message {
+  @include font.text(colors.$color-font-text, 16px);
+  line-height: 1.6;
+  margin: 0;
+  text-align: left;
+
+  &[role='alert'] {
+    color: colors.$color-error;
+  }
+}
+
+.footer {
+  @include flex.flex-container(flex-end, center, row wrap, $gap: 16px);
+  border-top: 1px solid colors.$color-border;
+  margin-top: 24px;
+  padding-top: 20px;
+}
+
+.action {
+  min-height: 44px;
+}
+
+@include responsive.screen-xs {
+  .modal {
+    width: calc(100vw - 16px);
+  }
+
+  .footer {
+    align-items: stretch;
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}

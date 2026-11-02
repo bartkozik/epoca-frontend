@@ -1,0 +1,137 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-center-column;
+  margin-bottom: auto;
+
+  @include responsive.screen-md-plus {
+    width: 369px;
+  }
+}
+
+.loginForm {
+  width: 100%;
+  @include flex.flex-center-column;
+  @include font.typography('Playfair Display');
+
+  & {
+    @include font.text(colors.$color-black);
+  }
+
+  .signupLink {
+    color: colors.$color-primary-light;
+  }
+
+  @include responsive.screen-md-minus {
+    @include flex.flex-center-column;
+  }
+
+  @include responsive.screen-sm-minus {
+    @include flex.flex-start-column-container(85vw);
+  }
+}
+
+.welcomeSign {
+  margin-bottom: 40px;
+
+  @include responsive.screen-xs {
+    margin-top: 25px;
+    @include flex.flex-start-column-container;
+  }
+}
+
+.inputs {
+  width: 100%;
+}
+
+.input {
+  margin-bottom: 40px;
+}
+
+.passwordInput {
+  padding-inline-end: 58px;
+}
+
+.passwordVisibilityButton {
+  position: absolute;
+  inset-inline-end: 4px;
+  inset-block-start: 7px;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: currentColor;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 1px;
+  }
+
+  @media (forced-colors: active) {
+    color: ButtonText;
+
+    &:focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}
+
+.passwordVisibilityIcon {
+  display: block;
+}
+
+.button {
+  margin-top: 30px;
+  margin-bottom: 22px;
+}
+
+.links {
+  @include flex.flex-center-column;
+
+  @include responsive.screen-sm-minus {
+    align-items: start;
+  }
+}
+
+.ssoSection {
+  height: 109px;
+}
+
+.ssoLogin {
+  @include flex.flex-center;
+  position: relative;
+
+  margin-top: 20px;
+  padding-top: 40px;
+  border-top: 1px solid colors.$color-border;
+}
+
+.ssoForm {
+  width: 100%;
+}
+
+.ssoUnavailableText {
+  color: colors.$color-font-text;
+  text-align: center;
+}
+
+.ssoTitle {
+  position: absolute;
+  background-color: colors.$color-bg;
+  padding: 0px 30px;
+  top: -13px;
+  left: 50%;
+  transform: translate(-50%);
+
+  @include responsive.screen-mobile {
+    padding: 0 5px;
+  }
+}

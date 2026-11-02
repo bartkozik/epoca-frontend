@@ -1,0 +1,34 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, flex-start, row wrap, $gap: 20px);
+  margin-left: 10px;
+}
+
+.link {
+  position: relative;
+  @include font.text(colors.$color-font-heading, 18px, font.$font-w-medium);
+  &:hover {
+    color: colors.$color-border-hover;
+  }
+}
+
+.active {
+  color: colors.$color-border-active;
+  cursor: default;
+  &:hover {
+    color: colors.$color-border-active;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: colors.$color-border-active;
+  }
+}

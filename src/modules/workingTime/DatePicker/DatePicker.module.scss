@@ -1,0 +1,78 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.datePicker {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 16px;
+
+  @include responsive.screen-md-minus {
+    margin-bottom: 27px;
+    margin-top: 12px;
+  }
+}
+
+.dateButton {
+  position: relative;
+  @include flex.flex-center;
+  background: transparent;
+  border: solid 1px colors.$color-border;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0 20px;
+
+  &:hover {
+    background-color: colors.$color-primary-lightest;
+  }
+
+  &:first-child svg {
+    transform: rotate(180deg);
+  }
+
+  svg path {
+    fill: colors.$color-primary;
+  }
+}
+
+.dateButtonText {
+  @include font.text(colors.$color-font-heading, 16px);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+.dateButtonTextActive {
+  opacity: 1;
+}
+
+.arrowButton {
+  @include flex.flex-center;
+
+  &:first-child svg {
+    transform: rotate(180deg);
+  }
+}
+
+@include responsive.screen-min(responsive.$screen-md-min) {
+  .datePicker {
+    display: flex;
+
+    .dateButton {
+      width: 200px;
+    }
+  }
+}
+
+@include responsive.screen-min(responsive.$screen-lg-min) {
+  .datePicker {
+    margin-top: 0;
+  }
+}

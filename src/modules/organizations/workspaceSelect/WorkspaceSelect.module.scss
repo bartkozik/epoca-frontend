@@ -1,0 +1,109 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(center, center, column);
+  margin-bottom: auto;
+
+  @include responsive.screen-xs {
+    @include flex.flex-start-column-container;
+    padding: 20px;
+  }
+}
+
+.organizationSelectBox {
+  @include flex.flex-container(center, flex-start, column);
+  padding: 40px;
+  width: 30vw;
+  border: 1px solid colors.$color-placeholder;
+  border-radius: 12px;
+  margin-top: 40px;
+  box-shadow: 0 5px 5px colors.$color-dropdown-menu;
+
+  & > :last-child {
+    margin-top: 30px;
+  }
+
+  @include responsive.screen-md-minus {
+    width: 50vw;
+  }
+
+  @include responsive.screen-xs {
+    @include flex.flex-start-column-container(90vw);
+  }
+}
+
+.logo {
+  margin-bottom: auto;
+
+  @include responsive.screen-sm-plus {
+    width: 100%;
+    @include flex.flex-center-column;
+  }
+
+  @include responsive.screen-sm-minus {
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+}
+
+.infoSign {
+  margin: 20px 0;
+  font-size: 20px;
+
+  @include responsive.screen-xs {
+    margin-top: 25px;
+    @include flex.flex-start-column-container;
+  }
+}
+
+.organization {
+  @include flex.flex-container(space-between, center);
+  margin-bottom: 20px;
+  width: 100%;
+  cursor: pointer;
+  padding: 7px 5px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+
+  &:hover {
+    border-color: colors.$color-placeholder;
+    box-shadow: 0 3px 3px colors.$color-dropdown-menu;
+  }
+
+  & > :last-child {
+    flex-shrink: 0;
+  }
+}
+
+.nameBox {
+  @include flex.flex-center;
+  flex: 1 1 auto;
+  min-width: 0;
+
+  & > :first-child {
+    flex-shrink: 0;
+  }
+}
+
+.name {
+  @include font.text(colors.$color-primary, 16px);
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-transform: capitalize;
+  margin: 0px 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nameTooltip {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}

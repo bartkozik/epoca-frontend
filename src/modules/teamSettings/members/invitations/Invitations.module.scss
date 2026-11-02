@@ -1,0 +1,10 @@
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, stretch, column);
+  width: 100%;
+}
+
+.emptyState {
+  padding: 24px;
+}

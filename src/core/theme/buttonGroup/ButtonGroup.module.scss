@@ -1,0 +1,54 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container;
+  width: fit-content;
+}
+
+.button {
+  padding: 0 40px;
+  z-index: 1;
+
+  &[aria-busy='true'] {
+    opacity: 1;
+  }
+}
+
+.loadingIcon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  margin-left: 0;
+}
+
+.spinner {
+  position: static;
+}
+
+.inactiveRight {
+  margin-right: -15px;
+}
+
+.inactiveLeft {
+  margin-left: -15px;
+  z-index: 0;
+}
+
+.middleButton {
+  margin: 0 -15px;
+  border-radius: 0px;
+}
+
+.firstInactive {
+  border-left: 1px solid colors.$color-border;
+  border-radius: 8px 0 0 8px;
+}
+
+.lastInactive {
+  border-right: 1px solid colors.$color-border;
+  border-radius: 0 8px 8px 0;
+}

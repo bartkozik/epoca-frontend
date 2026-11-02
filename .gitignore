@@ -1,0 +1,50 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+/target
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+/.iterators/current-task.json
+
+# Documentation is local by default, including agent checkpoints, plans and specs.
+# Track only reviewed technical dependencies listed below.
+/docs/*
+/docs/checkpoints/
+!/docs/architecture/
+/docs/architecture/*
+!/docs/architecture/ct564-query-layout.md
+!/docs/contracts/
+/docs/contracts/*
+!/docs/contracts/work-unit-pivot-query.schema.json
+!/docs/testing/
+/docs/testing/*
+!/docs/testing/e2e.md
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.yarn/*
+!.yarn/releases
+
+.vscode/
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.worktrees/

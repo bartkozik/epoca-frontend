@@ -1,0 +1,30 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+
+.options {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  padding-top: 14px;
+  border-top: 1px solid colors.$color-border;
+
+  h3 {
+    @include font.text(colors.$color-font-heading, 14px, font.$font-w-medium);
+  }
+
+  .toggles {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px 36px;
+
+    @include responsive.screen-max(831px) {
+      flex-direction: column;
+    }
+  }
+}

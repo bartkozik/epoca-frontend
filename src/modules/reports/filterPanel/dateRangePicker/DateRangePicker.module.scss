@@ -1,0 +1,85 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-form' as form;
+
+.root {
+  @include flex.flex-container(flex-start, flex-start, column);
+  position: relative;
+}
+
+.labelContainer {
+  @include flex.flex-container(space-between);
+  width: 100%;
+}
+
+.label {
+  @include form.form-label;
+}
+
+.navigation {
+  @include flex.flex-container(flex-end, flex-end);
+  margin-bottom: 10px;
+}
+
+.monthSelectButton {
+  padding: 0;
+
+  &:first-child {
+    margin-right: 10px;
+
+    svg {
+      transform: rotate(180deg);
+    }
+
+    @include responsive.screen-xs {
+      margin-right: 7px;
+    }
+  }
+
+  &:last-child svg {
+    transform: rotate(360deg);
+  }
+}
+
+.reset {
+  position: absolute;
+  bottom: 37px;
+  right: 200px;
+  padding: 0;
+
+  @include responsive.screen-max(421px) {
+    left: -45px;
+    bottom: 56px;
+  }
+}
+
+.resetPl {
+  right: 220px;
+  bottom: 42px;
+}
+
+.datePickBox {
+  @include flex.flex-container(space-between, $gap: 19px);
+
+  @include responsive.screen-mobile {
+    gap: 10px;
+  }
+}
+
+.dateInput {
+  width: 188px;
+
+  @include responsive.screen-xs {
+    width: 179px;
+  }
+
+  @include responsive.screen-mobile {
+    width: 147px;
+  }
+}
+
+.calendarRelativeContainer {
+  position: absolute;
+  top: 80px;
+  z-index: 50;
+}

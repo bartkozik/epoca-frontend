@@ -1,0 +1,227 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+
+.root {
+  margin-top: 39px;
+  @include flex.flex-container(stretch, stretch, column);
+  width: 100%;
+  flex-grow: 1;
+}
+
+.dates {
+  @include responsive.screen-lg {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    min-height: 100%;
+  }
+}
+
+.date {
+  @include flex.flex-container($flex-flow: column);
+  row-gap: 19px;
+  border-bottom: 1px solid colors.$color-border;
+  position: relative;
+
+  &:last-of-type .dateHeader {
+    border-radius: 8px;
+  }
+
+  @include responsive.screen-lg {
+    &:first-child {
+      .dateBody {
+        border-left: 1px solid colors.$color-border;
+      }
+    }
+
+    &:last-child {
+      .dateHeader {
+        border: none;
+      }
+    }
+
+    &:first-of-type .dateHeader {
+      border-radius: 8px 0 0 8px;
+    }
+
+    &:last-of-type .dateHeader {
+      border-radius: 0 8px 8px 0;
+    }
+  }
+}
+
+.dateHeaderBackground {
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+
+  @include common.white-background-before;
+}
+
+.dateHeader {
+  background-color: colors.$color-primary-lightest;
+  padding: 12.5px 18px;
+  margin-bottom: 5px;
+  box-shadow: colors.$color-header-shadow-border;
+
+  @include responsive.screen-lg {
+    border-right: 1px solid colors.$color-border;
+    padding: 12.5px 15px;
+  }
+}
+
+.dateHeaderContent {
+  @include flex.flex-container(space-between, center);
+  height: 31px;
+
+  .dateHeaderContentTextBox {
+    @include flex.flex-container($align-items: center);
+  }
+
+  span {
+    @include font.font(30, regular);
+    margin-right: 7px;
+    color: colors.$color-font-primary;
+
+    &:first-child {
+      font-size: 30px;
+
+      .dayDigit {
+        display: block;
+        font-size: inherit;
+        margin-top: -10px;
+      }
+    }
+
+    &:last-child {
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    &.todaysDay {
+      background: colors.$color-gradient-light;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      @include flex.flex-center;
+      color: colors.$color-white;
+
+      .dayDigit {
+        display: inline;
+        font-size: 23px;
+      }
+    }
+  }
+
+  @include responsive.screen-lg {
+    justify-content: flex-start;
+  }
+}
+
+.dateBodyHeader {
+  border-bottom: 1px solid colors.$color-border;
+  padding: 0 0 1rem;
+  @include flex.flex-container(space-between, center);
+
+  @include responsive.screen-lg {
+    display: block;
+    padding: 0 10px 28px;
+  }
+}
+
+.dateBody {
+  @include responsive.screen-lg {
+    border-right: 1px solid colors.$color-border;
+    min-height: 320px;
+    height: 100%;
+  }
+}
+
+.summary {
+  @include flex.flex-container($align-items: center);
+  white-space: nowrap;
+
+  svg path {
+    fill: colors.$color-primary;
+  }
+
+  p {
+    color: colors.$color-font-primary;
+    margin: 0 0.4rem;
+  }
+
+  @include responsive.screen-lg {
+    margin-top: 2px;
+    margin-bottom: 17px;
+    white-space: nowrap;
+  }
+}
+
+.summaryCompleted {
+  svg path {
+    fill: colors.$color-success-status1;
+  }
+
+  p {
+    color: colors.$color-success-status1;
+  }
+}
+
+.addActivityButton {
+  @include responsive.screen-lg {
+    width: 100%;
+  }
+}
+
+.addActivityBox {
+  margin-top: 1rem;
+}
+
+.dateBodyContent {
+  padding: 1rem 0;
+  @include flex.flex-container(flex-start, stretch, column);
+  height: calc(100% - 100px);
+  width: 100%;
+
+  @include responsive.screen-lg {
+    padding: 1rem 0.5rem;
+  }
+}
+
+.dateBodyContentUnits {
+  @include flex.flex-container(flex-start, stretch, column, $gap: 10px);
+  height: fit-content;
+  margin-bottom: 10px;
+}
+
+.addActivityIconButton {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  height: 100%;
+
+  &:hover {
+    opacity: 1;
+    background-color: colors.$color-primary-lightest;
+    border-radius: 8px;
+  }
+
+  &:disabled {
+    display: none;
+  }
+
+  svg {
+    transform: rotate(45deg);
+  }
+}
+
+.addActivityIconButtonMaxHeight {
+  height: calc(100% - 250px);
+}
+
+.arrowButton {
+  @include responsive.screen-lg {
+    display: none;
+  }
+}

@@ -1,0 +1,152 @@
+@use 'common-colors' as colors;
+@use 'common-responsive' as responsive;
+@use 'common-flex' as flex;
+@use 'common-font' as font;
+@use 'common-style' as common;
+
+@mixin table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+  position: relative;
+
+  tbody {
+    background-color: colors.$color-white;
+    z-index: 0;
+
+    tr {
+      border-bottom: 1px solid colors.$color-border;
+      color: colors.$color-font-heading;
+
+      td {
+        padding: 21px 0px 17px 0px;
+      }
+
+      td:first-child {
+        padding-left: 22px;
+
+        @include responsive.screen-xs {
+          padding-left: 13px;
+        }
+      }
+
+      td:last-child {
+        padding-right: 0px;
+      }
+    }
+
+    tr.noBorder {
+      border: none;
+    }
+
+    @include responsive.screen-range(768px, 900px) {
+      td:first-child {
+        white-space: normal;
+        max-width: 150px;
+        word-break: break-all;
+        padding-right: 22px;
+      }
+    }
+
+    tr td:last-child {
+      @include flex.flex-container(flex-end);
+
+      @include responsive.screen-mobile {
+        @include flex.flex-container(flex-start, flex-start, column, $gap: 25px);
+      }
+    }
+  }
+
+  tbody tr.noBorder {
+    border-bottom: none;
+  }
+
+  th,
+  td {
+    text-align: left;
+  }
+
+  thead {
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+
+    tr {
+      @include font.text(colors.$color-primary, 14px);
+      background-color: colors.$color-primary-lightest;
+      border-radius: 8px;
+      box-shadow: colors.$color-header-shadow-border;
+
+      th {
+        padding: 19px 0px 17px 0px;
+      }
+
+      th:first-child {
+        border-radius: 8px 0 0 8px;
+        padding-left: 22px;
+
+        @include responsive.screen-xs {
+          padding-left: 13px;
+        }
+      }
+
+      th:last-child {
+        border-radius: 0 8px 8px 0;
+      }
+    }
+
+    @include responsive.screen-xs {
+      overflow: hidden;
+      border-radius: 8px;
+
+      tr th {
+        padding: 16px 0px 16px 16px;
+      }
+    }
+
+    @include common.white-background-before;
+  }
+}
+
+@mixin sticky-table-head-position {
+  thead {
+    top: 57.2px;
+  }
+}
+
+@mixin table-cell-width($headCellName, $width) {
+  th[data-th='#{$headCellName}'],
+  td[data-th='#{$headCellName}'] {
+    width: $width;
+  }
+}
+
+@mixin table-with-only-first-column-mobile {
+  @include responsive.screen-xs {
+    th:not(:first-child),
+    td:not(:first-child):not(:last-child) {
+      display: none;
+    }
+    thead tr th:first-child {
+      border-radius: 8px;
+    }
+
+    @include mobile-table;
+  }
+}
+
+@mixin mobile-table {
+  tbody {
+    tr {
+      @include flex.flex-container(flex-start, flex-start, column);
+
+      td {
+        padding: 20px 0px 16px 14px;
+      }
+    }
+
+    tr:first-child {
+      padding-top: 13px;
+    }
+  }
+}

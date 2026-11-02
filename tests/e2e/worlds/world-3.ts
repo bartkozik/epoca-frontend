@@ -1,0 +1,135 @@
+import { IDS, identityId } from './ids';
+import type { WorldDefinition } from './types';
+
+export const world3: WorldDefinition = {
+  name: 'world-3',
+  parent: 'world-2',
+  clock: '2026-07-15T10:00:00.000+02:00',
+  locale: 'pl-PL',
+  timeZone: 'Europe/Warsaw',
+  organization: null,
+  actors: {
+    manager: {
+      userId: IDS.manager,
+      email: 'manager@example.test',
+      firstName: 'Manager',
+      lastName: 'User',
+      organizationRoles: ['Manager'],
+      projectRoles: { [IDS.projectBeta]: 'Owner' },
+      archived: false,
+    },
+    pm: {
+      userId: IDS.pm,
+      email: 'pm@example.test',
+      firstName: 'Project',
+      lastName: 'Manager',
+      organizationRoles: ['Employee'],
+      projectRoles: { [IDS.projectAlpha]: 'Owner' },
+      archived: false,
+    },
+    user: {
+      userId: IDS.user,
+      email: 'user@example.test',
+      firstName: 'Regular',
+      lastName: 'User',
+      organizationRoles: ['Employee'],
+      projectRoles: { [IDS.projectAlpha]: 'Member' },
+      archived: false,
+    },
+  },
+  users: [
+    {
+      id: IDS.manager,
+      email: 'manager@example.test',
+      firstName: 'Manager',
+      lastName: 'User',
+      organizationRoles: ['Manager'],
+      archived: false,
+      identities: [
+        {
+          id: identityId(2),
+          type: 'MailAddress',
+          value: 'manager@example.test',
+          main: true,
+        },
+      ],
+    },
+    {
+      id: IDS.pm,
+      email: 'pm@example.test',
+      firstName: 'Project',
+      lastName: 'Manager',
+      organizationRoles: ['Employee'],
+      archived: false,
+      identities: [
+        {
+          id: identityId(3),
+          type: 'MailAddress',
+          value: 'pm@example.test',
+          main: true,
+        },
+      ],
+    },
+    {
+      id: IDS.user,
+      email: 'user@example.test',
+      firstName: 'Regular',
+      lastName: 'User',
+      organizationRoles: ['Employee'],
+      archived: false,
+      identities: [
+        {
+          id: identityId(4),
+          type: 'MailAddress',
+          value: 'user@example.test',
+          main: true,
+        },
+      ],
+    },
+  ],
+  clients: [
+    {
+      id: IDS.clientInternal,
+      name: 'Internal Client',
+      type: 'Internal',
+      archivedAt: null,
+      // An old build's fully-resolved, differently-hashed asset path -- not the stable `textureN`
+      // id new selections are saved as -- exercising resolveClientTexture's CT-525
+      // backward-compatibility regex path (see src/modules/clients/clientBackgroundOptions.ts). Picked
+      // texture7 arbitrarily; any index would exercise the same code path.
+      texture: '/static/media/texture7.oldhash123.png',
+      color: '#2e7d32',
+    },
+    {
+      id: IDS.clientExternal,
+      name: 'External Client',
+      type: 'External',
+      archivedAt: null,
+      // CT-65: exercises ItemLogo's background-image branch on the client details page title.
+      logo: 'https://static.e2e.test/clients/external-logo.png',
+    },
+  ],
+  projects: [
+    {
+      id: IDS.projectAlpha,
+      clientId: IDS.clientInternal,
+      name: 'Alpha Project',
+      description: 'Alpha project description',
+      archivedAt: null,
+      ownerIds: [IDS.pm],
+      memberIds: [IDS.user],
+    },
+    {
+      id: IDS.projectBeta,
+      clientId: IDS.clientExternal,
+      name: 'Beta Project',
+      description: 'Beta project description',
+      archivedAt: null,
+      ownerIds: [IDS.manager],
+      memberIds: [],
+    },
+  ],
+  workUnits: [],
+  failures: [],
+  capabilities: ['organization:people', 'projects:read', 'projects:user-details'],
+};

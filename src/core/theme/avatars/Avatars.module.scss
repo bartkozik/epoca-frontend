@@ -1,0 +1,35 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, flex-start, column);
+  overflow: hidden;
+}
+
+.label {
+  @include font.text(colors.$color-font-heading, 16px);
+}
+
+.avatarsBox {
+  @include flex.flex-container(flex-start, center, row);
+  margin-top: 9px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+.avatar,
+.groupedAvatars,
+.addMemberButton {
+  margin-right: 7px;
+  margin-bottom: 3px;
+}
+
+.avatarDefault {
+  cursor: default;
+}
+
+.defaultItemBtn {
+  margin-left: 7px;
+  margin-top: 3px;
+}

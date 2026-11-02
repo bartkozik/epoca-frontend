@@ -1,0 +1,22 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  column-gap: 0.4rem;
+}
+
+.icon {
+  @include flex.flex-center;
+  background-color: colors.$color-border;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  margin-left: 7px;
+  @include font.text(colors.$color-primary, 8px, font.$font-w-medium);
+  cursor: default;
+}
+
+isClickable {
+  cursor: pointer;
+}

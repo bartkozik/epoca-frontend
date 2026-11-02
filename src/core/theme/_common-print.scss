@@ -1,0 +1,18 @@
+@mixin no-print {
+  @media print {
+    display: none;
+  }
+}
+
+@mixin print-display {
+  @media print {
+    @content;
+  }
+}
+
+@mixin print-without-table-cell($headCellName) {
+  td[data-th='#{$headCellName}'],
+  th[data-th='#{$headCellName}'] {
+    @include no-print;
+  }
+}

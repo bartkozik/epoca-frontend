@@ -1,0 +1,6 @@
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container($flex-flow: column, $justify-content: center, $align-items: center, $gap: 2rem);
+  height: 100svh;
+}

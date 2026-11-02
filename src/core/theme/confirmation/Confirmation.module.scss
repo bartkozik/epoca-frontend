@@ -1,0 +1,40 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+$confirmation-modal-container-padding: 40px;
+
+.root {
+  min-height: 462px;
+  padding: $confirmation-modal-container-padding;
+  overflow-x: hidden;
+  max-width: 520px;
+
+  @include responsive.screen-xs {
+    max-width: 382px;
+  }
+}
+
+.title {
+  text-align: center;
+}
+
+.relativeContainer {
+  @include flex.flex-center-column;
+  gap: 30px;
+}
+
+.text {
+  @include font.text(colors.$color-font-heading, 16px);
+  line-height: 1.5rem;
+}
+
+.footer {
+  @include flex.flex-container(flex-start, flex-start, row wrap, $gap: 20px);
+}
+
+.blurContainer {
+  margin: -$confirmation-modal-container-padding;
+  padding: $confirmation-modal-container-padding;
+}

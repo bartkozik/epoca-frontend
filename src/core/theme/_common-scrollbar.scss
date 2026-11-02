@@ -1,0 +1,74 @@
+@use 'common-colors' as colors;
+
+//scrollbar
+// IMPORTANT: if we want to use both vertical and horizontal scrollbars on one element, we must use it as '@include horizontal-scrollbar($color-white, 3px, 0)' and '@include vertical-scrollbar($color-white, 3px, 0)'
+
+@mixin scrollbar($thumb-color, $track-color) {
+  cursor: auto;
+  scrollbar-color: $thumb-color $track-color;
+  scrollbar-gutter: always;
+  &::-webkit-scrollbar {
+    background-color: $track-color;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: $track-color;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $thumb-color;
+  }
+  &:-moz-scrollbar-thumb {
+    border-radius: 8px;
+  }
+}
+
+@mixin vertical-scrollbar(
+  $background-color: colors.$color-white,
+  $width: 5px,
+  $border-width: 0px,
+  $thumb-color: colors.$color-primary,
+  $track-color: colors.$color-scrollbar-track,
+  $margin-right: 21px
+) {
+  @include scrollbar($thumb-color, $track-color);
+  scrollbar-width: thin;
+  margin-right: $margin-right;
+  background-color: colors.$color-white;
+
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-right: $border-width $background-color solid;
+    border-left: $border-width $background-color solid;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-right: $border-width $background-color solid;
+    border-left: $border-width $background-color solid;
+    border-radius: 4px;
+  }
+}
+
+@mixin horizontal-scrollbar(
+  $background-color: colors.$color-white,
+  $height: 41px,
+  $border-width: 19px,
+  $thumb-color: colors.$color-primary,
+  $track-color: colors.$color-scrollbar-track
+) {
+  @include scrollbar($thumb-color: colors.$color-primary, $track-color: colors.$color-scrollbar-track);
+  overflow-x: auto;
+  scrollbar-height: thin;
+  &::-webkit-scrollbar {
+    height: $height;
+  }
+  &::-webkit-scrollbar-track {
+    border-bottom: $border-width $background-color solid;
+    border-top: $border-width $background-color solid;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-bottom: $border-width $background-color solid;
+    border-top: $border-width $background-color solid;
+  }
+}

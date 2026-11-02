@@ -1,0 +1,11 @@
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container($align-items: center, $gap: 12px);
+  padding: 16px 0;
+  min-height: 48px;
+}
+.spinner {
+  position: static;
+  flex: 0 0 24px;
+}

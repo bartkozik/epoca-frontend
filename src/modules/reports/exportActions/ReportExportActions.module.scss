@@ -1,0 +1,30 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.container {
+  @include flex.flex-container(flex-end, center, $gap: 12px);
+
+  @include responsive.screen-xs {
+    flex-wrap: wrap;
+    margin-left: -20px;
+    gap: 10px;
+  }
+}
+
+.text {
+  @include font.text(colors.$color-font-heading, 14px);
+  text-align: left;
+  white-space: nowrap;
+
+  @include responsive.screen-md-minus {
+    display: none;
+  }
+}
+
+.button {
+  @include responsive.screen-xs {
+    flex: 1 1 30%;
+  }
+}

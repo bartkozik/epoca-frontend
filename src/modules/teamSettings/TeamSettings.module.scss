@@ -1,0 +1,19 @@
+@use 'core/theme/common-responsive' as responsive;
+
+.layout {
+  // Fill the scroll area below the header, retaining its bottom padding.
+  min-height: calc(100dvh - 86px - 2rem);
+
+  @include responsive.screen-xs {
+    min-height: 0;
+  }
+}
+
+.tabs {
+  flex: 1;
+  height: auto;
+
+  @include responsive.screen-xs {
+    flex: none;
+  }
+}

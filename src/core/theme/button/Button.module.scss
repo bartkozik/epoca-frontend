@@ -1,0 +1,318 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-print' as print;
+
+.root {
+  @include flex.flex-container($justify-content: center, $align-items: center, $inline: true);
+  @include font.text(colors.$color-white, 16px, font.$font-w-medium);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s ease-in-out;
+  white-space: nowrap;
+  min-width: 70px;
+
+  &:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 2px;
+  }
+
+  @include print.no-print;
+}
+
+.maxWidth {
+  width: 100%;
+}
+
+.content {
+  @include flex.flex-center;
+
+  span::first-letter {
+    text-transform: capitalize;
+  }
+}
+
+//Variants and colors
+.contained {
+  &.color-primary {
+    background: colors.$color-button;
+    color: colors.$color-white;
+
+    svg {
+      path {
+        fill: colors.$color-white;
+      }
+    }
+
+    &:hover:not(:disabled) {
+      background: colors.$color-button-hover;
+    }
+
+    &:active:not(:disabled) {
+      background: colors.$color-icon-button-active;
+    }
+  }
+
+  &.color-white {
+    background: colors.$color-white;
+    color: colors.$color-font-heading;
+
+    svg path {
+      fill: colors.$color-font-heading;
+    }
+  }
+}
+
+.outlined {
+  background-color: transparent;
+
+  &.color-primary {
+    color: colors.$color-font-heading;
+    border: 1px solid colors.$color-border;
+
+    svg path {
+      fill: colors.$color-primary;
+    }
+  }
+
+  &.color-white {
+    color: colors.$color-white;
+    border: 1px solid colors.$color-white;
+
+    svg path {
+      fill: colors.$color-white;
+    }
+  }
+
+  &.color-fontHeading {
+    color: colors.$color-font-heading;
+    border: 1px solid colors.$color-border;
+
+    svg path {
+      fill: colors.$color-link;
+    }
+
+    @include responsive.screen-md-minus {
+      color: colors.$color-white;
+      border: 1px solid colors.$color-border;
+    }
+
+    &:hover:not(:disabled) {
+      color: colors.$color-white;
+      background: colors.$color-button-hover;
+    }
+  }
+}
+
+.draft {
+  background: colors.$color-white;
+  color: colors.$color-primary;
+  height: 23px;
+
+  svg path {
+    fill: colors.$color-primary;
+  }
+}
+
+.text {
+  background-color: transparent;
+
+  &.color-primary {
+    color: colors.$color-primary;
+
+    svg path {
+      fill: colors.$color-primary;
+    }
+
+    &.size-medium {
+      font-size: 14px;
+    }
+  }
+
+  &.color-fontHeading {
+    color: colors.$color-link;
+
+    svg path {
+      fill: colors.$color-link;
+    }
+  }
+
+  &.color-white {
+    color: colors.$color-white;
+
+    svg path {
+      fill: colors.$color-white;
+    }
+  }
+
+  &:hover:not(:disabled) {
+    color: colors.$color-primary;
+
+    svg path {
+      fill: colors.$color-primary;
+    }
+  }
+}
+
+.transparent {
+  background-color: transparent;
+  text-decoration: underline;
+
+  &.color-primary {
+    color: colors.$color-primary;
+
+    svg path {
+      fill: colors.$color-primary;
+    }
+
+    &.size-medium {
+      font-size: 14px;
+    }
+  }
+}
+
+//Font weights
+.font-weightRegular {
+  font-weight: font.$font-w-regular;
+}
+
+.font-weightMedium {
+  font-weight: font.$font-w-medium;
+}
+
+//Sizes
+
+.size-smallRound {
+  font-size: 12px;
+  padding: 0.1rem 0.8rem;
+  width: 48px;
+  height: 48px;
+  min-width: auto;
+  border-radius: 50%;
+
+  svg {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.size-extraSmall {
+  font-size: 10px;
+  padding: 1rem 0;
+}
+
+.size-small {
+  font-size: 12px;
+  padding: 0 10px;
+  border-radius: 8px;
+  height: 32px;
+
+  &.draft {
+    height: 27px;
+  }
+
+  svg {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.size-medium {
+  font-size: 16px;
+  padding: 5px 15px;
+  border-radius: 8px;
+  height: 40px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  @include responsive.screen-sm-minus {
+    padding: 0 13px;
+  }
+}
+
+.size-large {
+  font-size: 16px;
+  padding: 5px 20px;
+  border-radius: 8px;
+  min-width: 134px;
+  height: 48px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  @include responsive.screen-xs {
+    padding: 5px 15px;
+  }
+}
+
+.size-xLarge {
+  padding: 0;
+  @include font.text(colors.$color-primary, 16px, font.$font-w-bold);
+}
+
+//Icons
+.icon {
+  @include flex.flex-center;
+}
+
+.startIcon {
+  margin-right: 5px;
+
+  svg {
+    transform: scale(1);
+  }
+}
+
+.endIcon {
+  margin-left: 5px;
+
+  svg {
+    transform: scale(0.8);
+  }
+}
+
+.loader {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.raw {
+  background-color: transparent;
+
+  &.color-primary {
+    color: colors.$color-font-heading;
+    border-top: 1px solid colors.$color-border;
+    border-bottom: 1px solid colors.$color-border;
+
+    svg path {
+      fill: colors.$color-primary;
+    }
+  }
+
+  &.size-medium {
+    padding: 0px 40px;
+  }
+
+  &:hover:not(:disabled) {
+    background: colors.$color-button-raw-hover;
+    border-radius: 8px;
+  }
+}

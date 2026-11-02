@@ -1,0 +1,327 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+
+// The palette is a tinted tray of white fields to take from; the table layout below is white rows
+// with places to drop them, so source and target read differently.
+.builder {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 24px;
+  text-align: left;
+}
+
+.sectionHeading {
+  @include font.text(colors.$color-font-heading, 14px, font.$font-w-medium);
+  margin: 0 0 8px;
+}
+
+.availableShelf {
+  min-width: 0;
+
+  .zone {
+    min-height: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .instruction {
+    min-height: 0;
+  }
+
+  .fieldList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    padding: 12px;
+    border-radius: 10px;
+    background: colors.$color-primary-lightest;
+    transition: box-shadow 120ms ease;
+
+    > .insertionBar {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .zoneActive .fieldList {
+    box-shadow: inset 0 0 0 2px rgba(colors.$color-primary, 0.3);
+  }
+}
+
+.layoutSection {
+  min-width: 0;
+}
+
+// One row per area: its name and hint on the left, its fields in reading order on the right.
+.assignmentGrid {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+
+  .zone {
+    display: grid;
+    min-height: 56px;
+    grid-template-columns: 270px minmax(0, 1fr);
+    align-items: center;
+    column-gap: 16px;
+    padding: 8px 16px;
+  }
+
+  .zoneHeading {
+    margin: 0;
+  }
+
+  .instruction {
+    min-height: 0;
+    margin: 2px 0 0;
+  }
+
+  .fieldList {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .chipSlot {
+    min-width: 180px;
+    flex: 0 1 auto;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .chip {
+    flex: 1;
+  }
+
+  .insertionBar {
+    width: 3px;
+    height: 32px;
+    flex: 0 0 3px;
+  }
+}
+
+.zone {
+  min-width: 0;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid colors.$color-border;
+  border-radius: 10px;
+  background: colors.$color-white;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.zoneActive {
+  border-color: colors.$color-primary;
+  background: colors.$color-primary-lightest;
+  box-shadow: 0 0 0 2px rgba(colors.$color-primary, 0.14);
+}
+
+.zoneLabel {
+  min-width: 0;
+}
+
+.zoneHeading {
+  @include font.text(colors.$color-font-heading, 14px, font.$font-w-medium);
+  margin: 0 0 4px;
+}
+
+.instruction {
+  @include font.text(colors.$color-placeholder, 12px);
+  min-height: 18px;
+  margin: 0 0 8px;
+}
+
+.emptySlot {
+  @include font.text(colors.$color-placeholder, 12px);
+  display: flex;
+  width: 180px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed colors.$color-border-hover;
+  border-radius: 8px;
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chipSlot {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.insertionBar {
+  height: 3px;
+  border-radius: 999px;
+  background: colors.$color-primary;
+}
+
+.chip {
+  box-sizing: border-box;
+  display: flex;
+  position: relative;
+  height: 40px;
+  min-width: 0;
+  align-items: center;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+  background: colors.$color-white;
+  overflow: visible;
+}
+
+.chip:hover {
+  border-color: colors.$color-border-hover;
+}
+
+.dragging {
+  opacity: 0.35;
+}
+
+.dragSurface {
+  @include font.text(colors.$color-placeholder, 13px);
+  appearance: none;
+  display: flex;
+  height: 40px;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: colors.$color-placeholder;
+  cursor: grab;
+  text-align: left;
+
+  &:hover {
+    background: transparent;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-primary;
+    outline-offset: -2px;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.chipLabel {
+  @include font.text(colors.$color-font-heading, 13px);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chipAction {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: colors.$color-placeholder;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-primary;
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+.menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% - 2px);
+  right: 40px;
+  display: flex;
+  min-width: 150px;
+  flex-direction: column;
+  padding: 4px;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+  background: colors.$color-white;
+  box-shadow: colors.$color-header-shadow-border;
+}
+
+.menuItem {
+  @include font.text(colors.$color-font-heading, 13px);
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: colors.$color-primary-lightest;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+.overlay {
+  @include font.text(colors.$color-font-heading, 13px);
+  box-sizing: border-box;
+  display: flex;
+  height: 40px;
+  max-width: 220px;
+  align-items: center;
+  padding: 0 12px;
+  overflow: hidden;
+  border: 1px solid colors.$color-primary;
+  border-radius: 8px;
+  background: colors.$color-primary-lightest;
+  box-shadow: colors.$color-header-shadow-border;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.liveRegion {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@include responsive.screen-sm-minus {
+  .assignmentGrid .zone {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 8px;
+  }
+}

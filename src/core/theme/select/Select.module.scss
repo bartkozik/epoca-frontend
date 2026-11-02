@@ -1,0 +1,77 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-style' as common;
+
+.maxWidth {
+  width: 100%;
+}
+
+.input input {
+  background-color: transparent;
+}
+
+.readOnly input {
+  cursor: pointer;
+}
+
+.inputContainer {
+  position: relative;
+}
+
+.spinner {
+  position: absolute;
+  top: 13.5px;
+  left: 106px;
+}
+
+.settingsDropdown {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 16px;
+  cursor: pointer;
+
+  &:hover .dropdownMenu {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.dropdownMenu {
+  @include common.dropdown;
+  right: 0px;
+  padding: 10px;
+  z-index: 99;
+
+  &Item {
+    @include font.text(colors.$color-dropdown-option-text, 12px);
+    list-style-type: none;
+    padding: 8px 0;
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px solid rgba(colors.$color-border, 0.25);
+
+    &:hover,
+    &:active {
+      color: colors.$color-font-heading;
+    }
+  }
+
+  &-top {
+    bottom: 50px;
+  }
+
+  &-bottom {
+    top: 50px;
+  }
+}
+
+.arrow {
+  transform: rotate(180deg);
+  transition: transform 0.3s;
+}
+
+.highlightedDropdownOption {
+  background-color: colors.$color-primary-lightest;
+}

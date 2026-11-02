@@ -1,0 +1,12 @@
+@use 'core/theme/common-responsive' as responsive;
+
+.logoImage {
+  width: 190px;
+  height: 73px;
+  cursor: pointer;
+
+  @include responsive.screen-xs {
+    width: 132px;
+    height: 54px;
+  }
+}

@@ -1,0 +1,85 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-transition' as transition;
+@use 'core/theme/common-print' as print;
+
+.root {
+  @include flex.flex-container(flex-start, flex-start, column);
+  width: 100%;
+}
+
+.list {
+  @include flex.flex-container(flex-start, flex-start, column);
+  width: 100%;
+  margin-left: 8px;
+
+  @include responsive.screen-xs {
+    margin-left: 10px;
+  }
+}
+
+.relativeContainer {
+  position: relative;
+}
+
+.spinner {
+  position: absolute;
+  top: 15px;
+  left: 125px;
+}
+
+.icon {
+  transition: transform 0.3s;
+  margin-left: -11px;
+
+  @include print.no-print;
+}
+
+.arrow {
+  transform: scaleY(-1);
+}
+
+.addProjectButton {
+  @include flex.flex-container(flex-start, flex-start);
+  padding: 0px;
+
+  @include print.no-print;
+}
+
+.noProjectsButton {
+  margin: 14px 0 0 22px;
+}
+
+.listContent {
+  width: 100%;
+  margin: 21px 0 0 15px;
+}
+
+.listItem {
+  @include flex.flex-container(flex-start, center);
+  @include font.text(colors.$color-font-heading, 14px);
+  margin-bottom: 17px;
+  @include transition.text-transition;
+  width: 90%;
+
+  &Name {
+    width: 80%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: wrap;
+
+    @include responsive.screen-xs {
+      width: 90%;
+    }
+  }
+
+  &:hover {
+    color: colors.$color-border-hover;
+  }
+}
+
+.fileIcon {
+  margin-right: 7.91px;
+}

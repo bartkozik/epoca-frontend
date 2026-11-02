@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": ".",
+    // Overrides tsconfig.json's inherited `"@/*": ["./*"]` — that mapping is relative to *this
+    // file's* baseUrl (repo root, not "src"), so left as-is it would resolve `@/x` to `<root>/x`
+    // instead of `<root>/src/x`. No file under tests/ uses `@/` today (they import from src/ with
+    // relative paths instead), but the mapping should still point at the right place rather than
+    // silently break the first time one does.
+    "paths": { "@/*": ["./src/*"] },
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "types": ["node", "@playwright/test"]
+  },
+  "include": [
+    "playwright*.config.ts",
+    "tests/e2e/**/*.ts",
+    "tests/e2e/**/*.mjs",
+    "tests/pivotTable/**/*.ts",
+    "tests/workUnitOverrides/**/*.ts",
+    "tests/*.spec.ts"
+  ],
+  "exclude": ["node_modules", "tests/e2e/live/generated/**"]
+}

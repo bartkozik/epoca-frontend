@@ -1,0 +1,210 @@
+{
+  "name": "world-3",
+  "parent": "world-2",
+  "clock": "2026-07-15T10:00:00.000+02:00",
+  "locale": "pl-PL",
+  "timeZone": "Europe/Warsaw",
+  "organization": {
+    "id": "10000000-0000-4000-8000-000000000001",
+    "slug": "epoca-e2e",
+    "name": "Epoca E2E"
+  },
+  "actors": {
+    "manager": {
+      "userId": "20000000-0000-4000-8000-000000000002",
+      "email": "manager@example.test",
+      "firstName": "Manager",
+      "lastName": "User",
+      "organizationRoles": [
+        "Manager"
+      ],
+      "projectRoles": {
+        "40000000-0000-4000-8000-000000000002": "Owner"
+      },
+      "archived": false
+    },
+    "owner": {
+      "userId": "20000000-0000-4000-8000-000000000001",
+      "email": "owner@example.test",
+      "firstName": "Owner",
+      "lastName": "User",
+      "organizationRoles": [
+        "Owner"
+      ],
+      "projectRoles": {},
+      "archived": false
+    },
+    "pm": {
+      "userId": "20000000-0000-4000-8000-000000000003",
+      "email": "pm@example.test",
+      "firstName": "Project",
+      "lastName": "Manager",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "projectRoles": {
+        "40000000-0000-4000-8000-000000000001": "Owner"
+      },
+      "archived": false
+    },
+    "user": {
+      "userId": "20000000-0000-4000-8000-000000000004",
+      "email": "user@example.test",
+      "firstName": "Regular",
+      "lastName": "User",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "projectRoles": {
+        "40000000-0000-4000-8000-000000000001": "Member"
+      },
+      "archived": false
+    }
+  },
+  "users": [
+    {
+      "id": "20000000-0000-4000-8000-000000000001",
+      "email": "owner@example.test",
+      "firstName": "Owner",
+      "lastName": "User",
+      "organizationRoles": [
+        "Owner"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000001",
+          "type": "MailAddress",
+          "value": "owner@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000002",
+      "email": "manager@example.test",
+      "firstName": "Manager",
+      "lastName": "User",
+      "organizationRoles": [
+        "Manager"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000002",
+          "type": "MailAddress",
+          "value": "manager@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000003",
+      "email": "pm@example.test",
+      "firstName": "Project",
+      "lastName": "Manager",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000003",
+          "type": "MailAddress",
+          "value": "pm@example.test",
+          "main": true
+        }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000004",
+      "email": "user@example.test",
+      "firstName": "Regular",
+      "lastName": "User",
+      "organizationRoles": [
+        "Employee"
+      ],
+      "archived": false,
+      "identities": [
+        {
+          "id": "60000000-0000-4000-8000-000000000004",
+          "type": "MailAddress",
+          "value": "user@example.test",
+          "main": true
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "texture": "/static/media/texture7.oldhash123.png",
+      "color": "#2e7d32",
+      "logo": "",
+      "id": "30000000-0000-4000-8000-000000000001",
+      "name": "Internal Client",
+      "type": "Internal",
+      "archivedAt": null
+    },
+    {
+      "texture": "",
+      "color": "",
+      "logo": "https://static.e2e.test/clients/external-logo.png",
+      "id": "30000000-0000-4000-8000-000000000002",
+      "name": "External Client",
+      "type": "External",
+      "archivedAt": null
+    }
+  ],
+  "projects": [
+    {
+      "id": "40000000-0000-4000-8000-000000000001",
+      "clientId": "30000000-0000-4000-8000-000000000001",
+      "name": "Alpha Project",
+      "description": "Alpha project description",
+      "archivedAt": null,
+      "ownerIds": [
+        "20000000-0000-4000-8000-000000000003"
+      ],
+      "memberIds": [
+        "20000000-0000-4000-8000-000000000004"
+      ]
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000002",
+      "clientId": "30000000-0000-4000-8000-000000000002",
+      "name": "Beta Project",
+      "description": "Beta project description",
+      "archivedAt": null,
+      "ownerIds": [
+        "20000000-0000-4000-8000-000000000002"
+      ],
+      "memberIds": []
+    }
+  ],
+  "workUnits": [],
+  "failures": [],
+  "capabilities": [
+    "auth:anonymous",
+    "auth:saml",
+    "organization:empty",
+    "organization:people",
+    "projects:read",
+    "projects:user-details",
+    "session:owner"
+  ],
+  "allIds": [
+    "10000000-0000-4000-8000-000000000001",
+    "20000000-0000-4000-8000-000000000001",
+    "20000000-0000-4000-8000-000000000002",
+    "20000000-0000-4000-8000-000000000003",
+    "20000000-0000-4000-8000-000000000004",
+    "30000000-0000-4000-8000-000000000001",
+    "30000000-0000-4000-8000-000000000002",
+    "40000000-0000-4000-8000-000000000001",
+    "40000000-0000-4000-8000-000000000002",
+    "60000000-0000-4000-8000-000000000001",
+    "60000000-0000-4000-8000-000000000002",
+    "60000000-0000-4000-8000-000000000003",
+    "60000000-0000-4000-8000-000000000004"
+  ]
+}

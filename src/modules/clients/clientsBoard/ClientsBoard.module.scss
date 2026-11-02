@@ -1,0 +1,47 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-print' as print;
+@use 'core/theme/common-table' as table;
+
+.tableCustom {
+  @include table.table-cell-width('Logo', 17%);
+  @include table.table-cell-width('Client', 55%);
+  @include table.table-cell-width('Date Added', 15%);
+  @include table.table-cell-width('Type', 10%);
+
+  th,
+  td {
+    vertical-align: top;
+  }
+
+  tr:last-child {
+    border-bottom: none;
+  }
+
+  @include print.print-without-table-cell('Logo');
+
+  @include responsive.screen-md-minus {
+    @include table.table-cell-width('Client', 45%);
+    @include table.table-cell-width('Date Added', 20%);
+    @include table.table-cell-width('Type', 15%);
+  }
+
+  @include responsive.screen-xs {
+    @include table.table-cell-width('Client', 100%);
+    th:not(:nth-child(2)),
+    td:not(:nth-child(2)):not(:last-child) {
+      display: none;
+    }
+    thead tr th:nth-child(2) {
+      border-radius: 8px;
+    }
+
+    @include table.mobile-table;
+  }
+}
+
+.tableArchivedClients {
+  th,
+  td {
+    vertical-align: middle;
+  }
+}

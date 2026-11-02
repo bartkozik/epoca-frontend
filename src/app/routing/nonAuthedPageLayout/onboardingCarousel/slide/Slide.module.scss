@@ -1,0 +1,46 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.slide {
+  @include flex.flex-container(flex-end, center, column);
+  background-size: cover;
+  background-position: center;
+  height: 100%;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    left: 0;
+    width: 100%;
+    bottom: 0px;
+    height: 100%;
+    background-image: colors.$color-gradient-login-carousel;
+    z-index: 0;
+    opacity: 0.33;
+  }
+}
+
+.textBox {
+  text-align: center;
+  padding: 60px 0 130px 0;
+  white-space: pre;
+  z-index: 1;
+  @include font.typography('Playfair Display');
+
+  & {
+    @include font.text(colors.$color-primary-light, 27px, font.$font-w-bold);
+  }
+}
+
+.text {
+  @include font.text(colors.$color-primary-lightest, 15px);
+}
+
+.exampleImg {
+  z-index: 1;
+}

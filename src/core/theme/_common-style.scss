@@ -1,0 +1,109 @@
+@use 'common-colors' as color;
+@use 'common-responsive' as responsive;
+@use 'common-flex' as flex;
+
+$unit-min-width: calc(100% / 7);
+
+@mixin container {
+  margin: 0 auto;
+  max-width: 1177px;
+
+  @include responsive.screen-md-minus {
+    width: 90%;
+    padding: 0;
+  }
+
+  @include responsive.screen-xs {
+    max-width: 90%;
+  }
+}
+
+@mixin color-ball($radius: 12px, $margin-right: 10px) {
+  height: $radius;
+  min-width: $radius;
+  border-radius: 25px;
+  margin-right: $margin-right;
+}
+
+@mixin details-view {
+  @include flex.flex-container(flex-start, flex-start, column);
+  padding-left: 40px;
+  width: 100%;
+  max-width: 600px;
+
+  @include responsive.screen-sm-minus {
+    padding-left: 30px;
+  }
+
+  @include responsive.screen-xs {
+    padding: 40px 0 0 0;
+  }
+}
+
+@mixin dropdown($bg-color: color.$color-white) {
+  position: absolute;
+  width: 100%;
+  background-color: $bg-color;
+  border-left: 0.6px solid color.$color-option-list-border;
+  border-right: 0.6px solid color.$color-option-list-border;
+  border-bottom: 0.6px solid color.$color-option-list-border;
+  box-shadow: 0 9px 9px color.$color-dropdown-menu;
+  border-radius: 0 0 9px 9px;
+}
+
+@mixin details-table {
+  display: block;
+  padding-left: 38px;
+
+  @include responsive.screen-md-minus {
+    @include flex.flex-container(center, stretch, column);
+    margin-bottom: 40px;
+    padding-left: 15px;
+    padding-right: 0px;
+  }
+
+  @include responsive.screen-xs {
+    padding: 0;
+  }
+}
+
+@mixin long-names-break($padding-right: 30px) {
+  white-space: normal;
+  word-break: break-word;
+  padding-right: $padding-right;
+  text-overflow: ellipsis;
+}
+
+@mixin one-line-long-names-break($max-width: 100%) {
+  max-width: $max-width;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@mixin reports-header {
+  gap: 16px;
+
+  @include responsive.screen-min(responsive.$screen-lg-min) {
+    flex-direction: column;
+    height: 80px;
+  }
+}
+
+@mixin white-background-before {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 57px;
+    background-color: color.$color-white;
+    z-index: -1;
+    border-radius: 0 0px 8px 8px;
+
+    @include responsive.screen-xs {
+      right: 0px;
+    }
+  }
+}

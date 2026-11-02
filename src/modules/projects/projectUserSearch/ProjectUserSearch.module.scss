@@ -1,0 +1,16 @@
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  position: relative;
+  text-align: left;
+  @include flex.flex-container(flex-start, flex-start, column);
+}
+
+.selectUsers {
+  width: 100%;
+}
+
+.avatars {
+  width: 100%;
+  overflow: visible;
+}

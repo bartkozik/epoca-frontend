@@ -1,0 +1,112 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+@use 'core/theme/common-table' as table;
+
+.root {
+  @include flex.flex-container(flex-end, flex-start, column);
+  padding-top: 25px;
+}
+
+.scrolledContainer {
+  margin: 25px 0;
+  max-height: 40vh;
+}
+
+.tableCustom {
+  @include font.text(colors.$color-font-heading, 14px);
+
+  @include table.table-cell-width('Date', 12%);
+  @include table.table-cell-width('Client', 20%);
+  @include table.table-cell-width('Project', 20%);
+  @include table.table-cell-width('Description', 25%);
+
+  td[data-th='Client'],
+  td[data-th='Project'],
+  td[data-th='Description'] {
+    @include common.long-names-break(15px);
+  }
+
+  @include responsive.screen-md-minus {
+    @include font.text(colors.$color-font-heading, 12px);
+
+    th:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:last-child),
+    td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:last-child) {
+      display: none;
+    }
+
+    @include table.table-cell-width('Date', 20%);
+    @include table.table-cell-width('Client', 30%);
+    @include table.table-cell-width('Project', 30%);
+  }
+
+  @include responsive.screen-xs {
+    @include font.text(colors.$color-font-heading, 14px);
+    th:not(:nth-child(2)),
+    td:not(:nth-child(2)):not(:last-child) {
+      display: none;
+    }
+    thead tr th:nth-child(2) {
+      border-radius: 8px;
+    }
+
+    @include table.table-cell-width('Client', 85%);
+    @include table.mobile-table;
+  }
+}
+
+.desktopClientName {
+  @include responsive.screen-xs {
+    display: none;
+  }
+}
+
+.mobileContainer {
+  @include flex.flex-container(flex-start, flex-start, column);
+  @include common.long-names-break(15px);
+  margin-top: 15px;
+
+  p {
+    @include common.long-names-break(15px);
+    margin: 22px 0 0 22px;
+  }
+
+  span {
+    @include font.text(colors.$color-primary, 14px, font.$font-w-medium);
+  }
+
+  @include responsive.screen-sm-plus {
+    display: none;
+  }
+}
+
+.btnBox {
+  @include flex.flex-container($gap: 10px);
+  margin-top: 1px;
+
+  @include responsive.screen-xs {
+    margin: 10px 0 15px 22px;
+    gap: 20px;
+  }
+}
+
+.buttonInfoBox {
+  @include flex.flex-container(space-between, center);
+  width: 100%;
+  margin: 30px 0;
+
+  @include responsive.screen-xs {
+    @include flex.flex-container(flex-start, flex-start, column, $gap: 20px);
+  }
+}
+
+.infoText {
+  @include font.text(colors.$color-primary, 14px);
+
+  @include responsive.screen-xs {
+    font-size: 13px;
+    margin-left: 3px;
+  }
+}

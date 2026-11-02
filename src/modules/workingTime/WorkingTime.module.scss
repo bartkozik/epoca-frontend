@@ -1,0 +1,47 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-style' as common;
+
+.mainContent {
+  min-height: calc(100dvh - 100px);
+  @include common.container;
+}
+
+.loadingAreaWrapper {
+  min-height: inherit;
+}
+
+.header {
+  @include responsive.screen-xs {
+    margin-bottom: -35px;
+  }
+}
+
+.calendarBoard {
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+  min-height: 100%;
+  padding-left: 10px;
+
+  @include responsive.screen-xs {
+    padding: 0;
+  }
+}
+
+.draftsModal {
+  min-width: 80vw;
+  min-height: 570px;
+}
+
+.snackbar {
+  padding: 20px 60px;
+  overflow: visible;
+
+  @include responsive.screen-md-minus {
+    padding: 20px 50px;
+  }
+
+  @include responsive.screen-xs {
+    display: none;
+  }
+}

@@ -1,0 +1,5 @@
+//mobile menu background
+// Sass/Vite resolve this relative url() against the file that actually applies it as a CSS
+// property (Navbar.module.scss, one directory below this file), not this definition site --
+// keep the `../` in sync if that consumer moves.
+$image-mobile-menu-background: url('../assets/images/navbarMenuAssets/menu-mobile-background.png');

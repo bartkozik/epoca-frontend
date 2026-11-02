@@ -1,0 +1,121 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+
+.root {
+  @include flex.flex-container($flex-flow: column);
+  text-align: left;
+
+  > *:not(:last-child) {
+    margin-bottom: 25px;
+  }
+}
+
+.reportForm {
+  @include responsive.screen-sm-plus {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 24px;
+
+    > * {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+
+    > *:not(:last-child) {
+      margin-bottom: 0;
+    }
+
+    > .dateEditor,
+    > .hours {
+      grid-column: auto;
+    }
+  }
+}
+
+.projectDescriptionBox {
+  @include flex.flex-container(flex-start, flex-start, column);
+}
+
+.descriptionHidden {
+  display: none;
+}
+
+.projectDescriptionLabel {
+  @include flex.flex-center;
+}
+
+.projectDescriptionLabelText {
+  @include font.text(colors.$color-font-heading, 16px);
+  margin: 0 0 6px;
+}
+
+.projectDescriptionInfoIcon {
+  margin-bottom: 6px;
+}
+
+.projectDescription {
+  @include font.text(colors.$color-primary, 13px);
+  @include common.long-names-break(0px);
+  padding: 0 10px;
+  margin-top: 7px;
+  text-align: left;
+}
+
+.entryTypeInformation {
+  @include flex.flex-container(flex-start, center, $gap: 6px);
+}
+
+.entryTypeInformationLabel {
+  @include font.text(colors.$color-font-heading, 16px);
+}
+
+.entryTypeInformationValue {
+  @include font.text(colors.$color-primary, 15px);
+}
+
+.submitButton {
+  min-width: 116px;
+}
+
+.footer {
+  @include flex.flex-container($flex-flow: column);
+  margin-top: 0px;
+}
+
+.footerBtns {
+  @include flex.flex-container(space-between, flex-end);
+
+  @include responsive.screen-sm-minus {
+    @include flex.flex-container($flex-flow: column);
+
+    button ~ button {
+      margin-top: 20px;
+    }
+  }
+}
+
+.footerBtnsEdit {
+  @include flex.flex-container(flex-end, flex-end, $gap: 20px);
+}
+
+.footerInfo {
+  @include flex.flex-container($align-items: center);
+  margin-top: 10px;
+}
+
+.formErrorMessage {
+  margin-left: auto;
+}
+
+.dateEditor {
+  position: relative;
+}
+
+.dateSelector {
+  position: absolute;
+  top: 78px;
+  z-index: 1;
+}

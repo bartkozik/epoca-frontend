@@ -1,0 +1,13 @@
+@use 'core/theme/common-responsive' as responsive;
+
+.clientLogo {
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+
+  @include responsive.screen-xs {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}

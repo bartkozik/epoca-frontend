@@ -1,0 +1,22 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, center);
+  @include font.text(colors.$color-text-button, 10px, font.$font-w-regular);
+  width: 100%;
+  border-bottom: solid 1px colors.$color-border;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  height: 57px;
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+  background-color: colors.$color-white;
+
+  @include responsive.screen-xs {
+    margin-left: 0px;
+  }
+}

@@ -1,0 +1,22 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+
+.root {
+  position: fixed;
+  bottom: 24px;
+  right: 14px;
+  z-index: 9999;
+}
+
+.errorInfo {
+  @include font.text(colors.$color-white, 12px);
+
+  span {
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}

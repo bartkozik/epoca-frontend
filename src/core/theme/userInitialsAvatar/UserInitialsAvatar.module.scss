@@ -1,0 +1,58 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-center;
+  overflow: hidden;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: colors.$color-client-05;
+  @include font.text(colors.$color-white, 16px);
+  position: relative;
+  transition: filter 0.9s ease;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageLoading {
+  opacity: 0;
+}
+
+.loader {
+  inset: 0;
+}
+
+.withDelete {
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.5;
+    transition: opacity 0.5s;
+  }
+}
+
+.initials {
+  transition: opacity 0.9s ease;
+}
+
+.withDelete:hover .initials {
+  display: none;
+}
+
+.closeButton {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+}
+
+.withDelete:hover .closeButton {
+  display: block;
+}

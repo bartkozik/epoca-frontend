@@ -1,0 +1,137 @@
+@use 'common-responsive' as responsive;
+@use 'common-colors' as colors;
+@use 'sass:map';
+$font-family-primary:
+  'Poppins',
+  Helvetica Neue,
+  sans-serif;
+$font-family-secondary:
+  'Playfair Display',
+  Helvetica Neue,
+  sans-serif;
+
+$font-w-mini: 200;
+$font-w-small: 300;
+$font-w-regular: 400;
+$font-w-medium: 500;
+$font-w-bold: 600;
+$font-w-max-bold: 700;
+
+$fonts: (
+  '': 16px,
+  '8': 8px,
+  '10': 10px,
+  '11': 11px,
+  '12': 12px,
+  '13': 13px,
+  '14': 14px,
+  '15': 15px,
+  '16': 16px,
+  '17': 17px,
+  '18': 18px,
+  '19': 19px,
+  '20': 20px,
+  '22': 22px,
+  '23': 23px,
+  '24': 24px,
+  '26': 26px,
+  '28': 28px,
+  '30': 30px,
+  '32': 32px,
+  '36': 36px,
+  '40': 40px,
+  '44': 44px,
+  '45': 45px,
+  '73': 73px,
+);
+
+@mixin font($font, $weight: $font-w-regular, $height: normal) {
+  font-size: map.get($fonts, '#{$font}');
+  line-height: $height;
+
+  @if $weight == bold {
+    font-weight: $font-w-bold;
+  } @else if $weight == semibold {
+    font-weight: $font-w-semibold;
+  } @else if $weight == medium {
+    font-weight: $font-w-medium;
+  } @else if $weight == regular {
+    font-weight: $font-w-regular;
+  } @else {
+    font-weight: $weight;
+  }
+}
+
+@mixin typography($font-family: $font-family-primary) {
+  text-align: center;
+  position: relative;
+  font-family: $font-family;
+
+  h1,
+  .largeP {
+    font-weight: $font-w-regular;
+    font-size: 1.625rem;
+    line-height: 2.215rem;
+
+    @include font(63px, $font-w-mini);
+    @include responsive.screen-xs {
+      @include font(36px, $font-w-mini);
+    }
+  }
+
+  h2 {
+    @include font(39px, $font-w-small);
+    @include responsive.screen-xs {
+      @include font(18px, $font-w-small);
+    }
+  }
+
+  h3 {
+    font-weight: $font-w-max-bold;
+    font-size: 18px;
+  }
+
+  h4 {
+    font-weight: $font-w-regular;
+    font-size: 1rem;
+  }
+
+  h5 {
+    @include text($font-size: 14px);
+  }
+
+  h6,
+  .smallH {
+    font-weight: $font-w-bold;
+    font-size: 0.625rem;
+
+    &_uppercase {
+      @extend .smallH;
+      text-transform: uppercase;
+    }
+  }
+
+  p {
+    font-weight: lighter;
+    font-size: 0.875rem;
+    line-height: 1rem;
+  }
+
+  a {
+    color: initial;
+    font-weight: lighter;
+    text-decoration: initial;
+  }
+}
+
+@mixin text(
+  $color: colors.$color-font-text,
+  $font-size: 15px,
+  $font-weight: $font-w-regular,
+  $font-family: $font-family-primary
+) {
+  font-size: $font-size;
+  font-weight: $font-weight;
+  font-family: $font-family;
+  color: $color;
+}

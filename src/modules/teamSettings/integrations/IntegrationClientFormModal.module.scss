@@ -1,0 +1,307 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-form' as form;
+
+.overlay {
+  overflow-y: auto;
+  padding: 16px 0;
+}
+
+.modal {
+  margin: auto 0;
+  max-width: 640px;
+  overflow: visible;
+  text-align: left;
+  width: min(640px, calc(100vw - 32px));
+
+  > button:first-child {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    right: 5px;
+    top: 3px;
+  }
+}
+
+.modalTitle {
+  @include font.text(colors.$color-font-heading, 22px, font.$font-w-medium);
+  line-height: 1.35;
+  margin: 0 32px 24px 0;
+  text-align: left;
+}
+
+.form {
+  @include flex.flex-container(flex-start, stretch, column, $gap: 30px);
+  text-align: left;
+}
+
+.field,
+.dateField {
+  @include flex.flex-container(flex-start, stretch, column);
+  text-align: left;
+
+  label {
+    @include form.form-label;
+  }
+
+  input {
+    @include font.text(colors.$color-font-heading, 16px);
+    background-color: colors.$color-white;
+    border: 1px solid colors.$color-border;
+    border-radius: 8px;
+    min-height: 48px;
+    padding: 10px 16px;
+    width: 100%;
+
+    &:hover:not(:disabled) {
+      border-color: colors.$color-border-hover;
+    }
+
+    &:focus-visible {
+      border-color: colors.$color-border-active;
+      outline: 2px solid colors.$color-border-active;
+      outline-offset: 2px;
+    }
+
+    &[aria-invalid='true'] {
+      border-color: colors.$color-border-text-input-error;
+    }
+  }
+}
+
+.fieldset {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+
+  > legend {
+    @include form.form-label;
+  }
+}
+
+.choices {
+  @include flex.flex-container(flex-start, stretch, column, $gap: 4px);
+}
+
+.scopeChoices {
+  display: grid;
+  column-gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.choice {
+  @include font.text(colors.$color-font-text, 16px);
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 20px minmax(0, 1fr);
+  line-height: 1.5;
+  min-height: 44px;
+  padding: 6px 0;
+  text-align: left;
+
+  input {
+    appearance: none;
+    background-color: colors.$color-white;
+    border: 1px solid colors.$color-border;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 20px;
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    width: 20px;
+
+    &[type='radio'] {
+      border-radius: 50%;
+    }
+
+    &:hover:not(:disabled) {
+      border-color: colors.$color-border-hover;
+    }
+
+    &[type='checkbox']:checked {
+      background-color: colors.$color-primary;
+      border-color: colors.$color-primary;
+      box-shadow: none;
+    }
+
+    &[type='checkbox']:checked + .checkmark {
+      opacity: 1;
+    }
+
+    &[type='radio']:checked {
+      background-color: colors.$color-primary;
+      border-color: colors.$color-primary;
+      box-shadow: inset 0 0 0 4px colors.$color-white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid colors.$color-border-active;
+      outline-offset: 2px;
+    }
+
+    &[type='checkbox']:focus-visible {
+      outline-color: colors.$color-font-heading;
+      outline-offset: -2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
+
+.checkmark {
+  grid-column: 1;
+  grid-row: 1;
+  margin-top: 6px;
+  opacity: 0;
+  pointer-events: none;
+  place-self: start center;
+  transition: opacity 0.2s;
+  z-index: 1;
+
+  svg {
+    display: block;
+  }
+}
+
+.choiceCopy {
+  @include flex.flex-container(flex-start, stretch, column, $gap: 4px);
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.choiceHelper {
+  @include font.text(colors.$color-font-text, 14px);
+  line-height: 1.4;
+}
+
+.projectSearch {
+  margin-top: 12px;
+  max-width: 100%;
+  text-align: left;
+  width: 100%;
+
+  input {
+    @include font.text(colors.$color-font-heading, 16px);
+    min-height: 44px;
+  }
+
+  li {
+    @include font.text(colors.$color-font-heading, 16px);
+    min-height: 44px;
+    text-align: left;
+  }
+
+  h4,
+  p {
+    @include font.text(colors.$color-font-text, 14px);
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  button {
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  > div:last-child > div:last-child > div {
+    height: auto;
+    max-height: min(400px, calc(100vh - 96px));
+  }
+
+  [data-testid='multi-search-options'] {
+    max-height: 280px;
+  }
+}
+
+.choice[data-disabled='true'] {
+  cursor: not-allowed;
+
+  input,
+  .choiceCopy {
+    opacity: 0.5;
+  }
+
+  input[type='checkbox']:checked + .checkmark {
+    opacity: 0.5;
+  }
+}
+
+.dateField {
+  margin-top: 12px;
+}
+
+.error {
+  @include font.text(colors.$color-error, 14px);
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+.catalogState {
+  @include flex.flex-container(flex-start, flex-start, column, $gap: 10px);
+}
+
+.catalogStatus {
+  @include font.text(colors.$color-font-text, 14px);
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+.footer {
+  @include flex.flex-container(flex-end, center, row wrap, $gap: 16px);
+  border-top: 1px solid colors.$color-border;
+  padding-top: 20px;
+
+  button {
+    min-height: 44px;
+  }
+}
+
+@media (forced-colors: active) {
+  .choice input,
+  .choice input[type='checkbox']:checked,
+  .choice input[type='radio']:checked {
+    accent-color: Highlight;
+    appearance: auto;
+    background-color: Canvas;
+    border-color: ButtonText;
+    box-shadow: none;
+    forced-color-adjust: auto;
+  }
+
+  .checkmark {
+    display: none;
+  }
+}
+
+@include responsive.screen-xs {
+  .modal {
+    width: calc(100vw - 16px);
+  }
+
+  .footer {
+    align-items: stretch;
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .scopeChoices {
+    grid-template-columns: 1fr;
+  }
+}

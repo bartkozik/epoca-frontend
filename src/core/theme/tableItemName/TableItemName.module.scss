@@ -1,0 +1,18 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+
+.root {
+  @include flex.flex-container(flex-start, center);
+  @include font.text(colors.$color-font-heading, 16px, font.$font-w-regular);
+}
+
+.name {
+  @include common.long-names-break;
+
+  @include responsive.screen-xs {
+    min-width: 80vw;
+  }
+}

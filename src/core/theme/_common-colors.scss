@@ -1,0 +1,134 @@
+$color-primary-dark: #683c0d;
+$color-primary: #a07241;
+$color-primary-light: #cc9761;
+$color-primary-lightest: #fbf9f4;
+$color-under-modal: #2c1600e0;
+$color-primary-semi-light: #d2c1ae;
+
+$color-bg: #fbfbfb;
+$color-modal-border: #ebebeb;
+$color-navbar-mobile-border: #ffffff26;
+
+$color-gradient: linear-gradient(90deg, $color-primary-light 0%, $color-primary 100%);
+$color-gradient-dark: linear-gradient(90deg, $color-primary 0%, $color-primary-dark 100%);
+$color-gradient-light: linear-gradient(90deg, #e0b98b 0%, #cd9661 100%);
+$color-gradient-disabled: linear-gradient(91deg, $color-primary-light 10%, $color-primary 89%);
+$color-gradient-login-carousel: linear-gradient(to bottom, $color-primary 0%, black 100%);
+$color-icon-button-hover: linear-gradient(93.71deg, #e0b98b 11.26%, #cd9661 87.72%);
+$color-icon-button-active: linear-gradient(93.71deg, #cc9761 11.26%, #a07241 87.72%);
+$color-button: linear-gradient(93.71deg, #e0b98b 11.26%, #cd9661 87.72%);
+$color-button-hover: linear-gradient(93.71deg, #cc9761 11.26%, #a07241 87.72%);
+$color-button-raw-hover: linear-gradient(94deg, rgba(194, 141, 90, 0.1029) 11.76%, rgba(155, 99, 57, 0.1029) 86.99%);
+
+$color-inset-shadow-color-picker: inset 0px 0px 1px 1px $color-primary-lightest;
+
+$color-border-text-input-active: #a39482;
+$color-border-text-input-error: #ff3737;
+
+$color-border: #f0ddc5;
+$color-header-shadow-border: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+$color-border-hover: #dfb98a;
+$color-border-active: #a97135;
+$color-border-shadow: #c2bfbf80;
+$color-option-list-border: #faf5ee;
+$color-link: #505050;
+$color-dropdown-option-text: #8c8c8c;
+
+$color-black: #000000;
+$color-white: #ffffff;
+$color-green: #00ff00;
+
+$color-font-heading: #252628;
+$color-font-text: #7d7d7d;
+$color-font-primary: #a97135;
+$color-text-button: #505050;
+
+$color-placeholder: #a8a8aa;
+$color-scrollbar-track: #fcfcfb;
+$color-avatar-text: #787878;
+$color-avatar-border: #e0e0e0;
+
+$color-success: #4bb543;
+$color-error: #d93232;
+$color-orange: #ff7700;
+$color-teal-blue: #27728c;
+$color-success-status: #0c9209;
+$color-success-status1: #4e814d;
+
+$color-example-unit: #1c499c;
+
+$color-client-default: #1c499c;
+$color-client-01: #e02020;
+$color-client-02: #fa715b;
+$color-client-03: #f98b00;
+$color-client-04: #a5c700;
+$color-client-05: #41b967;
+$color-client-06: #19a0c3;
+$color-client-07: #3362ff;
+$color-client-08: #862cf1;
+$color-client-09: #761700;
+$color-client-10: #f8a300;
+$color-client-11: #4ec148;
+$color-client-12: #31af8d;
+$color-client-13: #193d94;
+$color-client-14: #2b044f;
+$color-client-15: #8a004e;
+$color-client-16: #4c2700;
+$color-client-17: #916107;
+$color-client-18: #cc9761;
+$color-client-19: #dfb98a;
+$color-client-20: #acb964;
+$color-client-21: #edd4b9;
+$color-client-22: #a1b800;
+$color-client-23: #3f1b78;
+$color-client-24: #050300;
+
+$color-toast-background: #f8d7da;
+$color-toast-error-font: $color-error;
+$color-toast-shadow: rgba(0, 0, 0, 0.16);
+$color-toast-shadow2: rgba(0, 0, 0, 0.23);
+
+$color-menu-mobile: #683c0d;
+$color-menu-bottom-border: rgba(255, 255, 255, 0.15);
+$color-menu-user-avatar-border: rgba(255, 255, 255, 0.15);
+$color-dropdown-menu: rgba(194, 191, 191, 0.5);
+
+$colors: (
+  '01': $color-client-01,
+  '02': $color-client-02,
+  '03': $color-client-03,
+  '04': $color-client-04,
+  '05': $color-client-05,
+  '06': $color-client-06,
+  '07': $color-client-07,
+  '08': $color-client-08,
+  '09': $color-client-09,
+  '10': $color-client-10,
+  '11': $color-client-11,
+  '12': $color-client-12,
+  '13': $color-client-13,
+  '14': $color-client-14,
+  '15': $color-client-15,
+  '16': $color-client-16,
+  '17': $color-client-17,
+  '18': $color-client-18,
+  '19': $color-client-19,
+  '20': $color-client-20,
+  '21': $color-client-21,
+  '22': $color-client-22,
+  '23': $color-client-23,
+  '24': $color-client-24,
+);
+
+@each $colorname, $color in $colors {
+  .backgroundColor#{$colorname} {
+    background-color: $color;
+  }
+}
+
+// Inactive audit cards retain readable contrast against their muted background.
+$color-inactive-border: #c8c8c8;
+$color-inactive-background: #e8e8e8;
+$color-inactive-text: #333333;
+$color-inactive-border-hover: #999999;
+$color-inactive-heading: #202020;

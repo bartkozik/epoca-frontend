@@ -1,0 +1,222 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.modal {
+  max-width: 680px;
+  text-align: left;
+  width: min(680px, calc(100vw - 32px));
+
+  > button:first-child {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    right: 5px;
+    top: 3px;
+  }
+}
+
+.modalTitle {
+  @include font.text(colors.$color-font-heading, 22px, font.$font-w-medium);
+  line-height: 1.35;
+  margin: 0 32px 24px 0;
+  text-align: left;
+}
+
+.loading {
+  @include flex.flex-container(center, center, column, $gap: 14px);
+  @include font.text(colors.$color-font-text, 16px);
+  min-height: 220px;
+  position: relative;
+}
+
+.loadingArea {
+  min-height: 140px;
+}
+
+.headingRow {
+  @include flex.flex-container(space-between, flex-start, row, $gap: 20px);
+  border-bottom: 1px solid colors.$color-border;
+  margin-bottom: 8px;
+  padding-bottom: 20px;
+  text-align: left;
+
+  h3 {
+    @include font.text(colors.$color-font-heading, 18px, font.$font-w-bold);
+    line-height: 1.4;
+    margin-bottom: 4px;
+    text-align: left;
+  }
+}
+
+.status {
+  @include font.text(colors.$color-font-text, 16px, font.$font-w-medium);
+}
+
+.actions {
+  @include flex.flex-container(flex-end, center, row wrap, $gap: 12px);
+
+  button {
+    min-height: 44px;
+  }
+}
+
+.details {
+  margin: 0;
+}
+
+.detailRow {
+  align-items: start;
+  border-bottom: 1px solid colors.$color-border;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 180px minmax(0, 1fr);
+  min-width: 0;
+  padding: 16px 0;
+  text-align: left;
+
+  dt {
+    @include font.text(colors.$color-font-heading, 14px, font.$font-w-medium);
+    line-height: 1.5;
+    margin: 0;
+    text-align: left;
+  }
+
+  dd {
+    @include font.text(colors.$color-font-heading, 16px);
+    line-height: 1.5;
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
+
+  code {
+    @include font.text(colors.$color-font-heading, 16px);
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+}
+
+.copyValue,
+.serviceAccount,
+.lifecycleValue {
+  @include flex.flex-container(flex-start, flex-start, column, $gap: 4px);
+  text-align: left;
+}
+
+.copyValue button {
+  min-height: 44px;
+}
+
+.tags {
+  @include flex.flex-container(flex-start, center, row wrap, $gap: 8px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    @include font.text(colors.$color-font-heading, 14px);
+    background-color: colors.$color-primary-lightest;
+    border-radius: 12px;
+    padding: 6px 10px;
+  }
+}
+
+.projectIds {
+  margin-top: 8px;
+  text-align: left;
+
+  ul {
+    margin: 6px 0 0;
+    padding-left: 18px;
+  }
+}
+
+.copyAnnouncement {
+  @include font.text(colors.$color-font-text, 14px);
+  min-height: 21px;
+  padding: 8px 0 0;
+  text-align: left;
+}
+
+.audit {
+  padding-top: 24px;
+  text-align: left;
+
+  > h3 {
+    @include font.text(colors.$color-font-heading, 18px, font.$font-w-bold);
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
+  > button {
+    min-height: 44px;
+  }
+}
+
+.auditList {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+
+  li {
+    align-items: start;
+    border-bottom: 1px solid colors.$color-border;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 14px 0;
+    text-align: left;
+
+    > div {
+      @include flex.flex-container(flex-start, flex-start, column, $gap: 4px);
+      @include font.text(colors.$color-font-text, 16px);
+      text-align: left;
+    }
+  }
+}
+
+.error {
+  @include font.text(colors.$color-error, 16px);
+  @include flex.flex-container(flex-start, flex-start, column, $gap: 12px);
+  text-align: left;
+
+  button {
+    min-height: 44px;
+  }
+}
+
+@include responsive.screen-xs {
+  .modal {
+    width: calc(100vw - 16px);
+  }
+
+  .headingRow,
+  .auditList li {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .headingRow {
+    flex-direction: column;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .detailRow {
+    gap: 4px;
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,152 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.settingsBtn {
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  @include flex.flex-container(flex-start, stretch);
+
+  &:hover {
+    color: colors.$color-primary-light;
+  }
+  @include responsive.screen-xs {
+    padding-right: 0.8rem;
+  }
+}
+
+.userInformation {
+  @include flex.flex-container(flex-start, center);
+  padding-top: 25px;
+  border-top: 1px solid colors.$color-menu-user-avatar-border;
+  white-space: nowrap;
+  margin-bottom: 10px;
+  width: 100%;
+
+  @include responsive.screen-xs {
+    min-width: 210px;
+  }
+
+  @include responsive.screen-mobile {
+    min-width: 194px;
+  }
+
+  @include responsive.screen-mini {
+    min-width: 174px;
+  }
+
+  @include responsive.screen-min(responsive.$screen-lg-min) {
+    border: none;
+    height: 90px;
+    padding: 0.8rem;
+    margin-bottom: 0px;
+    border-bottom: 3px solid transparent;
+    width: 100%;
+
+    &:hover {
+      background-color: colors.$color-bg;
+    }
+
+    &[data-active='true'],
+    :focus {
+      background-color: colors.$color-bg;
+      border-bottom-color: colors.$color-primary;
+
+      svg path {
+        fill: colors.$color-primary;
+      }
+
+      p {
+        color: colors.$color-primary;
+      }
+    }
+
+    @include responsive.screen-range(responsive.$screen-lg-min, responsive.$screen-hg-min) {
+      min-width: 200px;
+    }
+  }
+}
+
+.arrowRightBox {
+  margin-left: auto;
+
+  svg path {
+    fill: colors.$color-white;
+  }
+
+  @include responsive.screen-min(responsive.$screen-lg-min) {
+    display: none;
+  }
+}
+
+.dropdownMenuContainer {
+  position: relative;
+}
+
+.dropdownMenu {
+  @include responsive.screen-min(responsive.$screen-lg-min) {
+    position: absolute;
+    height: auto;
+    width: 100%;
+    background-color: colors.$color-bg;
+    border: 0.5px solid colors.$color-border;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 10px;
+    box-shadow: 0 9px 9px colors.$color-dropdown-menu;
+
+    @include responsive.screen-range(responsive.$screen-lg-min, responsive.$screen-lg-min) {
+      right: 0px;
+      width: 174px;
+    }
+  }
+
+  @include responsive.screen-xs {
+    padding-right: 0.7rem;
+  }
+
+  @include responsive.screen-mobile {
+    padding: 0;
+  }
+}
+
+.languageBtn {
+  margin-bottom: 10px;
+
+  &:first-child {
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+    svg path {
+      fill: colors.$color-white;
+    }
+
+    @include responsive.screen-min(responsive.$screen-lg-min) {
+      svg path {
+        fill: colors.$color-black;
+      }
+      &:hover:not(:disabled) {
+        svg path {
+          fill: colors.$color-white;
+        }
+      }
+    }
+  }
+}
+
+.workspaceCheckoutBtn {
+  margin-bottom: 10px;
+}
+
+.languageSelector {
+  padding-top: 24px;
+  @include flex.flex-container(flex-start, center, column, $gap: 12px);
+}
+
+.avatarLinkItem {
+  list-style: none;
+  margin-bottom: 10px;
+}

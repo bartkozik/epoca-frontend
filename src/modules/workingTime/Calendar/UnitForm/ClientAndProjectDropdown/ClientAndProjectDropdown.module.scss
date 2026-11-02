@@ -1,0 +1,158 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-scrollbar' as scrollbar;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-form' as form;
+@use 'core/theme/common-style' as common;
+
+.clientAndProjectDropdown {
+  position: relative;
+}
+
+.label {
+  @include form.form-label;
+
+  p {
+    @include font.text(colors.$color-primary-light, 12px);
+    margin: 3px 0;
+  }
+}
+
+.selectedOptionArea {
+  display: flex;
+  flex-direction: column;
+}
+
+.selectedOption {
+  border: 1px solid colors.$color-border;
+  padding: 10px 15px;
+  border-radius: 0.5rem;
+  font-size: 14px;
+  color: colors.$color-font-heading;
+}
+
+.selectedOptionNotDisabled {
+  cursor: pointer;
+}
+
+.clear {
+  cursor: pointer;
+}
+
+.optionsArea {
+  display: none;
+  flex-grow: 1;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  right: 0;
+  background-color: colors.$color-white;
+  z-index: 1;
+
+  &.showOptions {
+    display: flex;
+  }
+
+  &.isValueSelected {
+    top: 94px;
+  }
+}
+
+.options {
+  width: 100%;
+  padding: 17px 0 15px;
+  border-radius: 9px;
+  box-shadow: 0 9px 9px 0 colors.$color-border-shadow;
+  max-height: 400px;
+  overflow: hidden;
+
+  &Inner {
+    height: 100%;
+    overflow-y: auto;
+    @include scrollbar.vertical-scrollbar();
+  }
+
+  span {
+    @include font.text(colors.$color-placeholder, 12px);
+  }
+
+  &List {
+    text-align: left;
+    width: 100%;
+    padding: 0 17px 0 16px;
+
+    &Results {
+      margin-bottom: 8px;
+    }
+  }
+}
+
+.dropdownLabel {
+  cursor: default;
+  pointer-events: none;
+}
+
+.optionTitle {
+  @include font.text(colors.$color-placeholder, 10px);
+  padding: 8px 16px;
+}
+
+.noDataTitle {
+  @include font.text(colors.$color-placeholder, 12px);
+  padding: 8px 16px;
+}
+
+.option {
+  padding: 12px 0;
+  border-bottom: solid 1px colors.$color-option-list-border;
+  cursor: pointer;
+  display: block;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: colors.$color-primary-lightest;
+  }
+}
+
+.highlightedDropdownOption {
+  background-color: colors.$color-primary-lightest;
+}
+
+.firstLine {
+  @include flex.flex-container(flex-start, center);
+
+  &DropOption {
+    @include flex.flex-container(flex-start, center);
+  }
+}
+
+.secondLine {
+  @include font.text(colors.$color-font-text, 14px);
+  padding: 0 10px;
+  @include common.one-line-long-names-break;
+
+  &DropOption {
+    @include font.text(colors.$color-font-heading, 14px);
+    padding: 0 10px;
+    @include common.long-names-break(0px);
+  }
+}
+
+.dot {
+  @include common.color-ball(6px, 4px);
+}
+
+.text {
+  @include font.text(colors.$color-font-heading, 12px);
+
+  &DropOption {
+    @include font.text(colors.$color-font-heading, 14px);
+  }
+}
+
+.inputWithSelectedValue {
+  height: 61px;
+}

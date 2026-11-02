@@ -1,0 +1,64 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-scrollbar' as scrollbar;
+
+[data-reach-dialog-overlay] {
+  z-index: 6;
+  background-color: rgba(colors.$color-under-modal, 0.88);
+}
+
+.overlay {
+  @include scrollbar.vertical-scrollbar($margin-right: 0px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding: 16px 0;
+  background-color: rgba(colors.$color-under-modal, 0.88);
+  z-index: 26;
+  @include flex.flex-center;
+}
+
+.root {
+  // Auto margins center short dialogs and keep the top of tall dialogs reachable.
+  margin: auto 0;
+  flex-shrink: 0;
+  width: 90vw;
+  border-radius: 16px;
+  border: 1px solid colors.$color-modal-border;
+  position: relative;
+  max-width: 478px;
+  padding: 21px 32px 31px;
+  background-color: colors.$color-white;
+  z-index: 27;
+
+  @include responsive.screen-md {
+    width: 70vw;
+  }
+
+  @include responsive.screen-min(responsive.$screen-lg-min) {
+    width: 500px;
+  }
+
+  @include responsive.screen-xs {
+    max-width: 382px;
+    padding: 21px 15px;
+  }
+}
+
+.close {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  position: absolute;
+  top: 16px;
+  right: 19px;
+  cursor: pointer;
+  z-index: 28;
+  line-height: 0;
+}

@@ -1,0 +1,122 @@
+$screen-xl-min: 1536px;
+$screen-hg-min: 1400px;
+
+$screen-lg-max: $screen-xl-min - 1;
+$screen-lg-min: 1200px;
+
+$screen-md-max: $screen-lg-min - 1;
+$screen-md-min: 992px;
+
+$screen-sm-max: $screen-md-min - 1;
+$screen-sm-min: 768px;
+
+$screen-xs-max: $screen-sm-min - 1;
+$screen-xs-min: 300px;
+
+@mixin screen-range($min, $max) {
+  @media only screen and (min-width: $min) and (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin screen-minHeight($min) {
+  @media only screen and (min-height: $min) {
+    @content;
+  }
+}
+
+@mixin screen-maxHeight($max) {
+  @media only screen and (max-height: $max) {
+    @content;
+  }
+}
+
+@mixin screen-min($min) {
+  @media only screen and (min-width: $min) {
+    @content;
+  }
+}
+
+@mixin screen-max($max) {
+  @media only screen and (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin screen-lg {
+  @include screen-min($screen-lg-min) {
+    @content;
+  }
+}
+
+@mixin screen-md {
+  @include screen-range($screen-md-min, $screen-md-max) {
+    @content;
+  }
+}
+
+@mixin screen-sm {
+  @include screen-range($screen-sm-min, $screen-sm-max) {
+    @content;
+  }
+}
+
+@mixin screen-xs {
+  @include screen-max($screen-xs-max) {
+    @content;
+  }
+}
+
+//
+@mixin screen-mobile-xl {
+  @include screen-max(600px) {
+    @content;
+  }
+}
+
+@mixin screen-mobile {
+  @include screen-max(413px) {
+    @content;
+  }
+}
+
+@mixin screen-mini {
+  @include screen-max($screen-xs-min) {
+    @content;
+  }
+}
+
+// small and larger
+@mixin screen-sm-plus {
+  @include screen-min($screen-sm-min) {
+    @content;
+  }
+}
+
+// small and smaller
+@mixin screen-sm-minus {
+  @include screen-max($screen-sm-max) {
+    @content;
+  }
+}
+
+// medium and larger
+@mixin screen-md-plus {
+  @include screen-min($screen-md-min) {
+    @content;
+  }
+}
+
+// medium and smaller
+@mixin screen-md-minus {
+  @include screen-max($screen-md-max) {
+    @content;
+  }
+}
+
+//
+@mixin screen-lg-minus {
+  @include screen-max($screen-lg-max) {
+    @content;
+  }
+}

@@ -1,0 +1,49 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-search' as search;
+@use 'core/theme/common-style' as common;
+
+@include search.search-styles;
+
+.dropdownContent {
+  @include common.dropdown(colors.$color-white);
+  top: 42px;
+  left: -16px;
+  width: 100%;
+  padding: 17px 19px 10px 16px;
+  height: 280px;
+  overflow-y: hidden;
+
+  @include responsive.screen-md-minus {
+    min-width: 150px;
+    right: 25px;
+  }
+}
+
+.emptyDropdownContent {
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
+
+  .dropdownMenu {
+    height: auto;
+    overflow: hidden;
+  }
+}
+
+.emptyDropdownMenuList {
+  height: auto;
+  overflow: hidden;
+}
+
+.emptyState {
+  padding: 16px 8px;
+  list-style: none;
+  text-align: center;
+  @include font.text(colors.$color-font-heading, 12px, font.$font-w-small);
+}
+
+.highlightedDropdownOption {
+  background-color: colors.$color-primary-lightest;
+}

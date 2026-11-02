@@ -1,0 +1,116 @@
+@use 'sass:color';
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, center);
+  text-align: left;
+  padding: 25px 106px 25px 25px;
+  min-width: 498px;
+  min-height: 115px;
+  color: colors.$color-white;
+  position: relative;
+  border-radius: 10px;
+
+  & ~ & {
+    margin-top: 12px;
+  }
+
+  @include responsive.screen-sm-minus {
+    min-width: 300px;
+    padding: 15px;
+    padding-right: 40px;
+  }
+  @include responsive.screen-xs {
+    max-width: 290px;
+  }
+}
+
+.closeIcon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
+}
+
+.icon {
+  @include flex.flex-center;
+  width: 44px;
+  height: 44px;
+  background-color: colors.$color-white;
+  border-radius: 50%;
+
+  &-success svg path:nth-child(2) {
+    fill: colors.$color-success;
+  }
+
+  &-error svg path {
+    fill: colors.$color-error;
+  }
+
+  &-info {
+    color: colors.$color-font-text;
+  }
+
+  &-warning svg path {
+    fill: colors.$color-orange;
+  }
+
+  @include responsive.screen-sm-minus {
+    width: 24px;
+    height: 24px;
+  }
+
+  @include responsive.screen-xs {
+    display: none;
+  }
+}
+
+.label {
+  @include font.font(12);
+  letter-spacing: 0.6;
+  text-transform: uppercase;
+}
+
+.success {
+  background-color: color.adjust(colors.$color-success, $lightness: 10%);
+}
+.error {
+  background-color: colors.$color-error;
+}
+.warning {
+  background-color: colors.$color-orange;
+}
+
+.text {
+  color: colors.$color-white;
+}
+
+.info {
+  background-color: colors.$color-primary-lightest;
+  border: 1px solid colors.$color-border;
+
+  .text {
+    color: colors.$color-font-heading;
+  }
+
+  .closeIcon path {
+    fill: colors.$color-font-text;
+    stroke: colors.$color-font-text;
+  }
+}
+
+.textContainer {
+  @include flex.flex-container($align-items: flex-start, $flex-flow: column);
+  margin-left: 16px;
+}
+
+.childrenContainer {
+  @include font.font(22);
+
+  @include responsive.screen-sm-minus {
+    @include font.font(14);
+  }
+}

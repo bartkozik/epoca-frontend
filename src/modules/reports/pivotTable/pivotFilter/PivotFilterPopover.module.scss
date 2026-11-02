@@ -1,0 +1,129 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+
+.root {
+  position: relative;
+  display: inline-flex;
+  height: 40px;
+  align-items: center;
+}
+
+.trigger {
+  @include font.text(colors.$color-primary, 12px, font.$font-w-medium);
+  height: 32px;
+  min-width: 38px;
+  min-height: 0;
+  padding: 0 10px;
+  border: 1px solid colors.$color-border;
+  border-radius: 6px;
+  background: colors.$color-white;
+  color: colors.$color-primary;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-primary;
+    outline-offset: 1px;
+  }
+}
+
+.panel {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max-content;
+  max-width: 520px;
+  padding: 20px 24px;
+  border: 1px solid colors.$color-modal-border;
+  border-radius: 12px;
+  background: colors.$color-white;
+  box-shadow: colors.$color-header-shadow-border;
+
+  h2 {
+    @include font.text(colors.$color-font-heading, 18px, font.$font-w-medium);
+    margin: 0 0 16px;
+  }
+}
+
+.search {
+  @include font.text(colors.$color-font-heading, 14px);
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+
+  &:focus-visible {
+    border-color: colors.$color-primary;
+    outline: 2px solid rgba(colors.$color-primary, 0.16);
+  }
+}
+
+.bulkActions {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0;
+
+  button {
+    @include font.text(colors.$color-primary, 13px, font.$font-w-medium);
+    min-height: 38px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+}
+
+.members {
+  max-height: min(48vh, 420px);
+  overflow-y: auto;
+  border-top: 1px solid colors.$color-border;
+  border-bottom: 1px solid colors.$color-border;
+}
+
+.group {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 12px 0;
+  border: 0;
+
+  & + & {
+    border-top: 1px solid colors.$color-border;
+  }
+
+  legend {
+    @include font.text(colors.$color-placeholder, 12px, font.$font-w-medium);
+    padding: 0;
+  }
+}
+
+.member {
+  @include font.text(colors.$color-font-heading, 14px);
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background: colors.$color-primary-lightest;
+  }
+
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: colors.$color-primary;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}

@@ -1,0 +1,85 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  margin-top: 21px;
+  padding-left: 10px;
+
+  @include responsive.screen-xs {
+    padding-left: 0px;
+  }
+}
+
+// Period, then the entity filters in the table's column order (client, project, user).
+.filterRow {
+  @include flex.flex-container(flex-start, flex-end, $gap: 32px);
+  flex-wrap: wrap;
+
+  @include responsive.screen-md-minus {
+    @include flex.flex-container(flex-start, flex-start, column, $gap: 16px);
+  }
+}
+
+.entityFilters {
+  @include flex.flex-container(flex-start, flex-end, $gap: 16px);
+  flex-wrap: wrap;
+
+  @include responsive.screen-md-minus {
+    width: 100%;
+  }
+}
+
+.entityFilter {
+  width: 220px;
+
+  @include responsive.screen-xs {
+    flex: 1 1 100%;
+    width: auto;
+  }
+}
+
+// Fixed height: chips appearing or disappearing never move the table below.
+.resultsBar {
+  @include flex.flex-container(space-between, center, $gap: 12px);
+  min-height: 40px;
+  margin-top: 16px;
+
+  @include responsive.screen-xs {
+    flex-wrap: wrap;
+  }
+}
+
+.chips {
+  @include flex.flex-container(flex-start, center, $gap: 8px);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.clearAll,
+.retry {
+  @include font.text(colors.$color-primary, 12px, font.$font-w-small);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.summary {
+  @include flex.flex-container(flex-end, center, $gap: 12px);
+  margin-left: auto;
+  @include font.text(colors.$color-font-heading, 13px, font.$font-w-small);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

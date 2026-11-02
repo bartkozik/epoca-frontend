@@ -1,0 +1,33 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.labelHeader {
+  @include flex.flex-container(flex-start, center);
+  position: relative;
+  @include font.text(colors.$color-font-heading, 16px);
+  margin-bottom: 6px;
+  overflow-wrap: break-word;
+}
+
+.label {
+  @include font.text(colors.$color-font-heading, 16px);
+  display: block;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+.labelBottomMargin {
+  margin-bottom: 6px;
+}
+
+.labelBold {
+  @include font.text(colors.$color-font-heading, 16px, font.$font-w-max-bold);
+}
+
+.secondaryLabel {
+  @include font.text(colors.$color-placeholder, 16px, font.$font-w-regular);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}

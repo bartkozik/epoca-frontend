@@ -1,0 +1,31 @@
+@mixin flex-container(
+  $justify-content: 'flex-start',
+  $align-items: 'stretch',
+  $flex-flow: 'row nowrap',
+  $inline: false,
+  $gap: normal
+) {
+  @if $inline {
+    display: inline-flex;
+  } @else {
+    display: flex;
+  }
+  justify-content: #{$justify-content};
+  align-items: #{$align-items};
+  flex-flow: #{$flex-flow};
+  gap: #{$gap};
+  @content;
+}
+
+@mixin flex-center {
+  @include flex-container(center, center);
+}
+
+@mixin flex-start-column-container($width: 100%) {
+  @include flex-container(flex-start, flex-start, column);
+  width: $width;
+}
+
+@mixin flex-center-column {
+  @include flex-container(center, center, column);
+}

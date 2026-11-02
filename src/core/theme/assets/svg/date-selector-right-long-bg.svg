@@ -1,0 +1,10 @@
+<svg width="57px" height="32px" viewBox="0 0 57 32" xmlns="http://www.w3.org/2000/svg">
+    <g transform="scale(-1, 1) translate(-57, 0)">
+        <mask id="mask" x="0" y="0" width="57" height="32" >
+            <rect x="0" y="0" width="57" height="32" fill="white"/>
+            <circle cx="41" cy="16" r="16" fill="black"/>
+        </mask>
+        <rect x="25.2" y="0" width="16" height="32" fill="#f0ddc5" mask="url(#mask)"/>
+        <rect x="0" y="0" width="25.2" height="32" fill="#f0ddc5"/>
+    </g>
+</svg>

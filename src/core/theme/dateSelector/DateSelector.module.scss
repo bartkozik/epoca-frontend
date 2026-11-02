@@ -1,0 +1,191 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+@mixin calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px 25px;
+
+  @include responsive.screen-xs {
+    grid-gap: 5px 10px;
+  }
+}
+
+@mixin in-range-mixin($left, $width, $height: 100%, $bg-color: colors.$color-border) {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: $left;
+  width: $width;
+  height: $height;
+  background-color: $bg-color;
+  opacity: 0.85;
+  z-index: -1;
+}
+
+.root {
+  background-color: colors.$color-white;
+  padding: 24px;
+  padding-bottom: 54px;
+  border-left: 0.6px solid colors.$color-option-list-border;
+  border-right: 0.6px solid colors.$color-option-list-border;
+  border-bottom: 0.6px solid colors.$color-option-list-border;
+  box-shadow: 0 9px 9px colors.$color-dropdown-menu;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+.header {
+  @include flex.flex-container(space-between);
+  margin-bottom: 22px;
+}
+
+.monthLabel {
+  @include font.text(colors.$color-font-heading, 24px, font.$font-w-medium);
+}
+
+.navigation {
+  @include flex.flex-center;
+}
+
+.weekDays {
+  margin-bottom: 10px;
+  @include font.text(colors.$color-font-heading, 16px, font.$font-w-medium);
+  @include calendar-grid;
+}
+
+.calendar {
+  @include calendar-grid;
+}
+
+.day {
+  @include flex.flex-center;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: relative;
+  z-index: 4;
+  @include font.text(colors.$color-font-heading, 16px);
+
+  &:hover {
+    background-color: colors.$color-primary-light;
+  }
+
+  &:focus {
+    border: 2px solid colors.$color-border-active;
+  }
+}
+
+.selected {
+  background: colors.$color-button;
+  color: colors.$color-white;
+  z-index: 7;
+
+  &:focus {
+    background: colors.$color-button-hover;
+  }
+}
+
+.disabled {
+  cursor: auto;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.numberInRange {
+  color: colors.$color-primary-semi-light;
+}
+
+.inRange {
+  @include in-range-mixin(-24.7px, calc(100% + 25px));
+  @include responsive.screen-xs {
+    @include in-range-mixin(-24.7px, calc(100% + 10.2px));
+  }
+}
+
+.sundayInRange {
+  @include in-range-mixin(-24.7px, calc(100% + 50px));
+}
+
+.rangeStart {
+  @include in-range-mixin(0, 101%);
+  border-radius: 50% 0 0 50%;
+}
+
+.rangeEnd {
+  @include in-range-mixin(-25px, 55px);
+  border-radius: 0 37% 37% 0;
+}
+
+.inRangeHovered {
+  background-color: colors.$color-primary-light;
+  z-index: 4;
+}
+
+.arrowButton {
+  @include flex.flex-center;
+  margin: -10px;
+
+  &:first-child svg {
+    transform: rotate(180deg);
+  }
+
+  svg {
+    stroke: colors.$color-font-heading;
+  }
+
+  &[disabled] {
+    cursor: auto;
+    pointer-events: none;
+  }
+}
+
+.highlightedDay {
+  background-color: colors.$color-primary-lightest;
+  border: 2px solid colors.$color-border-active;
+}
+
+// Month-only view shares the report calendar's surface and selection colors.
+.monthRoot {
+  padding: 20px;
+  overflow: visible;
+}
+.yearSelect {
+  margin-bottom: 16px;
+
+  [role='listbox'] {
+    max-height: 180px;
+    overflow-y: auto;
+  }
+}
+.monthGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.monthOption {
+  width: 100%;
+  height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 14px;
+
+  &.selected {
+    background: colors.$color-button;
+    color: colors.$color-font-heading;
+  }
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+    background: transparent;
+  }
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 2px;
+  }
+}

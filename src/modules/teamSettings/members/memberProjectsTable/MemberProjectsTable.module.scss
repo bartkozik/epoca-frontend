@@ -1,0 +1,94 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+@use 'core/theme/common-table' as table;
+
+.memberDetails {
+  @include flex.flex-container(flex-start, flex-start, column);
+  width: 100%;
+}
+
+.actions {
+  @include flex.flex-container(flex-start, flex-start, $gap: 20px);
+  margin-top: 20px;
+  position: relative;
+
+  @include responsive.screen-xs {
+    @include flex.flex-container(flex-start, flex-start, column, $gap: 20px);
+    margin-top: 10px;
+  }
+}
+
+.tableCustom {
+  @include table.table-cell-width('Project', 33%);
+  @include table.table-cell-width('Client', 33%);
+  @include table.table-cell-width('Type', 10%);
+  @include table.sticky-table-head-position;
+  margin-top: 30px;
+
+  th,
+  td {
+    vertical-align: middle;
+  }
+
+  td[data-th='Client'],
+  td[data-th='Project'] {
+    @include common.long-names-break(15px);
+  }
+
+  td[data-th='Project'] {
+    position: relative;
+  }
+
+  @include responsive.screen-md-minus {
+    th:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:last-child),
+    td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:last-child) {
+      display: none;
+    }
+
+    th,
+    td {
+      vertical-align: top;
+    }
+
+    @include table.table-cell-width('Client', 30%);
+    @include table.table-cell-width('Project', 30%);
+  }
+
+  @include responsive.screen-xs {
+    @include font.text(colors.$color-font-heading, 14px);
+    th:not(:nth-child(2)),
+    td:not(:nth-child(2)):not(:last-child) {
+      display: none;
+    }
+    thead tr th:nth-child(2) {
+      border-radius: 8px;
+    }
+
+    @include table.table-cell-width('Client', 85%);
+    @include table.mobile-table;
+  }
+}
+
+.clientNameBox {
+  @include flex.flex-container(flex-start, flex-start, column);
+  @include common.long-names-break(15px);
+
+  p {
+    @include common.long-names-break(15px);
+    margin: 22px 0 0 22px;
+  }
+
+  span {
+    @include font.text(colors.$color-primary, 14px, font.$font-w-medium);
+  }
+
+  @include responsive.screen-sm-plus {
+    display: none;
+  }
+}
+.tableToggle {
+  width: 220px;
+}

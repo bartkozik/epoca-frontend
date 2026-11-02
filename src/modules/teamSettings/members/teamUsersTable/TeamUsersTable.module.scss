@@ -1,0 +1,99 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-table' as table;
+
+.tableCustom {
+  table-layout: auto;
+  @include table.table-cell-width('User role', 177px);
+  @include table.table-cell-width('Action', 204px);
+
+  tbody tr td {
+    vertical-align: middle;
+  }
+
+  tbody tr td[data-th='User name'],
+  tbody tr td[data-th='User role'] {
+    padding-right: 24px;
+  }
+
+  tbody tr td[data-th='Action'] {
+    display: table-cell;
+    align-items: center;
+    gap: 24px;
+  }
+
+  @include responsive.screen-md-minus {
+    display: block;
+
+    thead,
+    tbody {
+      display: block;
+      width: 100%;
+    }
+
+    // The header and member rows share the same tracks at intermediate widths.
+    thead tr,
+    tbody tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 177px;
+      column-gap: 24px;
+      padding-inline: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    thead tr th {
+      width: auto;
+      min-width: 0;
+      padding-inline: 0;
+      white-space: normal;
+    }
+
+    thead tr th[data-th='Action'] {
+      display: none;
+    }
+
+    tbody tr {
+      align-items: center;
+      padding-block: 24px;
+      row-gap: 20px;
+    }
+
+    tbody tr td[data-th='User name'],
+    tbody tr td[data-th='User role'],
+    tbody tr td[data-th='Action'] {
+      width: auto;
+      min-width: 0;
+      max-width: none;
+      padding: 0;
+      margin: 0;
+      white-space: normal;
+      word-break: normal;
+    }
+
+    tbody tr td[data-th='Action'] {
+      grid-column: 1 / -1;
+      @include flex.flex-container(flex-end, center, row wrap, $gap: 24px);
+    }
+  }
+
+  @include responsive.screen-xs {
+    thead tr,
+    tbody tr {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    thead tr th:not(:first-child),
+    tbody tr td[data-th='User role'] {
+      display: none;
+    }
+
+    thead tr th:first-child {
+      border-radius: 8px;
+    }
+
+    tbody tr td[data-th='Action'] {
+      justify-content: flex-start;
+    }
+  }
+}

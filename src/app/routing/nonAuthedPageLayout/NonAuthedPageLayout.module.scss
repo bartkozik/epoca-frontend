@@ -1,0 +1,45 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  @include flex.flex-container;
+  background-color: colors.$color-bg;
+}
+
+.content {
+  @include flex.flex-container(flex-start, center, column);
+  flex: 1;
+
+  @include responsive.screen-md-minus {
+    @include flex.flex-center-column;
+  }
+
+  @include responsive.screen-xs {
+    @include flex.flex-start-column-container;
+    padding-left: 25px;
+    padding-top: 10px;
+  }
+}
+
+.logo {
+  margin-top: 20px;
+  margin-bottom: auto;
+
+  @include responsive.screen-sm-minus {
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+}
+
+.sideBoard {
+  @include flex.flex-container(center);
+  width: 56%;
+
+  @include responsive.screen-md-minus {
+    display: none;
+  }
+}

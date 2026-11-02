@@ -1,0 +1,98 @@
+@use '../common-team-users' as users;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+
+.avatar {
+  @include users.avatar;
+}
+
+.statusInput {
+  @include users.role-select;
+}
+
+.statusMobileView {
+  @include users.mobile-role;
+}
+
+.btnBox {
+  @include users.actions;
+}
+
+.resendIcon {
+  @include flex.flex-center;
+}
+
+.invitationDetails {
+  @include font.text(colors.$color-font-text, 12px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  margin-left: 67px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+
+  > span {
+    display: block;
+  }
+
+  @include responsive.screen-range(767px, 900px) {
+    margin-left: 54px;
+  }
+}
+
+.invitationStatus {
+  position: relative;
+  padding-left: 14px;
+  color: colors.$color-primary;
+  font-weight: 600;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+  }
+}
+
+.invitationDelivery {
+  font-weight: 500;
+}
+
+.invitationSuccess {
+  color: colors.$color-success-status1;
+}
+
+.invitationError {
+  color: colors.$color-error;
+}
+
+.invitationNotice {
+  color: colors.$color-primary;
+}
+
+.invitationCooldown {
+  color: colors.$color-primary;
+  font-weight: 600;
+}
+
+.invitationActions {
+  > button {
+    width: 60px;
+    align-self: flex-start;
+
+    > span {
+      width: 80px;
+      white-space: normal;
+      text-align: center;
+      text-transform: none;
+    }
+  }
+}

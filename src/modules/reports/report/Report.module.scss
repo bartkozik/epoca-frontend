@@ -1,0 +1,27 @@
+@use 'core/theme/common-style' as common;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-colors' as colors;
+
+.header {
+  @include common.reports-header;
+}
+
+.errorState {
+  @include flex.flex-container($align-items: center, $flex-flow: column, $gap: 16px);
+  padding: 24px 16px;
+  text-align: center;
+
+  p {
+    line-height: 1.5;
+  }
+}
+
+.summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.updating {
+  color: colors.$color-font-text;
+}

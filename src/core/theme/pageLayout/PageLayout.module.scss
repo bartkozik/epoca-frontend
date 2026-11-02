@@ -1,0 +1,64 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  position: relative;
+  @include flex.flex-container(flex-start, flex-start, column);
+  margin-left: 10px;
+
+  @include responsive.screen-xs {
+    margin-left: 0px;
+  }
+}
+
+.nameBox {
+  @include flex.flex-container(center, flex-start, column);
+  margin-top: 32px;
+  width: 100%;
+
+  @include responsive.screen-xs {
+    margin-top: 13px;
+  }
+}
+
+.title {
+  @include font.text(colors.$color-placeholder, 16px);
+  margin-bottom: -5px;
+}
+
+.nameRow {
+  @include flex.flex-container($align-items: center, $gap: 8px);
+  width: 100%;
+  margin-top: 6px;
+  @include responsive.screen-xs {
+    margin-top: 0px;
+  }
+}
+
+.avatar {
+  flex-shrink: 0;
+    margin-top: 6px;
+
+
+  @include responsive.screen-xs {
+    align-self: flex-start;
+  }
+}
+
+.name {
+  @include font.text(colors.$color-font-heading, 30px);
+  text-align: left;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+
+  @include responsive.screen-xs {
+    margin-bottom: 14px;
+  }
+}

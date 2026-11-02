@@ -1,0 +1,55 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, center, $gap: 2px);
+  height: 28px;
+  max-width: 100%;
+  padding: 0 2px 0 10px;
+  border: 1px solid colors.$color-border;
+  border-radius: 6px;
+  background-color: colors.$color-primary-lightest;
+}
+
+.text {
+  @include font.text(colors.$color-font-heading, 13px, font.$font-w-small);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.category {
+  color: colors.$color-font-text;
+}
+
+.value {
+  color: colors.$color-font-heading;
+}
+
+.remove {
+  @include flex.flex-center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+
+  path {
+    fill: colors.$color-font-heading;
+    stroke: colors.$color-font-heading;
+  }
+
+  &:hover {
+    background-color: colors.$color-border;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 1px;
+  }
+}

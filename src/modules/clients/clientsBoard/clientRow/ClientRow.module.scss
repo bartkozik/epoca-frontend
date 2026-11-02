@@ -1,0 +1,35 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.clientBox {
+  @include flex.flex-container(center, flex-start, column);
+  position: relative;
+}
+
+.clientType {
+  @include font.text(colors.$color-primary, 14px, font.$font-w-medium);
+  margin: 7px 0px 0px 22px;
+
+  span {
+    @include font.text(colors.$color-font-heading, 14px);
+  }
+
+  @include responsive.screen-sm-plus {
+    display: none;
+  }
+}
+
+.btnBox {
+  @include flex.flex-container($gap: 30px);
+  margin-top: 5px;
+
+  @include responsive.screen-xs {
+    margin: -5px 0 8px 22px;
+  }
+}
+
+.btnBoxArchived {
+  gap: 13px;
+}

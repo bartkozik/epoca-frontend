@@ -1,0 +1,13 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-style' as common;
+
+.link {
+  @include font.text(colors.$color-primary-light, 13px);
+  @include common.long-names-break(0px);
+
+  &:hover {
+    text-decoration: underline;
+    color: colors.$color-primary;
+  }
+}

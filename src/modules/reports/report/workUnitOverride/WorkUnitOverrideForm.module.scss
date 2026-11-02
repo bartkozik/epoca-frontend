@@ -1,0 +1,84 @@
+@use 'core/theme/common-colors' as colors;
+
+.root {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: colors.$color-font-heading;
+  text-align: left;
+}
+// Keep these dimensions above the shared modal's breakpoint rules.
+.reportEditModal[role='dialog'] {
+  width: min(912px, calc(100% - 32px));
+  max-width: none;
+  min-width: 0;
+  flex: none;
+  overflow: visible;
+}
+.sections,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+.original {
+  padding: 16px;
+  margin: 16px 0;
+  background: colors.$color-border;
+  border-radius: 8px;
+  dl {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px 16px;
+  }
+  dd {
+    margin: 0;
+  }
+}
+.fields {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  select {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid colors.$color-border;
+    border-radius: 6px;
+    background: white;
+    font: inherit;
+  }
+}
+.comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.conflict {
+  padding: 12px;
+  border: 1px solid colors.$color-border;
+}
+.form {
+  min-width: 0;
+}
+.badge {
+  display: inline-block;
+  margin: 4px 0;
+  padding: 3px 7px;
+  border: 1px solid colors.$color-border;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  cursor: help;
+}
+@media (max-width: 520px) {
+  .comparison {
+    grid-template-columns: 1fr;
+  }
+}

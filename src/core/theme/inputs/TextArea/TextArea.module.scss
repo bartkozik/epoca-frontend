@@ -1,0 +1,9 @@
+@use 'core/theme/common-scrollbar' as scrollbar;
+@use 'core/theme/common-inputs' as inputs;
+
+@include inputs.basic-input;
+
+.textarea {
+  resize: none;
+  @include scrollbar.vertical-scrollbar();
+}

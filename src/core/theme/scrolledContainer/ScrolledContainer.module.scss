@@ -1,0 +1,26 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-scrollbar' as scrollbar;
+
+.root {
+  @include scrollbar.vertical-scrollbar($margin-right: 0px);
+  width: 100%;
+  height: calc(100dvh - 86px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-right: 7px;
+  padding-bottom: 2rem;
+  margin-left: 0px;
+  position: relative;
+
+  @include responsive.screen-xs {
+    padding-right: 0;
+    margin-left: 0;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

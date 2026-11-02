@@ -1,0 +1,137 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+
+.root {
+  width: 218px;
+}
+
+.labelBox {
+  @include flex.flex-container(flex-start, center);
+}
+
+.label {
+  @include font.text(colors.$color-font-heading, 16px);
+  margin: 0 7px 6px 0;
+}
+
+.infoIcon {
+  margin-bottom: 6px;
+}
+
+.relativeContainer {
+  @include flex.flex-container(center, center);
+  position: relative;
+}
+
+.selectedBackground {
+  width: 100%;
+  height: 48px;
+  border-radius: 8px 0 0 8px;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.dropdownBtn {
+  margin-left: 0px;
+  border-radius: 0 8px 8px 0;
+
+  .arrow {
+    transform: rotate(180deg);
+    transition: transform 0.3s;
+  }
+}
+
+.dropdown {
+  @include common.dropdown;
+  width: 382px;
+  top: 70px;
+  left: 0;
+  padding: 22px 20px;
+  z-index: 10;
+
+  @include responsive.screen-xs {
+    width: 300px;
+    padding: 18px;
+    top: 56px;
+  }
+
+  span {
+    @include flex.flex-container;
+    @include font.text(colors.$color-font-heading, 16px);
+    margin-bottom: 8px;
+  }
+
+  &ColorItems {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-gap: 15px 16px;
+
+    @include responsive.screen-xs {
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
+    }
+  }
+
+  &TextureItems {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 7.5px 14px;
+
+    @include responsive.screen-xs {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+.dropdownToLeft {
+  @include responsive.screen-md-minus {
+    left: -163px;
+  }
+
+  @include responsive.screen-xs {
+    left: 0px;
+  }
+}
+
+.dropdownBgWhite {
+  background-color: colors.$color-white;
+}
+
+.colorOption {
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  cursor: pointer;
+  @include flex.flex-center;
+}
+
+.textureOption {
+  width: 73px;
+  height: 55px;
+  border-radius: 6px;
+  cursor: pointer;
+  @include flex.flex-center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      background-image: url('../../../core/theme/assets/images/textures/texture#{$i}.png');
+    }
+  }
+
+  @include responsive.screen-xs {
+    width: 65px;
+    height: 42px;
+  }
+}
+
+.highlightedDropdownOption {
+  border: 1px solid colors.$color-border-active;
+  -webkit-box-shadow: colors.$color-inset-shadow-color-picker;
+  -moz-box-shadow: colors.$color-inset-shadow-color-picker;
+  box-shadow: colors.$color-inset-shadow-color-picker;
+}

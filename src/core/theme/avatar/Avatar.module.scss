@@ -1,0 +1,52 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, center);
+  width: 100%;
+}
+
+.avatar {
+  flex-shrink: 0;
+  margin-right: 18px;
+  width: 49px;
+  height: 49px;
+
+  @include responsive.screen-range(767px, 900px) {
+    margin-right: 5px;
+  }
+
+  &Navbar {
+    margin: 0;
+
+    @include responsive.screen-mobile {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+.userName {
+  @include font.text(colors.$color-font-heading, 16px);
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mobileHidden {
+  @include responsive.screen-mobile {
+    display: none;
+  }
+}
+
+.userNameNavbar {
+  @include font.text(colors.$color-font-heading, 14px);
+  margin-left: 14px;
+
+  @include responsive.screen-md-minus {
+    @include font.text(colors.$color-white, 14px, font.$font-w-medium);
+  }
+}

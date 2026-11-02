@@ -1,0 +1,15 @@
+@use 'core/theme/common-responsive' as responsive;
+
+.headerCustomHeight {
+  @include responsive.screen-md-minus {
+    margin-top: 85px;
+  }
+}
+
+.modal {
+  height: fit-content;
+}
+
+.projectModal {
+  min-height: 500px;
+}

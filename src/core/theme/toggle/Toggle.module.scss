@@ -1,0 +1,121 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+@mixin circle {
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s;
+  z-index: 0;
+}
+
+@mixin iconPosition($side, $distance) {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 0;
+  #{$side}: $distance;
+}
+
+.root {
+  @include flex.flex-container(flex-start, flex-start, column);
+  min-width: 174px;
+}
+
+.toggleContainer {
+  display: inline-flex;
+  align-items: center;
+}
+
+.toggle {
+  @include flex.flex-container(space-between, center);
+  position: relative;
+  width: 69px;
+  height: 32px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.disabled {
+  border: 1px solid colors.$color-placeholder;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.on {
+  background: colors.$color-primary-light;
+}
+
+.off {
+  background-color: transparent;
+  border: 1px solid colors.$color-border-hover;
+}
+
+.circle {
+  background-color: colors.$color-white;
+  position: relative;
+  @include circle;
+
+  &Off {
+    background-color: colors.$color-border-hover;
+    @include circle;
+  }
+}
+
+.loading {
+  background-color: colors.$color-bg;
+  border: 1px solid colors.$color-border;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.on .circle {
+  transform: translateX(26px);
+}
+
+.off .circle {
+  transform: translateX(0);
+}
+
+.checkIcon {
+  @include iconPosition(left, 13px);
+}
+
+.crossIcon {
+  @include iconPosition(right, 11px);
+  svg {
+    color: colors.$color-primary;
+  }
+}
+
+.labelAsStatus {
+  margin-bottom: 0px;
+  label {
+    @include font.text(colors.$color-font-heading, 14px);
+  }
+}
+
+.stateLabels {
+  @include flex.flex-center;
+  margin-left: 8px;
+  @include font.text(colors.$color-font-heading, 15px);
+  user-select: none;
+  position: relative;
+}
+
+.labelWhileLoading {
+  @include font.text(colors.$color-placeholder, 15px);
+}
+
+.disabledLabel {
+  @include font.text(colors.$color-placeholder);
+}

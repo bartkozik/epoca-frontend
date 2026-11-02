@@ -1,0 +1,15 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-center;
+  @include font.text(colors.$color-primary, 22px, font.$font-w-bold);
+  width: 55px;
+  height: 55px;
+  background-color: colors.$color-border;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+}

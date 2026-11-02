@@ -1,0 +1,354 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+
+.viewportShell {
+  --pivot-grand-total-clearance: 24px;
+
+  position: relative;
+  width: 100%;
+  padding-bottom: var(--pivot-grand-total-clearance);
+
+  @include responsive.screen-xs {
+    margin-top: 44px;
+  }
+}
+
+.container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-color: colors.$color-primary-semi-light transparent;
+  scrollbar-width: thin;
+  background: colors.$color-white;
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-primary;
+    outline-offset: -2px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: colors.$color-primary-semi-light;
+    background-clip: padding-box;
+
+    &:hover {
+      background-color: colors.$color-primary;
+    }
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+.tableSurface {
+  min-width: 100%;
+  overflow: clip;
+  border-radius: 8px;
+  background: colors.$color-white;
+  box-shadow: inset 0 0 0 1px colors.$color-border;
+}
+
+.table {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: colors.$color-white;
+}
+
+.cornerHeader,
+.columnHeader,
+.rowHeader,
+.valueCell {
+  box-sizing: border-box;
+  padding: 0 12px;
+  border-right: 1px solid colors.$color-border;
+  border-bottom: 1px solid colors.$color-border;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.cornerHeader,
+.columnHeader,
+.rowHeader {
+  overflow: visible;
+}
+
+.cornerHeader,
+.columnHeader {
+  @include font.text(colors.$color-font-heading, 12px, font.$font-w-medium);
+  position: sticky;
+  z-index: 3;
+  height: 44px;
+  background: colors.$color-primary-lightest;
+  text-align: center;
+}
+
+.cornerHeader {
+  z-index: 4;
+  top: 0;
+  box-shadow: 0 2px 0 rgba(colors.$color-primary-dark, 0.08);
+  text-align: left;
+}
+
+.headerBoundary {
+  .columnHeader {
+    box-shadow: 0 2px 0 rgba(colors.$color-primary-dark, 0.08);
+  }
+}
+
+.rowHeader {
+  @include font.text(colors.$color-font-heading, 13px, font.$font-w-medium);
+  height: 48px;
+  background: colors.$color-white;
+  text-align: left;
+}
+
+.valueCell {
+  @include font.text(colors.$color-font-heading, 13px);
+  overflow: hidden;
+  height: 48px;
+  background: colors.$color-white;
+  text-overflow: ellipsis;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.rowHeaderContent {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+
+.overflowLabel {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.labelTooltip {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.rowFieldsSticky {
+  .rowHeader {
+    position: sticky;
+    z-index: 2;
+  }
+
+  .rowHeader:has(.labelTooltip:hover),
+  .rowHeader:has(.labelTooltip:focus-within) {
+    z-index: 3;
+  }
+
+  .cornerHeader {
+    z-index: 5;
+  }
+
+  .rowFieldBoundary {
+    box-shadow: 2px 0 0 rgba(colors.$color-primary-dark, 0.08);
+  }
+
+  .cornerHeader.rowFieldBoundary {
+    box-shadow:
+      2px 0 0 rgba(colors.$color-primary-dark, 0.08),
+      0 2px 0 rgba(colors.$color-primary-dark, 0.08);
+  }
+}
+
+.subtotalRow > * {
+  background: colors.$color-primary-lightest;
+  font-weight: font.$font-w-medium;
+}
+
+.grandTotalRow > * {
+  border-top: 1px solid colors.$color-primary;
+  background: colors.$color-primary-lightest;
+  box-shadow: 0 -2px 0 rgba(colors.$color-primary-dark, 0.08);
+  color: colors.$color-font-heading;
+  font-weight: font.$font-w-medium;
+}
+
+.headerDock {
+  position: fixed;
+  z-index: 7;
+  overflow: hidden;
+  visibility: hidden;
+  border-radius: 8px;
+  background: colors.$color-primary-lightest;
+  box-shadow:
+    inset 0 0 0 1px colors.$color-border,
+    colors.$color-header-shadow-border;
+  pointer-events: none;
+
+  .table {
+    will-change: transform;
+  }
+
+  .cornerHeader,
+  .columnHeader {
+    position: relative;
+    top: auto;
+  }
+}
+
+.grandTotalDock {
+  position: fixed;
+  z-index: 6;
+  overflow: visible;
+  visibility: hidden;
+  background: transparent;
+  pointer-events: none;
+
+  .table {
+    background: colors.$color-primary-lightest;
+    will-change: transform;
+  }
+
+  tbody,
+  .grandTotalRow {
+    height: 100%;
+  }
+
+  .grandTotalRow > * {
+    border-bottom: 0;
+  }
+
+  .rowHeader {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+.grandTotalSurface {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  background: colors.$color-primary-lightest;
+  box-shadow:
+    inset 0 0 0 1px colors.$color-border,
+    colors.$color-header-shadow-border;
+}
+
+.grandTotalClearance {
+  width: 100%;
+  height: calc(var(--pivot-grand-total-clearance) + var(--pivot-sticky-bottom-inset));
+  background: colors.$color-white;
+}
+
+.rightEdgeCell {
+  border-right: 0;
+}
+
+.masterCornerHeader {
+  padding-left: 48px;
+}
+
+.masterToggleDock {
+  display: inline-flex;
+  position: absolute;
+  z-index: 8;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid colors.$color-border;
+  border-radius: 6px;
+  background: rgba(colors.$color-white, 0.9);
+  color: colors.$color-primary;
+  cursor: pointer;
+
+  &:hover {
+    border-color: colors.$color-border-hover;
+    background: colors.$color-white;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-primary;
+    outline-offset: 1px;
+  }
+}
+
+.masterToggleIcon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.expandButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: -4px 4px -4px -4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: colors.$color-primary;
+  cursor: pointer;
+
+  &:hover {
+    background: colors.$color-white;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-primary;
+    outline-offset: -2px;
+  }
+}
+
+// Laptop and tablet density keeps more analytical context visible without shrinking touch controls.
+.container[data-density='compact'],
+.headerDock[data-density='compact'],
+.grandTotalDock[data-density='compact'] {
+  .cornerHeader,
+  .columnHeader,
+  .rowHeader,
+  .valueCell {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .cornerHeader,
+  .columnHeader {
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .rowHeader,
+  .valueCell {
+    height: 44px;
+    font-size: 12px;
+  }
+
+  .masterCornerHeader {
+    padding-left: 44px;
+  }
+}

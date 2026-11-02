@@ -1,0 +1,147 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-print' as print;
+
+.root {
+  @include flex.flex-container;
+  position: relative;
+
+  @include print.no-print;
+  @include responsive.screen-lg {
+    margin-left: 30px;
+  }
+}
+
+.inputsContainer {
+  @include flex.flex-container(center, $gap: 24px);
+
+  @include responsive.screen-md-minus {
+    gap: 15px;
+  }
+
+  @include responsive.screen-xs {
+    @include flex.flex-container(space-between, $gap: 10px);
+  }
+}
+
+.mobileInputsContainer {
+  @include responsive.screen-md-minus {
+    flex-wrap: wrap;
+  }
+
+  @include responsive.screen-xs {
+    gap: 15px;
+  }
+}
+
+.inputResetButton {
+  position: absolute;
+  top: 0px;
+  left: -100px;
+
+  @include responsive.screen-md-minus {
+    top: 40px;
+    left: -10px;
+  }
+}
+
+.mobileResetButton {
+  @include responsive.screen-md-minus {
+    top: 150px;
+    left: -10px;
+  }
+}
+
+.mobileResetButtonAddButtonHidden {
+  @include responsive.screen-md-minus {
+    top: 90px;
+    left: -10px;
+  }
+}
+
+.statusInput {
+  @include responsive.screen-lg {
+    max-width: 188px;
+  }
+
+  @include responsive.screen-md-minus {
+    flex: 1 1 45%;
+    min-width: 145px;
+  }
+
+  @include responsive.screen-xs {
+    flex: 1 1 50%;
+  }
+}
+
+.searchInput {
+  min-width: 280px;
+
+  @include responsive.screen-sm {
+    min-width: 230px;
+  }
+
+  @include responsive.screen-xs {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+.mobileSearchInput {
+  width: 100%;
+}
+
+.formErrorMessage {
+  position: absolute;
+  bottom: -25px;
+  left: 3px;
+  white-space: nowrap;
+
+  @include responsive.screen-md-minus {
+    bottom: -27.5px;
+    left: 73px;
+  }
+
+  @include responsive.screen-xs {
+    left: 65px;
+  }
+}
+
+.mobileErrorMessage {
+  @include responsive.screen-md-minus {
+    bottom: -28px;
+    left: 65px;
+  }
+}
+
+.mobileErrorMessageAddButtonHidden {
+  @include responsive.screen-md-minus {
+    bottom: -23.5px;
+    left: 65px;
+  }
+}
+
+@include responsive.screen-xs {
+  .root {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+
+    .inputsContainer {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .inputResetButton {
+      position: static;
+      order: 1;
+      justify-self: start;
+    }
+
+    .formErrorMessage {
+      position: static;
+      white-space: normal;
+    }
+  }
+}

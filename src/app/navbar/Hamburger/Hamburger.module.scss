@@ -1,0 +1,75 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-responsive' as responsive;
+
+.root {
+  width: 40px;
+  height: 24px;
+  display: inline-block;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+
+  transition-property: opacity, filter;
+  transition-duration: 0.15s;
+  transition-timing-function: linear;
+
+  .hamburgerBox {
+    width: 40px;
+    height: 24px;
+    display: inline-block;
+    position: relative;
+  }
+
+  .hamburgerInner,
+  .hamburgerInner:before,
+  .hamburgerInner:after {
+    width: 40px;
+    height: 4px;
+    background: colors.$color-gradient;
+    position: absolute;
+    transition-property: transform;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
+  }
+
+  .hamburgerInner {
+    margin-top: -2px;
+    top: 2px;
+
+    &:before {
+      content: '';
+      display: block;
+      top: 10px;
+      transition-property: transform, opacity;
+      transition-timing-function: ease;
+      transition-duration: 0.15s;
+      width: 30px;
+    }
+
+    &:after {
+      content: '';
+      display: block;
+      top: 20px;
+      bottom: -10px;
+    }
+  }
+
+  @include responsive.screen-min(responsive.$screen-lg-min) {
+    display: none;
+  }
+}
+
+.hamburgerActive {
+  .hamburgerInner {
+    transform: translate3d(0, 10px, 0) rotate(45deg);
+
+    &:before {
+      transform: rotate(-45deg) translate3d(-5.71429px, -6px, 0);
+      opacity: 0;
+    }
+
+    &:after {
+      transform: translate3d(0, -20px, 0) rotate(-90deg);
+    }
+  }
+}

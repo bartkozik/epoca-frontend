@@ -1,0 +1,43 @@
+@use 'core/theme/common-colors' as colors;
+
+.modal {
+  width: min(640px, calc(100vw - 32px));
+  max-width: 640px;
+  text-align: left;
+  > button:first-child {
+    min-width: 44px;
+    min-height: 44px;
+    top: 4px;
+    right: 4px;
+  }
+}
+.form {
+  min-width: 0;
+}
+.form > div:first-child {
+  padding-right: 32px;
+}
+.fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+.note {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+  color: colors.$color-font-text;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.error {
+  color: #b42318;
+}

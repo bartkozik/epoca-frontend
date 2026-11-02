@@ -1,0 +1,52 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.carouselItem {
+  width: 100%;
+  opacity: 0;
+  height: 100%;
+  position: absolute;
+  transition:
+    opacity 3s ease-in-out,
+    filter 2s ease-in-out;
+  filter: blur(5px);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+
+  &.active {
+    display: block;
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.sliderDots {
+  @include flex.flex-center;
+  margin-top: auto;
+  margin-bottom: 75px;
+}
+
+.dot {
+  height: 5px;
+  width: 5px;
+  border-radius: 20%;
+  background: colors.$color-primary-light;
+  margin: 0 6px;
+  z-index: 1;
+  cursor: pointer;
+  transition: all 7.5s ease-in-out;
+
+  &.active {
+    width: 34px;
+    opacity: 1;
+    filter: blur(0);
+  }
+}

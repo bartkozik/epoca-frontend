@@ -1,0 +1,204 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-scrollbar' as scrollbar;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-search' as search;
+
+@include search.search-styles(400px);
+
+.root {
+  position: relative;
+  min-width: 160px;
+}
+
+.input input {
+  padding-right: 36px;
+  text-overflow: ellipsis;
+}
+
+.labelRow {
+  @include flex.flex-container(space-between, baseline, $gap: 8px);
+}
+
+.clear {
+  @include font.text(colors.$color-primary, 12px, font.$font-w-small);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.panel {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  width: max(100%, 320px);
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  background-color: colors.$color-white;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(37, 38, 40, 0.08);
+
+  @include responsive.screen-xs {
+    width: min(320px, calc(100vw - 32px));
+  }
+}
+
+.panelRight {
+  left: auto;
+  right: 0;
+}
+
+.metaStatus {
+  @include font.text(colors.$color-font-text, 12px, font.$font-w-small);
+  @include flex.flex-container(flex-start, center, $gap: 8px);
+  flex-wrap: wrap;
+  padding: 0 16px 8px;
+}
+
+.selectMatching {
+  align-self: flex-start;
+  margin: 0 8px 4px;
+}
+
+.options {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  @include scrollbar.vertical-scrollbar($margin-right: 0px);
+}
+
+.list {
+  margin: 0;
+  padding: 0 8px;
+  list-style: none;
+  text-align: left;
+}
+
+.groupHeading {
+  @include font.text(colors.$color-font-text, 12px, font.$font-w-small);
+  padding: 8px 8px 4px;
+}
+
+.divider {
+  height: 1px;
+  margin: 4px 8px;
+  background-color: colors.$color-border;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 10px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  @include font.text(colors.$color-font-heading, 12px, font.$font-w-small);
+}
+
+.optionHighlighted {
+  background-color: colors.$color-primary-lightest;
+}
+
+.optionInactive {
+  .optionLabel,
+  .trailing {
+    color: colors.$color-font-text;
+  }
+}
+
+.box {
+  @include flex.flex-center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid colors.$color-border-hover;
+  border-radius: 3px;
+  background-color: colors.$color-white;
+
+  svg {
+    fill: colors.$color-white;
+    stroke: colors.$color-white;
+  }
+}
+
+.boxChecked {
+  background-color: colors.$color-primary;
+  border-color: colors.$color-primary;
+}
+
+.optionText {
+  @include flex.flex-container(flex-start, flex-start, column);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.optionLabel {
+  color: inherit;
+}
+
+.optionSecondary {
+  @include font.text(colors.$color-font-text, 12px, font.$font-w-small);
+}
+
+.archivedTag {
+  @include font.text(colors.$color-font-text, 11px, font.$font-w-small);
+  margin-top: 2px;
+  padding: 0 4px;
+  border: 1px solid colors.$color-border;
+  border-radius: 4px;
+}
+
+.trailing {
+  width: 56px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  @include font.text(colors.$color-font-heading, 12px, font.$font-w-small);
+}
+
+.archivedToggleRow {
+  padding: 4px 0 0;
+}
+
+.archivedToggle {
+  @include flex.flex-container(flex-start, center, $gap: 6px);
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  @include font.text(colors.$color-font-text, 12px, font.$font-w-small);
+
+  &:hover {
+    background-color: colors.$color-primary-lightest;
+  }
+}
+
+.emptyState {
+  margin: 0;
+  padding: 24px 8px;
+  text-align: center;
+  @include font.text(colors.$color-font-heading, 12px, font.$font-w-small);
+}
+
+.searchIcon {
+  cursor: pointer;
+}

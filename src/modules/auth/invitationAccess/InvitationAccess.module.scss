@@ -1,0 +1,24 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+
+.root {
+  @include font.text(colors.$color-font-heading, 16px);
+  width: min(100%, 480px);
+  margin: 24px auto;
+  padding: 16px;
+  overflow-wrap: anywhere;
+}
+.details {
+  display: grid;
+  gap: 8px;
+  dd {
+    margin: 0 0 12px;
+  }
+  dt {
+    font-weight: font.$font-w-bold;
+  }
+}
+.form {
+  display: grid;
+  gap: 20px;
+}

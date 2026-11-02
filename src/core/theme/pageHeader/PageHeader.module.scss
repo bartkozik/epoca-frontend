@@ -1,0 +1,13 @@
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.header {
+  @include flex.flex-container(flex-start, stretch, column);
+  margin-top: 27px;
+
+  @include responsive.screen-min(responsive.$screen-lg-min) {
+    @include flex.flex-container(space-between, flex-start);
+    height: 38px;
+    margin-top: 41px;
+  }
+}

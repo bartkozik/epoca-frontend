@@ -1,0 +1,14 @@
+.git
+node_modules
+test-results
+safe-artifacts
+playwright-report
+blob-report
+coverage
+build
+.env
+.env.*
+.yarn/*
+!.yarn/releases
+.codex
+.agents

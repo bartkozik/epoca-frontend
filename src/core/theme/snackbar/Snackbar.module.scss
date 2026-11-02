@@ -1,0 +1,61 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-center;
+
+  max-width: 100svw;
+  overflow: hidden;
+  background-color: colors.$color-primary-lightest;
+  position: fixed;
+  padding: 23px 4px;
+  bottom: 0;
+  left: 0;
+  width: 100svw;
+  z-index: 10;
+
+  @include responsive.screen-md-minus {
+    @include flex.flex-container(space-between);
+    padding: 23px 70px;
+  }
+
+  @include responsive.screen-xs {
+    @include flex.flex-container(flex-start, flex-start, column);
+    padding: 15px 20px 20px 40px;
+  }
+}
+
+.toggleButton {
+  position: fixed;
+  bottom: 20px;
+  right: 25px;
+  z-index: 10;
+
+  &:hover:not(:disabled) {
+    opacity: 1;
+  }
+  @include responsive.screen-xs {
+    display: none;
+  }
+}
+
+.buttonIcon {
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  cursor: pointer;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 25px;
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-50%) rotate(90deg);
+  }
+}

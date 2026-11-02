@@ -1,0 +1,148 @@
+@use 'common-colors' as colors;
+@use 'common-responsive' as responsive;
+@use 'common-flex' as flex;
+@use 'common-font' as font;
+@use 'common-style' as common;
+
+@mixin basic-input {
+  .root {
+    @include flex.flex-container($flex-flow: column);
+    text-align: left;
+    color: colors.$color-font-heading;
+    position: relative;
+  }
+
+  .inputRelativeContainer {
+    position: relative;
+  }
+
+  .helperText {
+    @include font.text(colors.$color-font-heading, 10px);
+    position: absolute;
+    right: 0;
+    top: 54px;
+  }
+
+  .input {
+    @include font.text(colors.$color-font-heading, 14px);
+    width: 100%;
+    position: relative;
+    border: 1px solid colors.$color-border;
+    padding: 10px 16px;
+    border-radius: 0.5rem;
+    flex: 1;
+
+    &::placeholder {
+      color: colors.$color-font-heading;
+      opacity: 1;
+    }
+
+    &:-ms-input-placeholder {
+      color: colors.$color-font-heading;
+    }
+
+    &::-ms-input-placeholder {
+      color: colors.$color-font-heading;
+    }
+
+    &-small {
+      max-height: 40px;
+    }
+
+    &-normal {
+      min-height: 48px;
+    }
+
+    &-large {
+      min-height: 58px;
+    }
+
+    &Transparent {
+      background-color: transparent;
+    }
+
+    &Color {
+      padding-left: 27px;
+    }
+
+    &:hover {
+      border-color: colors.$color-border-hover;
+
+      &.inputReadOnly {
+        border-color: colors.$color-border;
+      }
+    }
+
+    &:active,
+    &:focus {
+      border-color: colors.$color-border-active;
+
+      &.inputReadOnly {
+        border-color: colors.$color-border;
+      }
+    }
+  }
+
+  .inputReadOnly {
+    cursor: default;
+  }
+
+  .linkWrapper {
+    position: absolute;
+    right: 19px;
+    top: 49px;
+    cursor: pointer;
+
+    .link {
+      @include font.text(colors.$color-placeholder, 13px, font.$font-w-small);
+    }
+  }
+
+  .errorMessage {
+    margin-top: 0.4rem;
+    @include flex.flex-container($align-items: center);
+
+    .icon {
+      color: colors.$color-primary;
+      background-color: colors.$color-border;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      font-size: 8px;
+      text-align: center;
+      margin-right: 0.4rem;
+    }
+
+    p {
+      color: colors.$color-primary-light;
+      font-size: 10px;
+    }
+  }
+
+  .error .input {
+    border: 2px solid colors.$color-border-text-input-error;
+  }
+
+  .iconContainer {
+    @include flex.flex-container($align-items: center);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 15.11px;
+  }
+
+  .iconContainerError {
+    top: 26%;
+    right: 19.11px;
+    transform: scale(2);
+  }
+
+  .colorDot {
+    position: absolute;
+    top: 49%;
+    transform: translateY(-50%);
+    z-index: 2;
+    left: 16px;
+    @include common.color-ball(6px);
+  }
+}

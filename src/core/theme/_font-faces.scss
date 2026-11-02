@@ -1,0 +1,32 @@
+// Must only be `@use`d from a non-CSS-Module stylesheet. Under Vite's dev server, a CSS Module's
+// compiled CSS is injected as its own inline `<style>` tag with no base URL of its own, so
+// `@font-face`'s relative `url()`s resolve against the current route instead of this file's
+// directory -- a broken request Vite 200s with its SPA-fallback `index.html`, which the browser
+// then fails to parse as a font.
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('./fonts/PlayfairDisplay-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('./fonts/PlayfairDisplay-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('./fonts/Poppins-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('./fonts/Poppins-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}

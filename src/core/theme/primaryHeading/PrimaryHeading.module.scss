@@ -1,0 +1,18 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+
+.root {
+  text-align: left;
+  @include font.text(
+    colors.$color-font-heading,
+    30px,
+    font.$font-w-max-bold,
+    $font-family: font.$font-family-secondary
+  );
+  margin-left: 10px;
+
+  @include responsive.screen-md-minus {
+    margin: 0;
+  }
+}

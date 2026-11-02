@@ -1,0 +1,267 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+
+.count {
+  @include font.text(colors.$color-font-text, 14px);
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.tableScroll {
+  max-width: 100%;
+  overflow: visible;
+}
+
+.tableCustom {
+  table-layout: fixed;
+
+  thead tr th,
+  tbody tr td {
+    padding-left: 16px;
+    padding-right: 16px;
+    text-align: left;
+  }
+
+  thead tr th:first-child,
+  tbody tr td:first-child {
+    padding-left: 22px;
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 30%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 14%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3),
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 20%;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 16%;
+  }
+
+  tbody tr td {
+    @include font.text(colors.$color-font-heading, 14px);
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  thead tr th:last-child {
+    padding-right: 22px;
+    text-align: right;
+  }
+
+  tbody tr td:last-child {
+    display: table-cell;
+    overflow: visible;
+    padding-right: 16px;
+  }
+}
+
+.clientCell {
+  white-space: normal;
+}
+
+.clientName,
+.clientIdVisual {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clientName {
+  @include font.text(colors.$color-font-heading, 16px, font.$font-w-medium);
+}
+
+.clientIdVisual {
+  @include font.text(colors.$color-font-text, 14px);
+  margin-top: 3px;
+}
+
+.status {
+  @include flex.flex-container(flex-start, center, $inline: true, $gap: 8px);
+  @include font.text(colors.$color-font-heading, 14px, font.$font-w-medium);
+  white-space: nowrap;
+}
+
+.statusDot {
+  border-radius: 50%;
+  flex: 0 0 8px;
+  height: 8px;
+  width: 8px;
+}
+
+.statusActive .statusDot {
+  background-color: colors.$color-success;
+}
+
+.statusExpired .statusDot {
+  background-color: colors.$color-orange;
+}
+
+.statusRevoked .statusDot {
+  background-color: colors.$color-error;
+}
+
+.actionMenu {
+  @include flex.flex-container(flex-end, center);
+  position: relative;
+  width: 100%;
+}
+
+.actionTrigger {
+  @include flex.flex-container(center, center, row, $inline: true, $gap: 8px);
+  @include font.text(colors.$color-font-heading, 14px, font.$font-w-medium);
+  background-color: colors.$color-white;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 92px;
+  padding: 0 14px;
+
+  &:hover:not(:disabled) {
+    border-color: colors.$color-border-hover;
+    color: colors.$color-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-border-active;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}
+
+.actionArrowOpen {
+  transform: rotate(180deg);
+}
+
+.actionMenuContent {
+  @include common.dropdown(colors.$color-white);
+  @include flex.flex-container(flex-start, stretch, column, $gap: 2px);
+  min-width: 168px;
+  opacity: 0;
+  padding: 8px;
+  pointer-events: none;
+  right: 0;
+  top: 50px;
+  visibility: hidden;
+  z-index: 4;
+
+  button {
+    justify-content: flex-start;
+    min-height: 44px;
+    padding: 0 12px;
+    width: 100%;
+  }
+}
+
+.actionMenuOpen {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.pagination {
+  @include flex.flex-container(center, center, column, $gap: 8px);
+  margin-top: 20px;
+}
+
+.paginationButton {
+  min-height: 44px;
+}
+
+.visuallyHidden {
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@include responsive.screen-sm-minus {
+  .tableScroll {
+    overflow-x: auto;
+  }
+
+  .metadataColumn {
+    display: none;
+  }
+
+  .tableCustom {
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 58%;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 22%;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: 20%;
+    }
+  }
+
+  .actionMenu {
+    align-items: flex-end;
+    flex-direction: column;
+  }
+
+  .actionMenuContent {
+    display: none;
+    margin-top: 6px;
+    position: static;
+  }
+
+  .actionMenuOpen {
+    display: flex;
+  }
+}
+
+@include responsive.screen-mobile {
+  .clientIdVisual {
+    display: none;
+  }
+
+  .tableCustom {
+    min-width: 680px;
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 300px;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 180px;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: 160px;
+    }
+  }
+}

@@ -1,0 +1,92 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-form' as form;
+@use 'core/theme/common-style' as common;
+@use 'core/theme/common-table' as table;
+@use 'font-faces';
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// A trackpad swipe with any horizontal component during drag-and-drop (pivot table field builder,
+// working-time calendar units) is otherwise read by the browser as a back/forward navigation
+// gesture, bouncing the user off the page mid-drag. This disables that gesture app-wide rather
+// than only during a drag -- scoping it to drag state would mean toggling a class on every
+// dnd-kit drag-start/drag-end, and the SPA has no legitimate use for swipe-navigating browser
+// history within a page. Set on both `html` and `body` since browsers vary in which one they
+// honor for this property.
+html {
+  overscroll-behavior-x: none;
+}
+
+body {
+  background-color: colors.$color-white;
+  min-height: 100vh;
+  overscroll-behavior-x: none;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+  color: colors.$color-font-text;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  @include font.typography;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+input,
+textarea {
+  border: none;
+  outline: none;
+}
+
+button,
+a,
+div {
+  outline-color: colors.$color-border-active;
+}
+
+.container {
+  @include common.container;
+}
+
+.table {
+  @include table.table;
+}
+
+.form {
+  @include form.form;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.color-ball {
+  @include common.color-ball;
+}
+
+.details-view {
+  @include common.details-view;
+}

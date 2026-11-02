@@ -1,0 +1,59 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+@use 'core/theme/common-style' as common;
+@use 'core/theme/common-table' as table;
+
+.tableCustom {
+  @include table.table-cell-width('Project', 30%);
+  @include table.table-cell-width('Client', 55%);
+  @include table.table-cell-width('Members', 12%);
+  @include table.table-cell-width('Date Added', 2%);
+
+  @include table.table-with-only-first-column-mobile;
+
+  td[data-th='Members'] {
+    text-align: center;
+  }
+
+  td[data-th='Action'] {
+    margin-left: 100px;
+
+    @include responsive.screen-sm-minus {
+      margin: 20px 0 10px 0px;
+    }
+  }
+
+  @include responsive.screen-sm {
+    @include table.table-cell-width('Project', 28%);
+    @include table.table-cell-width('Client', 40%);
+    @include table.table-cell-width('Members', 15%);
+  }
+
+  @include responsive.screen-xs {
+    @include table.table-cell-width('Project', 100%);
+  }
+}
+
+.clientNameBox {
+  @include flex.flex-container(flex-start, center);
+  @include font.text(colors.$color-primary, 14px, font.$font-w-medium);
+
+  @include responsive.screen-sm-plus {
+    display: none;
+  }
+
+  @include responsive.screen-xs {
+    margin-bottom: -30px;
+  }
+}
+
+.clientName {
+  @include flex.flex-container(flex-start, center);
+  max-width: 200px;
+}
+
+.colorBall {
+  @include common.color-ball(14px);
+}

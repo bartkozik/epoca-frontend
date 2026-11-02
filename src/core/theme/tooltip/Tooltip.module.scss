@@ -1,0 +1,74 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+
+.root {
+  display: inline-flex;
+  position: relative;
+  min-width: 0;
+}
+
+.tooltip {
+  @include font.text(colors.$color-font-heading, 12px);
+  position: absolute;
+  left: 50%;
+  z-index: 10;
+  visibility: hidden;
+  width: max-content;
+  min-width: min(161px, calc(100vw - 24px));
+  min-height: 69px;
+  max-width: min(240px, calc(100vw - 24px));
+  padding: 17px 13px;
+  border-radius: 8px;
+  background: colors.$color-border;
+  opacity: 0;
+  pointer-events: none;
+  text-align: left;
+  line-height: 1rem;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.visible {
+  visibility: visible;
+  opacity: 1;
+}
+.fitViewport {
+  max-height: calc(100vh - 24px);
+  overflow: hidden;
+}
+
+.bottom {
+  top: calc(100% + 5px);
+  transform: translate(calc(-50% + var(--tooltip-horizontal-offset)), var(--tooltip-vertical-offset, 0px));
+
+  &::before {
+    position: absolute;
+    top: -5px;
+    left: calc(50% - var(--tooltip-horizontal-offset));
+    width: 0;
+    height: 0;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid colors.$color-border;
+    border-left: 5px solid transparent;
+    content: '';
+    transform: translateX(-50%);
+  }
+}
+
+.top {
+  bottom: calc(100% + 5px);
+  transform: translate(calc(-50% + var(--tooltip-horizontal-offset)), var(--tooltip-vertical-offset, 0px));
+
+  &::before {
+    position: absolute;
+    bottom: -5px;
+    left: calc(50% - var(--tooltip-horizontal-offset));
+    width: 0;
+    height: 0;
+    border-top: 5px solid colors.$color-border;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    content: '';
+    transform: translateX(-50%);
+  }
+}

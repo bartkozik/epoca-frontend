@@ -1,0 +1,116 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-container(flex-start, stretch, column);
+  padding-left: 52px;
+  text-align: left;
+  width: 100%;
+
+  @include responsive.screen-xs {
+    padding: 29px 0;
+  }
+}
+
+.header {
+  @include flex.flex-container(space-between, flex-start, row, $gap: 24px);
+  margin-bottom: 24px;
+
+  > button {
+    flex: 0 0 auto;
+    min-height: 44px;
+  }
+}
+
+.headerCopy {
+  @include font.text(colors.$color-font-heading);
+  min-width: 0;
+  text-align: left;
+
+  h3 {
+    @include font.text(colors.$color-font-heading, 18px, font.$font-w-max-bold);
+    margin-bottom: 6px;
+    text-align: left;
+  }
+
+  p {
+    @include font.text(colors.$color-font-text, 16px);
+    line-height: 1.5;
+    text-align: left;
+  }
+}
+
+.loadingState {
+  @include flex.flex-container(center, center, column, $gap: 18px);
+  @include font.text(colors.$color-font-text, 14px);
+  min-height: 220px;
+  position: relative;
+}
+
+.loadingArea {
+  min-height: 140px;
+}
+
+.emptyState,
+.errorState {
+  background-color: colors.$color-primary-lightest;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: left;
+
+  h4 {
+    @include font.text(colors.$color-font-heading, 16px, font.$font-w-medium);
+    margin-bottom: 6px;
+  }
+
+  p {
+    @include font.text(colors.$color-font-text, 14px);
+    line-height: 1.5;
+  }
+}
+
+.errorState {
+  h4 {
+    color: colors.$color-error;
+  }
+}
+
+.stateButton {
+  margin-top: 16px;
+  min-height: 44px;
+}
+
+.lifecycleNotice {
+  @include font.text(colors.$color-font-text, 14px);
+  background-color: colors.$color-primary-lightest;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.visuallyHidden {
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@include responsive.screen-xs {
+  .header {
+    align-items: stretch;
+    flex-direction: column;
+
+    > button {
+      width: 100%;
+    }
+  }
+}

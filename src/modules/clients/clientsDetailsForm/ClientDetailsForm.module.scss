@@ -1,0 +1,37 @@
+@use 'core/theme/common-colors' as colors;
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-responsive' as responsive;
+@use 'core/theme/common-flex' as flex;
+
+.maxWidth {
+  width: 100%;
+}
+
+.maxBottomMargin {
+  margin-bottom: 30px;
+}
+
+.nameInput {
+  margin-bottom: 30px;
+}
+
+.logoInput {
+  margin-bottom: 39px;
+}
+
+.backgroundPickers {
+  @include flex.flex-container(space-between);
+
+  @include responsive.screen-xs {
+    @include flex.flex-container(flex-start, flex-start, column);
+  }
+}
+
+.clientType {
+  @include font.text(colors.$color-font-heading, 16px);
+}
+
+.archived {
+  @include font.text(colors.$color-font-heading, 16px);
+  margin-bottom: 20px;
+}

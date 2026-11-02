@@ -1,0 +1,34 @@
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  cursor: pointer;
+}
+
+.header {
+  @include flex.flex-container(space-between, center);
+  position: relative;
+}
+
+.icon {
+  margin-top: 4px;
+}
+
+.triangleContainer {
+  margin-left: 7px;
+  margin-right: auto;
+  @include flex.flex-container(space-between, center, column);
+  height: 15px;
+}
+
+.triangle {
+  width: 10px;
+  height: 24px;
+
+  svg {
+    transform: scale(1.5);
+  }
+}
+
+.flipped {
+  transform: rotate(180deg);
+}

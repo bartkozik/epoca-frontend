@@ -1,0 +1,180 @@
+@use 'core/theme/common-colors' as colors;
+
+.root {
+  border-top: 1px solid colors.$color-border;
+  margin-top: 16px;
+  min-width: 0;
+  color: colors.$color-font-heading;
+  text-align: left;
+}
+.toggle {
+  width: 100%;
+  padding: 12px 0;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.toggle:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.region {
+  min-width: 0;
+}
+.content {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.viewSwitch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.viewButton {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid colors.$color-border;
+  border-radius: 6px;
+  background: colors.$color-white;
+  color: colors.$color-text-button;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+}
+.viewButton[aria-pressed='true'] {
+  border-color: colors.$color-border-active;
+  background: colors.$color-primary-lightest;
+  color: colors.$color-primary-dark;
+}
+.viewButton:focus-visible {
+  outline: 2px solid colors.$color-border-active;
+  outline-offset: 2px;
+}
+.viewButton:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.list:not(:empty) + * {
+  margin-top: 12px;
+}
+.entry {
+  padding: 12px;
+  border: 1px solid colors.$color-border;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.entry:hover {
+  border-color: colors.$color-border-hover;
+}
+.inactiveEntry {
+  border-color: colors.$color-inactive-border;
+  background: colors.$color-inactive-background;
+  color: colors.$color-inactive-text;
+}
+.inactiveEntry:hover {
+  border-color: colors.$color-inactive-border-hover;
+}
+.inactiveEntry strong,
+.inactiveEntry th {
+  color: colors.$color-inactive-heading;
+}
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+.headerTitle {
+  display: flex;
+  flex: 1 1 180px;
+  flex-direction: column;
+  min-width: 0;
+}
+.currentStatus {
+  color: colors.$color-primary-dark;
+  font-size: 12px;
+  font-weight: 600;
+}
+.headerMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 12px;
+  text-align: right;
+}
+.headerMeta time span {
+  display: block;
+}
+.restored {
+  margin: 6px 0 0;
+  font-size: 12px;
+}
+.reverted {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 6px 0 0;
+  font-size: 12px;
+}
+.undoAction {
+  margin-top: 12px;
+}
+.changesScroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.changesTable {
+  width: 100%;
+  margin: 12px 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.changesTable th,
+.changesTable td {
+  padding: 7px 8px 7px 0;
+  border-bottom: 1px solid colors.$color-border;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.changesTable thead th {
+  font-size: 12px;
+  font-weight: 500;
+}
+.changesTable thead th:first-child {
+  width: 20%;
+}
+.changesTable thead th:nth-child(2),
+.changesTable thead th:nth-child(3) {
+  width: 40%;
+}
+.changesTable tbody th {
+  font-weight: 500;
+}
+.cardFooter {
+  display: flex;
+  justify-content: flex-end;
+}
+.compact,
+.compact > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-wrap: anywhere;
+}

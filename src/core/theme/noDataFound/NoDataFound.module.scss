@@ -1,0 +1,13 @@
+@use 'core/theme/common-font' as font;
+@use 'core/theme/common-flex' as flex;
+
+.root {
+  @include flex.flex-center-column;
+  margin-top: 45px;
+}
+
+.label {
+  @include font.font(16);
+  margin-top: 35px;
+  margin-bottom: 20px;
+}
