@@ -98,7 +98,7 @@ it('unmounts the old workspace when another tab rotates its credentials', async 
     </DemoShell>,
   );
   await screen.findByText('Real EPOCA application');
-  act(() =>
+  await act(() =>
     window.dispatchEvent(
       new StorageEvent('storage', { key: LOCAL_STORAGE_AUTH_NAME.ACCESS_TOKEN, newValue: 'changed' }),
     ),

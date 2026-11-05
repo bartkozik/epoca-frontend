@@ -1,5 +1,6 @@
 FROM ghcr.io/bartkozik/portfolio-infra@sha256:1a23c66865a1e81113270900934e615f34bd8a05be409a6a7ddd5272d46bd35d
 COPY build/ /srv/
+RUN mkdir -p /srv/assets && printf '%s\n' 'window.env = {};' > /srv/assets/env.js
 COPY deploy/Caddyfile /etc/caddy/Caddyfile
 ENV XDG_CONFIG_HOME=/tmp/config XDG_DATA_HOME=/tmp/data
 USER 1000:1000
