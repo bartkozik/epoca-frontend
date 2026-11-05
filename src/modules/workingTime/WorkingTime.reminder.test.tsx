@@ -93,11 +93,12 @@ it('dismisses the unreported-drafts warning for 24 hours, then shows it again', 
 });
 
 it.each([
-  { isDemo: true, dateFrom: '2025-11-05' },
-  { isDemo: false, dateFrom: '2017-01-01' },
-])('uses the supported draft range when demo=$isDemo', ({ isDemo, dateFrom }) => {
+  { isDemo: true, now: new Date(2026, 10, 5, 0, 30), dateFrom: '2025-11-05', dateTo: '2026-11-05' },
+  { isDemo: true, now: new Date(2025, 1, 28, 16, 30), dateFrom: '2024-02-28', dateTo: '2025-02-28' },
+  { isDemo: false, now: new Date(2026, 10, 5, 12), dateFrom: '2017-01-01', dateTo: undefined },
+])('uses the supported draft range when demo=$isDemo', ({ isDemo, now, dateFrom, dateTo }) => {
   vi.useFakeTimers();
-  vi.setSystemTime(new Date('2026-11-05T12:00:00.000Z'));
+  vi.setSystemTime(now);
   demo.isDemo = isDemo;
 
   render(
@@ -107,7 +108,7 @@ it.each([
   );
 
   expect(useUnitsQuery).toHaveBeenCalledWith(
-    expect.objectContaining({ dateFrom, state: 'Draft' }),
+    expect.objectContaining({ dateFrom, ...(isDemo && { dateTo }), state: 'Draft' }),
     expect.objectContaining({ enabled: true }),
   );
 });

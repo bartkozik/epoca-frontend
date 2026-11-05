@@ -62,8 +62,10 @@ function WorkingTime(): JSX.Element {
   const mainUnitsDto = buildMainUnitsDto(weekStart, weekEnd, loggedInUser ? [loggedInUser.id] : []);
   const unitsQuery = useUnitsQuery(mainUnitsDto, { enabled: Boolean(loggedInUser) });
 
+  const today = dayjs();
   const draftsDto = {
-    dateFrom: isDemo ? dayjs().subtract(1, 'year').format('YYYY-MM-DD') : MAX_DATA_FETCH_DATE,
+    dateFrom: isDemo ? today.subtract(1, 'year').format('YYYY-MM-DD') : MAX_DATA_FETCH_DATE,
+    ...(isDemo && { dateTo: today.format('YYYY-MM-DD') }),
     userId: loggedInUser ? [loggedInUser.id] : [],
     state: UnitState.Draft,
   };
