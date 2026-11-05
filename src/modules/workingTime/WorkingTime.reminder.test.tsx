@@ -2,11 +2,15 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { UnitWorkspaceProvider } from './UnitWorkspaceProviderComponent';
 import WorkingTime from './WorkingTime';
 
-const { fetchClients, fetchProjects, hasAccess } = vi.hoisted(() => ({
+const { fetchClients, fetchProjects, hasAccess, demo, useUnitsQuery } = vi.hoisted(() => ({
   fetchClients: vi.fn(),
   fetchProjects: vi.fn(),
   hasAccess: vi.fn(() => true),
+  demo: { isDemo: false },
+  useUnitsQuery: vi.fn(() => ({ data: { draftIds: ['draft-1'] }, isLoading: false, isError: false })),
 }));
+
+vi.mock('@/core/config/demo', () => demo);
 
 vi.mock('@/modules/auth/AuthProvider', () => ({
   useAuth: () => ({ loggedInUser: { id: 'user-1' }, hasAccess }),
@@ -26,7 +30,7 @@ vi.mock('@/modules/workingTime/hooks/useDeleteUnitMutation', () => ({
   useDeleteUnitMutation: () => ({ mutate: vi.fn() }),
 }));
 vi.mock('@/modules/workingTime/hooks/useUnitsQuery', () => ({
-  useUnitsQuery: () => ({ data: { draftIds: ['draft-1'] }, isLoading: false, isError: false }),
+  useUnitsQuery,
   selectModeledUnits: () => [],
 }));
 vi.mock('./Calendar/UnitForm/useWorkUnitSubmission', () => ({
@@ -60,6 +64,7 @@ vi.mock('./DraftsBoard', () => ({ default: () => null }));
 vi.mock('./WeeklyHoursBar', () => ({ default: () => null }));
 
 afterEach(() => {
+  demo.isDemo = false;
   vi.useRealTimers();
   localStorage.clear();
   vi.clearAllMocks();
@@ -85,4 +90,24 @@ it('dismisses the unreported-drafts warning for 24 hours, then shows it again', 
 
   act(() => void vi.advanceTimersByTime(1));
   expect(screen.getByRole('button', { name: later })).toBeInTheDocument();
+});
+
+it.each([
+  { isDemo: true, dateFrom: '2025-11-05' },
+  { isDemo: false, dateFrom: '2017-01-01' },
+])('uses the supported draft range when demo=$isDemo', ({ isDemo, dateFrom }) => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date('2026-11-05T12:00:00.000Z'));
+  demo.isDemo = isDemo;
+
+  render(
+    <UnitWorkspaceProvider>
+      <WorkingTime />
+    </UnitWorkspaceProvider>,
+  );
+
+  expect(useUnitsQuery).toHaveBeenCalledWith(
+    expect.objectContaining({ dateFrom, state: 'Draft' }),
+    expect.objectContaining({ enabled: true }),
+  );
 });

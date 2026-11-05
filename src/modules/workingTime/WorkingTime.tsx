@@ -1,4 +1,5 @@
 import { ROLE_PERMISSIONS } from '@/app/routing/rolePermissions';
+import { isDemo } from '@/core/config/demo';
 import Confirmation, { ConfirmationAction } from '@/core/theme/confirmation';
 import LoadingArea from '@/core/theme/loadingArea';
 import Modal from '@/core/theme/modal';
@@ -13,6 +14,7 @@ import { useWorkspace } from '@/modules/organizations/WorkspaceProvider';
 import { useProjects } from '@/modules/projects/ProjectsProvider';
 import { getReportedUnits } from '@/modules/reports/hooks/useReportedUnits';
 import { selectModeledUnits, useUnitsQuery } from '@/modules/workingTime/hooks/useUnitsQuery';
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { bootstrapWorkingTime } from './bootstrapWorkingTime';
@@ -61,7 +63,7 @@ function WorkingTime(): JSX.Element {
   const unitsQuery = useUnitsQuery(mainUnitsDto, { enabled: Boolean(loggedInUser) });
 
   const draftsDto = {
-    dateFrom: MAX_DATA_FETCH_DATE,
+    dateFrom: isDemo ? dayjs().subtract(1, 'year').format('YYYY-MM-DD') : MAX_DATA_FETCH_DATE,
     userId: loggedInUser ? [loggedInUser.id] : [],
     state: UnitState.Draft,
   };
