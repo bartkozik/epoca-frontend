@@ -11,7 +11,7 @@ import styles from './DemoShell.module.scss';
 import { requestDemoSession, type DemoSession } from './requests';
 
 export function DemoShell({ children }: PropsWithChildren): JSX.Element {
-  const { persistSession, changeUserLanguage, loggedInUser } = useAuth();
+  const { persistSession, loggedInUser } = useAuth();
   const [session, setSession] = useState<DemoSession | null>(null);
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState('');
@@ -100,7 +100,6 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
       await queryClient.cancelQueries();
       const next = await requestDemoSession(reset ? 'reset' : 'start');
       queryClient.clear();
-      if (!reset) changeUserLanguage('en');
       window.history.replaceState(null, '', paths.index);
       acceptSession(next);
     } catch (cause) {
