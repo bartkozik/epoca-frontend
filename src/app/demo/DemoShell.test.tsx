@@ -4,8 +4,9 @@ import userEvent from '@testing-library/user-event';
 import { DemoShell } from './DemoShell';
 import { requestDemoSession } from './requests';
 
-const { persistSession, clearCache, cancelQueries } = vi.hoisted(() => ({
+const { persistSession, clearCache, cancelQueries, changeUserLanguage } = vi.hoisted(() => ({
   persistSession: vi.fn(),
+  changeUserLanguage: vi.fn(),
   clearCache: vi.fn(),
   cancelQueries: vi.fn().mockResolvedValue(undefined),
 }));
@@ -13,7 +14,7 @@ vi.mock('./requests', () => ({ requestDemoSession: vi.fn() }));
 vi.mock('@/modules/auth/AuthProvider', () => ({
   useAuth: () => ({
     persistSession,
-    changeUserLanguage: vi.fn(),
+    changeUserLanguage,
     loggedInUser: { id: 'guest' },
   }),
 }));
@@ -46,6 +47,7 @@ it('keeps the application unmounted until a visitor opens a guest workspace', as
   await user.click(screen.getByRole('button', { name: 'Open demo' }));
   expect(await screen.findByText('Real EPOCA application')).toBeInTheDocument();
   expect(persistSession).toHaveBeenCalledWith('token', 'demo-guest');
+  expect(changeUserLanguage).not.toHaveBeenCalled();
 });
 
 it.each(['/projects/old-id/project-details?clientId=old-client', '/clients/old-id/client-details'])(
@@ -70,6 +72,7 @@ it.each(['/projects/old-id/project-details?clientId=old-client', '/clients/old-i
     expect(window.location.pathname).toBe('/working-time');
     expect(window.location.search).toBe('');
     expect(window.history.state).toBeNull();
+    expect(changeUserLanguage).not.toHaveBeenCalled();
   },
 );
 
