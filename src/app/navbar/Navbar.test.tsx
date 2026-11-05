@@ -24,7 +24,7 @@ it('updates owner navigation when the current workspace resolves or changes', ()
     </MemoryRouter>
   );
   const { rerender } = render(view);
-  expect(screen.queryByRole('link', { name: 'common.clients' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: /common\.clients/ })).not.toBeInTheDocument();
 
   workspace.contextOrganizationId = 'owner-workspace';
   rerender(
@@ -32,9 +32,9 @@ it('updates owner navigation when the current workspace resolves or changes', ()
       <Navbar />
     </MemoryRouter>,
   );
-  expect(screen.getByRole('link', { name: 'common.clients' })).toHaveAttribute('href', '/clients');
-  expect(screen.getByRole('link', { name: 'common.projects' })).toHaveAttribute('href', '/projects');
-  expect(screen.getByRole('link', { name: 'common.reports' })).toHaveAttribute('href', '/report');
+  expect(screen.getByRole('link', { name: /common\.clients/ })).toHaveAttribute('href', '/clients');
+  expect(screen.getByRole('link', { name: /common\.projects/ })).toHaveAttribute('href', '/projects');
+  expect(screen.getByRole('link', { name: /common\.reports/ })).toHaveAttribute('href', '/report');
 
   workspace.contextOrganizationId = 'another-workspace';
   rerender(
@@ -42,7 +42,7 @@ it('updates owner navigation when the current workspace resolves or changes', ()
       <Navbar />
     </MemoryRouter>,
   );
-  expect(screen.queryByRole('link', { name: 'common.clients' })).not.toBeInTheDocument();
-  expect(screen.queryByRole('link', { name: 'common.projects' })).not.toBeInTheDocument();
-  expect(screen.queryByRole('link', { name: 'common.reports' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: /common\.clients/ })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: /common\.projects/ })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: /common\.reports/ })).not.toBeInTheDocument();
 });
