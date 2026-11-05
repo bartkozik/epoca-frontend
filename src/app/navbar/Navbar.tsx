@@ -7,6 +7,7 @@ import MainContent from '@/core/theme/mainContent';
 import { KeyBoardEventType, useKeyDown, useOnClickOutside } from '@/core/utils/hooks';
 import { useAuth } from '@/modules/auth/AuthProvider';
 import { clientsPaths } from '@/modules/clients/routes';
+import { useWorkspace } from '@/modules/organizations/WorkspaceProvider';
 import { projectsPaths } from '@/modules/projects/routes';
 import { reportPaths } from '@/modules/reports/report/routes';
 import { teamSettingsPaths } from '@/modules/teamSettings/routes';
@@ -32,7 +33,8 @@ function Navbar(): JSX.Element {
   const params = useParams();
 
   const auth = useAuth();
-  const { hasAccess, userChosenLanguage } = auth;
+  const { hasAccessInOrganization, userChosenLanguage } = auth;
+  const { contextOrganizationId } = useWorkspace();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -112,7 +114,7 @@ function Navbar(): JSX.Element {
     if (!item.requiredPermissions) return true;
 
     const requiredRoles = ROLE_PERMISSIONS[item.requiredPermissions];
-    return hasAccess(requiredRoles);
+    return hasAccessInOrganization(contextOrganizationId ?? '', requiredRoles);
   };
 
   return (
