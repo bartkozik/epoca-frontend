@@ -1,4 +1,6 @@
 import api, { queryClient, removeRefreshToken } from '@/core/api';
+import { LOCAL_STORAGE_AUTH_NAME } from '@/core/config/localStorageKeys';
+import { paths } from '@/app/routing/paths';
 import Button from '@/core/theme/button';
 import Modal from '@/core/theme/modal';
 import { useAuth } from '@/modules/auth/AuthProvider';
@@ -16,6 +18,7 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
   const [showGuide, setShowGuide] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const pending = useRef(false);
+  const activeToken = useRef<string | null>(null);
 
   const acceptSession = useCallback(
     (next: DemoSession | null) => {
@@ -23,6 +26,7 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
         removeRefreshToken();
         persistSession(next.accessToken, next.organizationSlug);
       }
+      activeToken.current = next?.accessToken ?? null;
       setSession(next);
     },
     [persistSession],
@@ -45,7 +49,13 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
 
   useEffect(() => {
     const id = api.interceptors.response.use(undefined, (cause: unknown) => {
-      if (isAxiosError(cause) && cause.response?.status === 401) {
+      if (
+        isAxiosError(cause) &&
+        cause.response?.status === 401 &&
+        activeToken.current &&
+        cause.config?.headers?.Authorization === `Bearer ${activeToken.current}`
+      ) {
+        activeToken.current = null;
         setSession(null);
         setError('Your workspace session has ended or changed in another tab. Open the demo again to continue.');
       }
@@ -55,10 +65,24 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
   }, []);
 
   useEffect(() => {
+    const onStorage = (event: StorageEvent): void => {
+      if (event.key !== LOCAL_STORAGE_AUTH_NAME.ACCESS_TOKEN && event.key !== null) return;
+      activeToken.current = null;
+      setSession(null);
+      setError('Your workspace changed in another tab. Open the demo again to continue.');
+      void queryClient.cancelQueries();
+      queryClient.clear();
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  useEffect(() => {
     if (!session) return undefined;
     const timer = window.setTimeout(
       () => {
         setSession(null);
+        activeToken.current = null;
         setError('Your demo session has expired. Open a new workspace to continue.');
       },
       Math.max(0, Date.parse(session.expiresAt) - Date.now() - 60_000),
@@ -77,6 +101,7 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
       const next = await requestDemoSession(reset ? 'reset' : 'start');
       queryClient.clear();
       if (!reset) changeUserLanguage('en');
+      window.history.replaceState(null, '', paths.index);
       acceptSession(next);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Please try again.');
