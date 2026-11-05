@@ -8,6 +8,7 @@
 // because an unset build-time var resolves to `undefined` at runtime, which env.ts already handles.
 // Not `readonly` -- env.test.ts deliberately reassigns these to mock build-time values per test.
 interface ImportMetaEnv {
+  VITE_DEMO_ENABLED?: string;
   VITE_API_BASE_URL?: string;
   VITE_PUBLIC_URL?: string;
 }

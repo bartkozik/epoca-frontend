@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import { resources } from '@/core/i18n';
 import Avatar from '@/core/theme/avatar';
 import Button from '@/core/theme/button';
@@ -115,7 +116,7 @@ function UserAvatarMenu({ setIsMenuOpen }: UserAvatarMenuProps): JSX.Element {
               color="fontHeading"
               startIcon={<Icon icon={icons.language} height={32} />}
             />
-            <li className={styles.avatarLinkItem}>
+            <li className={styles.avatarLinkItem} hidden={isDemo}>
               <Button
                 maxWidth
                 href="https://gravatar.com/profile/avatars"
@@ -143,6 +144,7 @@ function UserAvatarMenu({ setIsMenuOpen }: UserAvatarMenuProps): JSX.Element {
               maxWidth
               dataTestId="user-avatar-menu-logout-button"
               label={t('common.logout')}
+              hidden={isDemo}
               onClick={handleLogout}
               size="small"
               variant="contained"

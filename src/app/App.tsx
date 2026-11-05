@@ -1,3 +1,5 @@
+import { DemoShell } from '@/app/demo/DemoShell';
+import { isDemo } from '@/core/config/demo';
 import Router from '@/app/routing/Router';
 import { queryClient, saveDeviceId } from '@/core/api';
 import Toasts, { ToastProvider } from '@/core/providers/toastProvider';
@@ -49,7 +51,7 @@ function App(): JSX.Element {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <AuthProvider>
-          <SessionProviders />
+          {isDemo ? <DemoShell><SessionProviders /></DemoShell> : <SessionProviders />}
         </AuthProvider>
       </ToastProvider>
     </QueryClientProvider>
