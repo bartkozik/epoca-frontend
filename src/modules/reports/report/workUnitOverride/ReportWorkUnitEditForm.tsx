@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import { ROLE_PERMISSIONS } from '@/app/routing/rolePermissions';
 import Button from '@/core/theme/button';
 import Confirmation from '@/core/theme/confirmation';
@@ -32,7 +33,8 @@ const EditSession = ({ unit, onClose }: Props): JSX.Element => {
 
   const workspace = useWorkspace();
   const [organizationSlug] = useState(workspace.contextOrganizationSlug);
-  const correctionAllowed = Boolean(unit.override?.permissions.canEdit || unit.override?.permissions.canViewHistory);
+  const correctionAllowed =
+    !isDemo && Boolean(unit.override?.permissions.canEdit || unit.override?.permissions.canViewHistory);
   const [pending, setPending] = useState<'close' | null>(null);
   const pendingRef = useRef<'close' | null>(null);
   const sourceDirtyRef = useRef(false);

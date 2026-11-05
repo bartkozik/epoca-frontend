@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import { useToast } from '@/core/providers/toastProvider';
 import noReportsImage from '@/core/theme/assets/images/projectsComponentImages/multitasking.png';
 import Button from '@/core/theme/button';
@@ -237,14 +238,16 @@ const ReportBoard = ({
               size="small"
             />
           </div>
-          <ReportExportActions
-            label={t('report.report_board.text.export_selected')}
-            csvLoading={csvExportMutation.isPending}
-            disabled={false}
-            onCsv={() => handleExport(SpreadsheetFormat.CSV)}
-            onXlsx={() => handleExport(SpreadsheetFormat.XLS)}
-            xlsxLoading={xlsxExportMutation.isPending}
-          />
+          {!isDemo && (
+            <ReportExportActions
+              label={t('report.report_board.text.export_selected')}
+              csvLoading={csvExportMutation.isPending}
+              disabled={false}
+              onCsv={() => handleExport(SpreadsheetFormat.CSV)}
+              onXlsx={() => handleExport(SpreadsheetFormat.XLS)}
+              xlsxLoading={xlsxExportMutation.isPending}
+            />
+          )}
         </div>
       </Snackbar>
     </>

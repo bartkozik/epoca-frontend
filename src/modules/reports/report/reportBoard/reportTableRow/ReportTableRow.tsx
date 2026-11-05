@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import { ROLE_PERMISSIONS } from '@/app/routing/rolePermissions';
 import Checkbox from '@/core/theme/checkbox';
 import Icon, { icons } from '@/core/theme/icon';
@@ -51,7 +52,8 @@ const ReportTableRow = ({
     (loggedInUser && userId === loggedInUser.id) || hasAccess(ROLE_PERMISSIONS.Owner);
   const displayedDuration = entryType === WorkUnitEntryType.Note ? '-' : formattedReportDuration;
 
-  const canOpenCorrection = Boolean(unit.override?.permissions.canEdit || unit.override?.permissions.canViewHistory);
+  const canOpenCorrection =
+    !isDemo && Boolean(unit.override?.permissions.canEdit || unit.override?.permissions.canViewHistory);
   const actionButtons =
     restrictedAccess || canOpenCorrection ? (
       <div className={styles.btnBox}>

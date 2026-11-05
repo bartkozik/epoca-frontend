@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import { ROLE_PERMISSIONS } from '@/app/routing/rolePermissions';
 import { useToast } from '@/core/providers/toastProvider';
 import Button from '@/core/theme/button';
@@ -205,17 +206,19 @@ const ClientDetailsForm = ({ client }: ClientDetailsFormProps): JSX.Element => {
           </div>
         )}
         {displayClientType()}
-        <Input
-          className={clsx(styles.logoInput, styles.maxWidth)}
-          label={t('clients.common.logo')}
-          name="Logo"
-          onChange={(e) => handleInputFieldChange(e, 'logoURL')}
-          readOnly={archived || restrictedAccess}
-          type="text"
-          value={logoURL}
-          error={clientFormErrors.logoURL}
-          infoText={t('clients.common.input.logo_url.info_text')}
-        />
+        {!isDemo && (
+          <Input
+            className={clsx(styles.logoInput, styles.maxWidth)}
+            label={t('clients.common.logo')}
+            name="Logo"
+            onChange={(e) => handleInputFieldChange(e, 'logoURL')}
+            readOnly={archived || restrictedAccess}
+            type="text"
+            value={logoURL}
+            error={clientFormErrors.logoURL}
+            infoText={t('clients.common.input.logo_url.info_text')}
+          />
+        )}
 
         {archived && (
           <>
