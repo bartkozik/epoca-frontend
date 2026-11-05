@@ -17,10 +17,21 @@
   color: colors.$color-font-heading;
   line-height: 1.6;
 
-  h1, h2 { margin-bottom: 16px; }
-  h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.2; }
-  p { margin-bottom: 16px; }
-  a { color: colors.$color-primary-dark; text-decoration: underline; }
+  h1,
+  h2 {
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.2;
+  }
+  p {
+    margin-bottom: 16px;
+  }
+  a {
+    color: colors.$color-primary-dark;
+    text-decoration: underline;
+  }
 }
 
 .eyebrow {
@@ -34,7 +45,9 @@
   padding-left: 24px;
   margin: 24px 0;
   list-style: decimal;
-  li { padding: 6px 0; }
+  li {
+    padding: 6px 0;
+  }
 }
 
 .banner {
@@ -48,7 +61,10 @@
   border-bottom: 1px solid colors.$color-border;
   color: colors.$color-primary-dark;
   font-size: 14px;
-  a { color: inherit; text-decoration: underline; }
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
 }
 
 .actions {
@@ -58,8 +74,13 @@
   gap: 12px;
 }
 
-.notice { padding: 24px; text-align: center; }
+.notice {
+  padding: 24px;
+  text-align: center;
+}
 
 @media print {
-  .banner { display: none; }
+  .banner {
+    display: none;
+  }
 }

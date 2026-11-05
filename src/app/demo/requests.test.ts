@@ -8,7 +8,10 @@ it('resumes an existing session without creating a workspace', async () => {
   const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify(fixture)));
   vi.stubGlobal('fetch', fetchMock);
   await expect(requestDemoSession('resume')).resolves.toEqual(fixture);
-  expect(fetchMock).toHaveBeenCalledWith('/api/demo/session', expect.objectContaining({ method: 'GET', credentials: 'same-origin', cache: 'no-store' }));
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/demo/session',
+    expect.objectContaining({ method: 'GET', credentials: 'same-origin', cache: 'no-store' }),
+  );
 });
 
 it('treats an expired session as an invitation to start again', async () => {
@@ -25,7 +28,10 @@ it('resets with an explicit same-origin mutation', async () => {
   const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify(fixture)));
   vi.stubGlobal('fetch', fetchMock);
   await requestDemoSession('reset');
-  expect(fetchMock).toHaveBeenCalledWith('/api/demo/reset', expect.objectContaining({ method: 'POST', credentials: 'same-origin' }));
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/demo/reset',
+    expect.objectContaining({ method: 'POST', credentials: 'same-origin' }),
+  );
 });
 
 it('explains capacity limits without exposing internal errors', async () => {

@@ -51,7 +51,13 @@ function App(): JSX.Element {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <AuthProvider>
-          {isDemo ? <DemoShell><SessionProviders /></DemoShell> : <SessionProviders />}
+          {isDemo ? (
+            <DemoShell>
+              <SessionProviders />
+            </DemoShell>
+          ) : (
+            <SessionProviders />
+          )}
         </AuthProvider>
       </ToastProvider>
     </QueryClientProvider>

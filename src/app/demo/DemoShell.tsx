@@ -17,20 +17,29 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
   const [confirmReset, setConfirmReset] = useState(false);
   const pending = useRef(false);
 
-  const acceptSession = useCallback((next: DemoSession | null) => {
-    if (next) {
-      removeRefreshToken();
-      persistSession(next.accessToken, next.organizationSlug);
-    }
-    setSession(next);
-  }, [persistSession]);
+  const acceptSession = useCallback(
+    (next: DemoSession | null) => {
+      if (next) {
+        removeRefreshToken();
+        persistSession(next.accessToken, next.organizationSlug);
+      }
+      setSession(next);
+    },
+    [persistSession],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
     void requestDemoSession('resume', controller.signal)
-      .then((next) => { if (!controller.signal.aborted) acceptSession(next); })
-      .catch(() => { if (!controller.signal.aborted) setError('Could not connect to the demo. Please try again.'); })
-      .finally(() => { if (!controller.signal.aborted) setBusy(false); });
+      .then((next) => {
+        if (!controller.signal.aborted) acceptSession(next);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setError('Could not connect to the demo. Please try again.');
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setBusy(false);
+      });
     return () => controller.abort();
   }, [acceptSession]);
 
@@ -47,10 +56,13 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
 
   useEffect(() => {
     if (!session) return undefined;
-    const timer = window.setTimeout(() => {
-      setSession(null);
-      setError('Your demo session has expired. Open a new workspace to continue.');
-    }, Math.max(0, Date.parse(session.expiresAt) - Date.now() - 60_000));
+    const timer = window.setTimeout(
+      () => {
+        setSession(null);
+        setError('Your demo session has expired. Open a new workspace to continue.');
+      },
+      Math.max(0, Date.parse(session.expiresAt) - Date.now() - 60_000),
+    );
     return () => window.clearTimeout(timer);
   }, [session]);
 
@@ -82,11 +94,19 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
           <h1 id="demo-title">A working day, without the paperwork.</h1>
           <p>Explore time tracking, projects and reporting in your own temporary workspace. No account required.</p>
           <DemoGuide />
-          <p>All people and businesses are fictional. Changes are temporary and expire within 24 hours. Please do not enter personal or confidential information.</p>
+          <p>
+            All people and businesses are fictional. Changes are temporary and expire within 24 hours. Please do not
+            enter personal or confidential information.
+          </p>
           <p>Company login, invitations, uploads and external integrations are disabled in this demo.</p>
           {error && <p role="alert">{error}</p>}
           <div className={styles.actions}>
-            <Button label={busy ? 'Preparing demo…' : 'Open demo'} loading={busy} disabled={busy} onClick={() => void openDemo(false)} />
+            <Button
+              label={busy ? 'Preparing demo…' : 'Open demo'}
+              loading={busy}
+              disabled={busy}
+              onClick={() => void openDemo(false)}
+            />
             <a href="https://kozikowski.it/projects/epoca">Back to portfolio</a>
           </div>
         </section>
@@ -97,22 +117,51 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
   return (
     <>
       <aside className={styles.banner} aria-label="Demo workspace">
-        <div><strong>EPOCA demo</strong><span> Your private sample workspace · resets after 24h</span></div>
+        <div>
+          <strong>EPOCA demo</strong>
+          <span> Your private sample workspace · expires after 24h</span>
+        </div>
         <div className={styles.actions}>
           <Button label="Quick guide" size="small" variant="outlined" onClick={() => setShowGuide(true)} />
-          <Button label="Reset demo" size="small" variant="outlined" disabled={busy} onClick={() => setConfirmReset(true)} />
+          <Button
+            label="Reset demo"
+            size="small"
+            variant="outlined"
+            disabled={busy}
+            onClick={() => setConfirmReset(true)}
+          />
           <a href="https://kozikowski.it/projects/epoca">Portfolio</a>
         </div>
       </aside>
-      {error && <p className={styles.notice} role="alert">{error}</p>}
-      {busy ? <p className={styles.notice} role="status">Preparing your workspace…</p> : children}
-      <Modal isOpen={showGuide} close={() => setShowGuide(false)} ariaLabelledBy="demo-guide-title" className={styles.panel}>
+      {error && (
+        <p className={styles.notice} role="alert">
+          {error}
+        </p>
+      )}
+      {busy ? (
+        <p className={styles.notice} role="status">
+          Preparing your workspace…
+        </p>
+      ) : (
+        children
+      )}
+      <Modal
+        isOpen={showGuide}
+        close={() => setShowGuide(false)}
+        ariaLabelledBy="demo-guide-title"
+        className={styles.panel}
+      >
         <h2 id="demo-guide-title">Try EPOCA in a few minutes</h2>
         <DemoGuide />
         <p>Sample data only. Sessions last up to 24 hours; integrations and downloads are unavailable.</p>
         <Button label="Got it" onClick={() => setShowGuide(false)} />
       </Modal>
-      <Modal isOpen={confirmReset} close={() => setConfirmReset(false)} ariaLabelledBy="demo-reset-title" className={styles.panel}>
+      <Modal
+        isOpen={confirmReset}
+        close={() => setConfirmReset(false)}
+        ariaLabelledBy="demo-reset-title"
+        className={styles.panel}
+      >
         <h2 id="demo-reset-title">Restore the sample workspace?</h2>
         <p>This removes your demo changes and creates fresh fictional data. Other visitors are not affected.</p>
         <div className={styles.actions}>
