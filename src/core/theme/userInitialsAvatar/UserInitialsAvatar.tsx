@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import Icon, { icons } from '@/core/theme/icon';
 import Spinner from '@/core/theme/spinner';
 import { DisplayableUser } from '@/core/theme/types';
@@ -21,7 +22,7 @@ const UserInitialsAvatarContent = <T extends DisplayableUser>({
   onDeleteClick,
   withDelete,
 }: UserInitialsAvatarProps<T>): JSX.Element => {
-  const { url: gravatarUrl, isLoading: isGravatarLoading } = useGravatarUrl(item.email);
+  const { url: gravatarUrl, isLoading: isGravatarLoading } = useGravatarUrl(isDemo ? undefined : item.email);
   const [failedSources, setFailedSources] = useState<string[]>([]);
   const [loadedSource, setLoadedSource] = useState<string>();
   const imageSrc = [item.avatar?.trim(), gravatarUrl].find((src) => src && !failedSources.includes(src));

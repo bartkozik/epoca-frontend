@@ -1,0 +1,86 @@
+@use 'core/theme/common-colors' as colors;
+
+.welcome {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: colors.$color-primary-lightest;
+}
+
+.panel {
+  width: min(100%, 720px);
+  padding: clamp(24px, 5vw, 48px);
+  border: 1px solid colors.$color-border;
+  border-radius: 16px;
+  background: colors.$color-white;
+  color: colors.$color-font-heading;
+  line-height: 1.6;
+
+  h1,
+  h2 {
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.2;
+  }
+  p {
+    margin-bottom: 16px;
+  }
+  a {
+    color: colors.$color-primary-dark;
+    text-decoration: underline;
+  }
+}
+
+.eyebrow {
+  color: colors.$color-primary-dark;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.guide {
+  padding-left: 24px;
+  margin: 24px 0;
+  list-style: decimal;
+  li {
+    padding: 6px 0;
+  }
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 24px;
+  background: colors.$color-primary-lightest;
+  border-bottom: 1px solid colors.$color-border;
+  color: colors.$color-primary-dark;
+  font-size: 14px;
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.notice {
+  padding: 24px;
+  text-align: center;
+}
+
+@media print {
+  .banner {
+    display: none;
+  }
+}

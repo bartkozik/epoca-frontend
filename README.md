@@ -59,3 +59,9 @@ The retained Playwright suite contains mock, controlled integration and live/rel
 Original Git history, private CI/deployment configuration, environment values and internal operational notes are excluded. Non-public endpoint/identity literals were anonymized. Imported account/onboarding screenshot assets were replaced with a neutral “Image removed for privacy” resource; application structure and workflows remain intact. Existing test fixtures were retained where synthetic, with identity literals sanitized consistently.
 
 Application names and source attribution are preserved. This snapshot does not include a new project-wide license or claim ownership of third-party resources. Deployment infrastructure, real accounts and client data are not included.
+
+## Public demo
+
+The demo build enables `VITE_DEMO_ENABLED=true` and uses the [EPOCA guest gateway](https://github.com/bartkozik/epoca-backend/tree/main/demo) on the same origin. Visitors can open a temporary workspace, follow a short guide and reset the sample data. The normal application build retains its existing authentication flow.
+
+GitHub Actions checks types, lint, tests and the built container before publishing its image. The demo container serves static assets as an unprivileged user; database credentials and signing keys are never included in the frontend. Deployment configuration lives in [portfolio-infra](https://github.com/bartkozik/portfolio-infra).

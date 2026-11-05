@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import { useToast } from '@/core/providers/toastProvider';
 import Avatar from '@/core/theme/avatar';
 import Button from '@/core/theme/button';
@@ -47,7 +48,7 @@ function AssignedMemberTable(): JSX.Element | null {
 
   const isActionDisabled = selectedProjectUsers.length === 1 || archived;
 
-  const restrictedAccess = !canUserEditProject(projectUsers);
+  const restrictedAccess = isDemo || !canUserEditProject(projectUsers);
 
   const handleUserRoleChange = (userId: string, newRole: ProjectUserRole): void => {
     const currentRoleOption = getSelectedUserRoleOption(userId);

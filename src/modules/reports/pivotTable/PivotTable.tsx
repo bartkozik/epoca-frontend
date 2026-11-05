@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import Button from '@/core/theme/button';
 import Icon, { icons } from '@/core/theme/icon';
 import LoadingArea from '@/core/theme/loadingArea';
@@ -200,7 +201,7 @@ function PivotTable(): JSX.Element {
                     >
                       {t('pivot_table.configurator.open')}
                     </button>
-                    {hasExportableResult && exportPresentation && (
+                    {!isDemo && hasExportableResult && exportPresentation && (
                       <button
                         aria-controls={PIVOT_EXPORT_OPTIONS_ID}
                         aria-expanded={isExportBarOpen}
@@ -233,7 +234,7 @@ function PivotTable(): JSX.Element {
                     verticalScrollContainerRef={verticalScrollContainerRef}
                   />
                 )}
-                {hasExportableResult && exportPresentation && (
+                {!isDemo && hasExportableResult && exportPresentation && (
                   <Snackbar className={styles.exportSnackbar} isVisible={isExportBarOpen}>
                     <div
                       aria-label={t('pivot_table.export.options')}

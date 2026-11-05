@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import { useToast } from '@/core/providers/toastProvider';
 import Button from '@/core/theme/button';
 import FormHeader from '@/core/theme/FormHeader';
@@ -145,15 +146,17 @@ function ClientForm({ onCancel, onCreated }: ClientFormProps): JSX.Element {
         size="normal"
         infoText={t('clients.client_form.select.type.info_text')}
       />
-      <Input
-        label={t('clients.client_form.input.logo_url.label')}
-        name="Logo URL"
-        onChange={(e) => handleInputFieldChange(e, 'logoURL')}
-        type="text"
-        value={logoURL}
-        error={clientFormErrors.logoURL}
-        infoText={t('clients.common.input.logo_url.info_text')}
-      />
+      {!isDemo && (
+        <Input
+          label={t('clients.client_form.input.logo_url.label')}
+          name="Logo URL"
+          onChange={(e) => handleInputFieldChange(e, 'logoURL')}
+          type="text"
+          value={logoURL}
+          error={clientFormErrors.logoURL}
+          infoText={t('clients.common.input.logo_url.info_text')}
+        />
+      )}
       <div>
         <Button label={t('common.cancel')} onClick={onCancel} variant="text" />
         <Button

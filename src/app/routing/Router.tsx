@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import ErrorBoundary from '@/app/routing/errorBoundary';
 import NonAuthedPageLayout from '@/app/routing/nonAuthedPageLayout';
 import RouteSuspense from '@/app/routing/routeSuspense';
@@ -25,7 +26,7 @@ const invitationRoutes: RouteObject[] = [
 ];
 
 const contextOrganizationSelectionRoutes: RouteObject[] = [
-  ...invitationRoutes,
+  ...(isDemo ? [] : invitationRoutes),
   {
     element: <RouteSuspense />,
     children: [...workspaceSelectRoutes, { path: '*', element: <Navigate to={workspaceSelectPaths.main} replace /> }],
@@ -33,7 +34,7 @@ const contextOrganizationSelectionRoutes: RouteObject[] = [
 ];
 
 const contextOrganizationRoutes: RouteObject[] = [
-  ...invitationRoutes,
+  ...(isDemo ? [] : invitationRoutes),
   {
     element: <RouteSuspense withNavbar />,
     children: [
@@ -42,7 +43,7 @@ const contextOrganizationRoutes: RouteObject[] = [
       ...projectsRoutes,
       ...reportRoutes,
       ...pivotTableRoutes,
-      ...teamSettingsRoutes,
+      ...(isDemo ? [] : teamSettingsRoutes),
       { path: '*', element: <Navigate to={paths.index} replace /> },
     ],
   },

@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import Tooltip from '@/core/theme/tooltip';
 import { useWorkspace } from '@/modules/organizations/WorkspaceProvider';
 import { refreshReportedUnits } from '@/modules/reports/hooks/useReportedUnits';
@@ -72,7 +73,7 @@ function BadgeSession({
 
 export default function WorkUnitOverrideBadge(props: Props): JSX.Element | null {
   const workspace = useWorkspace();
-  if (!props.override?.active) return null;
+  if (isDemo || !props.override?.active) return null;
   const organizationSlug = workspace.contextOrganizationSlug;
   const sessionKey = JSON.stringify([
     organizationSlug,
