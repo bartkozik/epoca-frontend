@@ -14,6 +14,16 @@ import { ZodError } from 'zod';
 import IntegrationClientsTable from './IntegrationClientsTable';
 import Integrations from './Integrations';
 
+const demoMode = vi.hoisted(() => ({ enabled: false }));
+vi.mock('@/core/config/demo', () => ({
+  get isDemo() {
+    return demoMode.enabled;
+  },
+}));
+beforeEach(() => {
+  demoMode.enabled = false;
+});
+
 const providerMocks = vi.hoisted(() => ({ projects: vi.fn(), workspace: vi.fn() }));
 vi.mock('@/modules/organizations/WorkspaceProvider', () => ({ useWorkspace: providerMocks.workspace }));
 vi.mock('@/modules/projects/ProjectsProvider', () => ({ useProjects: providerMocks.projects }));
@@ -320,7 +330,9 @@ describe('Integrations list loading', () => {
 
   it('shows a distinct, non-network error message when the page fails response validation', async () => {
     requestsMock.listIntegrationClients.mockRejectedValueOnce(
-      new ZodError([{ code: 'invalid_type', expected: 'number', received: 'undefined', path: ['count'], message: 'Required' }]),
+      new ZodError([
+        { code: 'invalid_type', expected: 'number', received: 'undefined', path: ['count'], message: 'Required' },
+      ]),
     );
     renderIntegrations();
 
@@ -1075,4 +1087,22 @@ describe('IntegrationClientsTable', () => {
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
+});
+
+it('allows inspecting demo integrations while disabling credential and configuration changes', async () => {
+  demoMode.enabled = true;
+  const client = createClient('demo-client');
+  requestsMock.listIntegrationClients.mockResolvedValue({ count: 1, results: [client] });
+  requestsMock.getIntegrationClient.mockResolvedValue(client);
+  const user = userEvent.setup();
+  renderIntegrations();
+  await screen.findByText('Client demo-client');
+  expect(screen.getByRole('button', { name: '+ Add client' })).toBeDisabled();
+  for (const action of ['Edit', 'Rotate', 'Revoke']) {
+    expect(screen.getByRole('button', { name: `${action}: Client demo-client` })).toBeDisabled();
+  }
+  await user.click(screen.getByRole('button', { name: 'Details: Client demo-client' }));
+  expect(await screen.findByTestId('details-modal')).toBeInTheDocument();
+  expect(requestsMock.createIntegrationClient).not.toHaveBeenCalled();
+  expect(requestsMock.updateIntegrationClient).not.toHaveBeenCalled();
 });

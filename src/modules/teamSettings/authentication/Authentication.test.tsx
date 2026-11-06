@@ -4,6 +4,16 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import type { MockedFunction } from 'vitest';
 import Authentication from './Authentication';
 
+const demoMode = vi.hoisted(() => ({ enabled: false }));
+vi.mock('@/core/config/demo', () => ({
+  get isDemo() {
+    return demoMode.enabled;
+  },
+}));
+beforeEach(() => {
+  demoMode.enabled = false;
+});
+
 vi.mock('react-i18next', async () => ({
   ...(await vi.importActual('react-i18next')),
   useTranslation: () => ({ t: (key: string) => key }),
@@ -92,4 +102,13 @@ describe('Authentication', () => {
     expect(screen.getByDisplayValue('still-editing')).toBeInTheDocument();
     expect(screen.queryByDisplayValue('someone-else-changed-this')).not.toBeInTheDocument();
   });
+});
+
+it('blocks SAML changes and submission in the demo', () => {
+  demoMode.enabled = true;
+  renderAuthentication(rawSamlConfig);
+  expect(screen.getByDisplayValue('original-cert')).toHaveAttribute('readonly');
+  expect(screen.getByRole('button', { name: 'common.save' })).toBeDisabled();
+  fireEvent.submit(screen.getByRole('form', { name: 'team_seatings.authentication.header.saml_integration' }));
+  expect(mutateMock).not.toHaveBeenCalled();
 });

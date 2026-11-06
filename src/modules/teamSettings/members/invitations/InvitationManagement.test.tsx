@@ -489,3 +489,23 @@ it('adopts a refreshed list after conflict review without adopting an older revi
   expect(screen.getAllByLabelText('invitations.form.role')[0]).toHaveValue('invitations.role.Owner');
   expect(mocks.update).toHaveBeenCalledOnce();
 });
+
+it('shows read-only invitation previews without sending, editing or cancelling', async () => {
+  const user = userEvent.setup();
+  mount(
+    <table>
+      <tbody>
+        <InvitationRows {...props} invitations={[invitation]} readOnly />
+      </tbody>
+    </table>,
+  );
+  const resend = screen.getByRole('button', { name: /invitations.action.resend/ });
+  const cancel = screen.getByRole('button', { name: /invitations.action.cancel/ });
+  expect(resend).toBeDisabled();
+  expect(cancel).toBeDisabled();
+  await user.click(resend);
+  await user.click(cancel);
+  expect(mocks.resend).not.toHaveBeenCalled();
+  expect(mocks.cancel).not.toHaveBeenCalled();
+  expect(mocks.update).not.toHaveBeenCalled();
+});

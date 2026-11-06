@@ -1,10 +1,20 @@
 import * as requests from '@/modules/organizations/requests';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { teamSettingsPaths } from '../../routes';
 import MembersTable from './MembersTable';
+
+const demoMode = vi.hoisted(() => ({ enabled: false }));
+vi.mock('@/core/config/demo', () => ({
+  get isDemo() {
+    return demoMode.enabled;
+  },
+}));
+beforeEach(() => {
+  demoMode.enabled = false;
+});
 
 const mockNavigate = vi.fn();
 
@@ -87,4 +97,17 @@ describe('MembersTable', () => {
       state: { fromListSearch: '?membersSortColumn=UserRole' },
     });
   });
+});
+
+it('keeps the demo owner protected while allowing other team members to be managed', async () => {
+  demoMode.enabled = true;
+  getOrganizationUsersMock.mockResolvedValueOnce({
+    data: [rawOrganizationUser, { ...rawOrganizationUser, id: 'user-2', firstName: 'Alex' }],
+  });
+  renderTable(false);
+  const owner = await screen.findByRole('row', { name: /Jane Doe/ });
+  expect(within(owner).getByRole('button', { name: /remove_user/ })).toBeDisabled();
+  expect(
+    within(screen.getByRole('row', { name: /Alex Doe/ })).getByRole('button', { name: /remove_user/ }),
+  ).toBeEnabled();
 });

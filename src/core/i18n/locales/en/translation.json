@@ -1,4 +1,6 @@
 {
+  "team_seatings.demo.members": "Your fictional team. Try changing another member’s role or project assignments. Your guest Owner account stays protected. Reset demo restores the sample team.",
+  "team_seatings.demo.preview": "Read-only demo preview. These fictional settings do not connect to an identity provider, create credentials or send invitations.",
   "app.router.non_authed_page_slides.client_panel.text": "Let your client track progress in their project. Create client panel,\naccount for their use which lets them preview time and activities.",
   "app.router.non_authed_page_slides.client_panel.title": "Client panel",
   "app.router.non_authed_page_slides.export_data.text": "Export work data to Excel (.xls, .csv) for analysis.\n        ",

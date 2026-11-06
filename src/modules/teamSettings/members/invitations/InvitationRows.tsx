@@ -37,6 +37,7 @@ type Props = {
   organizationSlug: string;
   invitations: InvitationDto[];
   featureEnabled: boolean;
+  readOnly?: boolean;
 };
 type Action = ({ kind: 'role'; role: OrganizationUserRole } | { kind: 'resend' | 'cancel' }) & {
   expectedRevision?: string;
@@ -65,7 +66,7 @@ const InvitationRowsSession = ({ invitations, ...props }: Props): JSX.Element =>
           modalOpen={selection?.invitation.id === invitation.id}
         />
       ))}
-      {selection && (
+      {!props.readOnly && selection && (
         <InvitationCompletionModal
           onDeliveryResult={props.onDeliveryResult}
           organizationSlug={props.organizationSlug}
@@ -90,6 +91,7 @@ const InvitationRow = ({
   onDeliveryResult,
   organizationSlug,
   featureEnabled,
+  readOnly = false,
   onOpen,
   modalOpen,
 }: InvitationRowProps): JSX.Element => {
@@ -118,7 +120,7 @@ const InvitationRow = ({
   }, [current.delivery.lastAttemptAt, current.delivery.retryAfterSeconds, setCooldown]);
 
   const execute = async (action: Action): Promise<void> => {
-    if (pendingRef.current || conflict || !active.current) return;
+    if (readOnly || pendingRef.current || conflict || !active.current) return;
     setProblem(null);
     const variables = {
       organizationSlug,
@@ -157,6 +159,7 @@ const InvitationRow = ({
   };
 
   const openModal = (mode: ModalSelection['mode']): void => {
+    if (readOnly) return;
     onOpen({
       invitation: current,
       mode,
@@ -189,7 +192,7 @@ const InvitationRow = ({
         size="small"
         items={roleItems}
         selectedItem={roleItems.find(({ value }) => value === invitationRole(current))}
-        readOnly={pending || conflict || modalOpen || confirmCancel !== null}
+        readOnly={readOnly || pending || conflict || modalOpen || confirmCancel !== null}
         onSelect={({ value }) => {
           if (needsInvitationCompletion(current)) {
             openModal('complete');
@@ -260,7 +263,7 @@ const InvitationRow = ({
                 </span>
               }
               label={t('invitations.action.resend')}
-              disabled={pending || conflict || confirmCancel !== null || coolingDown}
+              disabled={readOnly || pending || conflict || confirmCancel !== null || coolingDown}
               variant="contained"
               onClick={() =>
                 needsInvitationCompletion(current)
@@ -277,7 +280,7 @@ const InvitationRow = ({
                 </span>
               }
               label={t('invitations.action.cancel')}
-              disabled={pending || conflict || confirmCancel !== null}
+              disabled={readOnly || pending || conflict || confirmCancel !== null}
               variant="contained"
               onClick={() =>
                 setConfirmCancel(
@@ -292,7 +295,7 @@ const InvitationRow = ({
         {retryAction && !conflict && waiting && (
           <Button
             label={t('invitations.action.retry')}
-            disabled={pending || (retryAction.kind === 'resend' && (!featureEnabled || coolingDown))}
+            disabled={readOnly || pending || (retryAction.kind === 'resend' && (!featureEnabled || coolingDown))}
             onClick={() =>
               retryAction.kind === 'cancel'
                 ? setConfirmCancel(retryAction.expectedRevision ?? current.revision)
@@ -301,7 +304,7 @@ const InvitationRow = ({
           />
         )}
         <Confirmation
-          isOpen={confirmCancel !== null}
+          isOpen={!readOnly && confirmCancel !== null}
           isSubmitting={pending}
           actionType="delete"
           text={t('invitations.cancel.confirm')}

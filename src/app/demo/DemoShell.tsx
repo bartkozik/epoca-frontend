@@ -122,7 +122,10 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
             All people and businesses are fictional. Changes are temporary and expire within 24 hours. Please do not
             enter personal or confidential information.
           </p>
-          <p>Company login, invitations, uploads and external integrations are disabled in this demo.</p>
+          <p>
+            Team settings includes a fictional team and read-only previews of company login, invitations and
+            integrations. Uploads and exports are disabled.
+          </p>
           {error && <p role="alert">{error}</p>}
           <div className={styles.actions}>
             <Button
@@ -177,7 +180,10 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
       >
         <h2 id="demo-guide-title">Try EPOCA in a few minutes</h2>
         <DemoGuide />
-        <p>Sample data only. Sessions last up to 24 hours; integrations and downloads are unavailable.</p>
+        <p>
+          Sample data only. Sessions last up to 24 hours. Team settings previews do not send invitations or connect
+          external services. Downloads are unavailable.
+        </p>
         <Button label="Got it" onClick={() => setShowGuide(false)} />
       </Modal>
       <Modal

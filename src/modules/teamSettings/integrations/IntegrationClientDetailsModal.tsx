@@ -12,6 +12,7 @@ type RequestState = 'idle' | 'loading' | 'success' | 'error';
 export type DetailsFocusAction = 'edit' | 'revoke' | 'rotate';
 
 interface IntegrationClientDetailsModalProps {
+  readOnly?: boolean;
   auditEvents: readonly IntegrationClientAuditEvent[];
   auditHasNextPage: boolean;
   auditState: RequestState;
@@ -57,6 +58,7 @@ const IntegrationClientDetailsModal = ({
   initialFocusAction = null,
   onClose,
   onEdit,
+  readOnly = false,
   onInitialFocusHandled,
   onLoadMoreAudit,
   onRetryAudit,
@@ -156,7 +158,7 @@ const IntegrationClientDetailsModal = ({
             <div className={styles.actions}>
               {client.status === 'Active' && (
                 <Button
-                  disabled={isBusy || !isDetailFresh}
+                  disabled={readOnly || isBusy || !isDetailFresh}
                   forwardedRef={editRef}
                   label={t('team_seatings.integrations.action.edit')}
                   onClick={() => onEdit(client)}
@@ -166,7 +168,7 @@ const IntegrationClientDetailsModal = ({
               )}
               {client.status === 'Expired' && (
                 <Button
-                  disabled={isBusy || !isDetailFresh}
+                  disabled={readOnly || isBusy || !isDetailFresh}
                   forwardedRef={editRef}
                   label={t('team_seatings.integrations.action.renew')}
                   onClick={() => onEdit(client)}
@@ -176,7 +178,7 @@ const IntegrationClientDetailsModal = ({
               )}
               {client.status === 'Active' && (
                 <Button
-                  disabled={isBusy || !isDetailFresh}
+                  disabled={readOnly || isBusy || !isDetailFresh}
                   forwardedRef={rotateRef}
                   label={t('team_seatings.integrations.action.rotate')}
                   onClick={() => onRotate(client)}
@@ -186,7 +188,7 @@ const IntegrationClientDetailsModal = ({
               )}
               {client.status !== 'Revoked' && (
                 <Button
-                  disabled={isBusy || !isDetailFresh}
+                  disabled={readOnly || isBusy || !isDetailFresh}
                   forwardedRef={revokeRef}
                   label={t('team_seatings.integrations.action.revoke')}
                   onClick={() => onRevoke(client)}

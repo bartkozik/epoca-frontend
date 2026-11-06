@@ -10,6 +10,7 @@ import styles from './IntegrationClientsTable.module.scss';
 
 export interface IntegrationClientsTableProps {
   actionsDisabled?: boolean;
+  readOnly?: boolean;
   clients: IntegrationClient[];
   count: number;
   locale: string;
@@ -29,6 +30,7 @@ type ActionKey = 'details' | 'edit' | 'renew' | 'revoke' | 'rotate';
 
 interface IntegrationClientActionsProps {
   actionsDisabled: boolean;
+  readOnly: boolean;
   client: IntegrationClient;
   onDetails?: (client: IntegrationClient) => void;
   onActionTriggerRef?: (clientId: string, button: HTMLButtonElement | null) => void;
@@ -39,6 +41,7 @@ interface IntegrationClientActionsProps {
 
 const IntegrationClientActions = ({
   actionsDisabled,
+  readOnly,
   client,
   onDetails,
   onActionTriggerRef,
@@ -111,7 +114,7 @@ const IntegrationClientActions = ({
           return (
             <Button
               aria-label={`${label}: ${client.name}`}
-              disabled={actionsDisabled}
+              disabled={actionsDisabled || (readOnly && key !== 'details')}
               key={key}
               label={label}
               onClick={() => runAction(callback)}
@@ -128,6 +131,7 @@ const IntegrationClientActions = ({
 
 const IntegrationClientsTable = ({
   actionsDisabled = false,
+  readOnly = false,
   clients,
   count,
   isLoadingMore = false,
@@ -196,6 +200,7 @@ const IntegrationClientsTable = ({
                   <td className={styles.metadataColumn}>{lastUsed}</td>
                   <td>
                     <IntegrationClientActions
+                      readOnly={readOnly}
                       actionsDisabled={actionsDisabled}
                       client={client}
                       onDetails={onDetails}

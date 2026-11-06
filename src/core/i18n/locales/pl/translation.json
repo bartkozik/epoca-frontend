@@ -1,4 +1,6 @@
 {
+  "team_seatings.demo.members": "Twój fikcyjny zespół. Zmieniaj role innych osób lub ich przypisania do projektów. Konto gościa Owner pozostaje chronione. Reset demo przywraca przykładowy zespół.",
+  "team_seatings.demo.preview": "Podgląd demo tylko do odczytu. Fikcyjne ustawienia nie łączą się z dostawcą logowania, nie tworzą kluczy ani nie wysyłają zaproszeń.",
   "app.router.non_authed_page_slides.client_panel.text": "Pozwól klientowi śledzić postępy w jego projekcie. Utwórz panel klienta,\nkonto do jego użytku, które pozwoli mu na podgląd czasu pracy i działań.",
   "app.router.non_authed_page_slides.client_panel.title": "Panel klienta",
   "app.router.non_authed_page_slides.export_data.text": "Eksportuj dane pracy do Excela (.xls, .csv) do analizy.\n        ",

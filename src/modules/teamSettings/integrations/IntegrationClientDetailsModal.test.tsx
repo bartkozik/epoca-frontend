@@ -279,3 +279,12 @@ describe('IntegrationClientDetailsModal', () => {
     expect(baseProps.onRetryAudit).toHaveBeenCalledTimes(1);
   });
 });
+
+it('keeps demo details and audit readable with mutation controls disabled', () => {
+  render(<IntegrationClientDetailsModal {...baseProps} client={{ ...client, status: 'Active' }} readOnly />);
+  expect(screen.getByRole('button', { name: 'Edit' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Rotate secret' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Revoke' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Close' })).toBeEnabled();
+  expect(screen.getByText('Audit history')).toBeVisible();
+});

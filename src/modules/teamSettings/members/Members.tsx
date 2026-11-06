@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import Button from '@/core/theme/button';
 import ButtonGroup from '@/core/theme/buttonGroup';
 import { useWorkspace } from '@/modules/organizations/WorkspaceProvider';
@@ -60,6 +61,7 @@ const MembersSession = ({ organizationSlug }: MembersSessionProps): JSX.Element 
     memberTab === 'invitations' ? (
       <Invitations
         organizationSlug={organizationSlug}
+        readOnly={isDemo}
         data={page}
         isLoading={invitations.isLoading}
         error={invitations.error}
@@ -75,11 +77,18 @@ const MembersSession = ({ organizationSlug }: MembersSessionProps): JSX.Element 
       <div className={styles.buttonsContainer}>
         <ButtonGroup className={styles.buttonGroup} buttons={buttons} activeButton={memberTab} />
         {canAdd && (
-          <Button className={styles.inviteButton} label={t('invitations.form.title')} onClick={() => setAdding(true)} />
+          <Button
+            disabled={isDemo}
+            className={styles.inviteButton}
+            label={t('invitations.form.title')}
+            onClick={() => {
+              if (!isDemo) setAdding(true);
+            }}
+          />
         )}
       </div>
       <div className={styles.tabContent}>{activeTabContent}</div>
-      {hasInvitationCapability && page && (
+      {!isDemo && hasInvitationCapability && page && (
         <InvitationForm
           existingInvitations={page.results}
           onDeliveryResult={(result) => {

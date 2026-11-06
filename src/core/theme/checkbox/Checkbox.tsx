@@ -7,6 +7,7 @@ import styles from './Checkbox.module.scss';
 
 interface CheckboxProps {
   ariaLabel?: string;
+  disabled?: boolean;
   className?: string;
   label?: string;
   infoText?: string;
@@ -19,6 +20,7 @@ interface CheckboxProps {
 
 const Checkbox = ({
   ariaLabel,
+  disabled = false,
   className,
   label,
   infoText,
@@ -56,6 +58,7 @@ const Checkbox = ({
       >
         <input
           aria-label={ariaLabel ?? label}
+          disabled={disabled}
           checked={selected}
           className={clsx(styles.checkbox, inputVariant)}
           id={inputId}
