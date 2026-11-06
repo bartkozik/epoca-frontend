@@ -50,23 +50,6 @@
   }
 }
 
-.banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 12px 24px;
-  background: colors.$color-primary-lightest;
-  border-bottom: 1px solid colors.$color-border;
-  color: colors.$color-primary-dark;
-  font-size: 14px;
-  a {
-    color: inherit;
-    text-decoration: underline;
-  }
-}
-
 .actions {
   display: flex;
   align-items: center;
@@ -77,10 +60,4 @@
 .notice {
   padding: 24px;
   text-align: center;
-}
-
-@media print {
-  .banner {
-    display: none;
-  }
 }
