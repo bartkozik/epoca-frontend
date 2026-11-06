@@ -57,7 +57,6 @@ const Authentication = (): JSX.Element | null => {
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
       if (isDemo) return;
       const { value } = event.target;
-      if (isDemo) return;
       setSamlConfigDraft((current) => (current ? { ...current, [field]: value } : current));
     };
 
@@ -116,7 +115,7 @@ const Authentication = (): JSX.Element | null => {
           />
           <div className={styles.inputsContainer}>
             <TextArea
-              disabled={isDemo}
+              readOnly={isDemo}
               label={t('team_seatings.authentication.text_area.idp_certificate.label')}
               name="certificate"
               infoText={t('team_seatings.authentication.text_area.idp_certificate.info_text')}
@@ -126,7 +125,7 @@ const Authentication = (): JSX.Element | null => {
               onChange={handleSamlConfigPropertyChange('idpCert')}
             />
             <Input
-              disabled={isDemo}
+              readOnly={isDemo}
               label={t('team_seatings.authentication.input.idp_entity_id.label')}
               name="entityId"
               infoText={t('team_seatings.authentication.input.idp_entity_id.info_text')}
@@ -135,7 +134,7 @@ const Authentication = (): JSX.Element | null => {
               onChange={handleSamlConfigPropertyChange('idpEntityId')}
             />
             <Input
-              disabled={isDemo}
+              readOnly={isDemo}
               label={t('team_seatings.authentication.input.sso_url.label')}
               name="ssoUrl"
               infoText={t('team_seatings.authentication.input.sso_url.info_text')}
@@ -158,7 +157,7 @@ const Authentication = (): JSX.Element | null => {
               size="normal"
             />
             <Input
-              disabled={isDemo}
+              readOnly={isDemo}
               label={t('team_seatings.authentication.input.session_valid_time.label')}
               name="sessionValidTime"
               value={formattedValidFor}

@@ -106,7 +106,7 @@ describe('Authentication', () => {
 it('blocks SAML changes and submission in the demo', () => {
   demoMode.enabled = true;
   renderAuthentication(rawSamlConfig);
-  expect(screen.getByDisplayValue('original-cert')).toBeDisabled();
+  expect(screen.getByDisplayValue('original-cert')).toHaveAttribute('readonly');
   expect(screen.getByRole('button', { name: 'common.save' })).toBeDisabled();
   fireEvent.submit(screen.getByRole('button', { name: 'common.save' }).closest('form')!);
   expect(mutateMock).not.toHaveBeenCalled();
