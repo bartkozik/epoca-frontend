@@ -81,14 +81,14 @@ const MembersTable = (): JSX.Element => {
             <div className={styles.statusMobileView}>{renderSelect(u, isOneOfLastTwo, true)}</div>
             <div className={styles.btnBox}>
               <IconButton
-                aria-label={t('common.projects')}
+                ariaLabel={t('common.projects')}
                 icon={<Icon icon={icons.cabinet} />}
                 label={t('common.projects')}
                 onClick={() => handleDetailsClick(id)}
                 variant="contained"
               />
               <IconButton
-                aria-label={t('team_seatings.members.members_table.icon_button.remove_user.aria_label')}
+                ariaLabel={t('team_seatings.members.members_table.icon_button.remove_user.aria_label')}
                 icon={<Icon icon={icons.remove} />}
                 label={t('common.remove')}
                 disabled={isProtectedOwner(id)}
