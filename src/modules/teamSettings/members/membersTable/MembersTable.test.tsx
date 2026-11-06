@@ -10,7 +10,7 @@ beforeEach(() => {
 import * as requests from '@/modules/organizations/requests';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { teamSettingsPaths } from '../../routes';
 import MembersTable from './MembersTable';
@@ -104,7 +104,7 @@ it('keeps the demo owner protected while allowing other team members to be manag
     data: [rawOrganizationUser, { ...rawOrganizationUser, id: 'user-2', firstName: 'Alex' }],
   });
   renderTable(false);
-  const removeButtons = await screen.findAllByRole('button', { name: /remove_user/ });
-  expect(removeButtons[0]).toBeDisabled();
-  expect(removeButtons[1]).toBeEnabled();
+  const owner = await screen.findByText('Jane Doe');
+  expect(within(owner.closest('tr')!).getByRole('button', { name: /remove_user/ })).toBeDisabled();
+  expect(within(screen.getByText('Alex Doe').closest('tr')!).getByRole('button', { name: /remove_user/ })).toBeEnabled();
 });
