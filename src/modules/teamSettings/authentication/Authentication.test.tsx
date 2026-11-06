@@ -1,3 +1,9 @@
+import { Language } from '@/core/models/types';
+import { useSamlConfigQuery, useUpdateSamlConfigMutation } from '@/modules/ssoAuth';
+import { fireEvent, render, screen } from '@testing-library/react';
+import type { MockedFunction } from 'vitest';
+import Authentication from './Authentication';
+
 const demoMode = vi.hoisted(() => ({ enabled: false }));
 vi.mock('@/core/config/demo', () => ({
   get isDemo() {
@@ -7,11 +13,6 @@ vi.mock('@/core/config/demo', () => ({
 beforeEach(() => {
   demoMode.enabled = false;
 });
-import { Language } from '@/core/models/types';
-import { useSamlConfigQuery, useUpdateSamlConfigMutation } from '@/modules/ssoAuth';
-import { fireEvent, render, screen } from '@testing-library/react';
-import type { MockedFunction } from 'vitest';
-import Authentication from './Authentication';
 
 vi.mock('react-i18next', async () => ({
   ...(await vi.importActual('react-i18next')),
@@ -108,6 +109,6 @@ it('blocks SAML changes and submission in the demo', () => {
   renderAuthentication(rawSamlConfig);
   expect(screen.getByDisplayValue('original-cert')).toHaveAttribute('readonly');
   expect(screen.getByRole('button', { name: 'common.save' })).toBeDisabled();
-  fireEvent.submit(screen.getByRole('button', { name: 'common.save' }).closest('form')!);
+  fireEvent.submit(screen.getByRole('form', { name: 'team_seatings.authentication.header.saml_integration' }));
   expect(mutateMock).not.toHaveBeenCalled();
 });

@@ -1,3 +1,9 @@
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Members from './Members';
+
 const demoMode = vi.hoisted(() => ({ enabled: false }));
 vi.mock('@/core/config/demo', () => ({
   get isDemo() {
@@ -7,11 +13,6 @@ vi.mock('@/core/config/demo', () => ({
 beforeEach(() => {
   demoMode.enabled = false;
 });
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import Members from './Members';
 
 const mocks = vi.hoisted(() => ({ query: vi.fn(), slug: 'acme', fetch: vi.fn() }));
 vi.mock('@/modules/organizations/WorkspaceProvider', () => ({

@@ -93,7 +93,11 @@ const Authentication = (): JSX.Element | null => {
         </p>
       </div>
       <LoadingArea loading={samlConfigQuery.isLoading || updateSamlConfigMutation.isPending}>
-        <form className={clsx(styles.ssoForm, styles.maxMarginBottom)} onSubmit={handleSubmit}>
+        <form
+          aria-label={t('team_seatings.authentication.header.saml_integration')}
+          className={clsx(styles.ssoForm, styles.maxMarginBottom)}
+          onSubmit={handleSubmit}
+        >
           <Checkbox
             disabled={isDemo}
             className={styles.maxBottomMargin}

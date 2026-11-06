@@ -1,12 +1,3 @@
-const demoMode = vi.hoisted(() => ({ enabled: false }));
-vi.mock('@/core/config/demo', () => ({
-  get isDemo() {
-    return demoMode.enabled;
-  },
-}));
-beforeEach(() => {
-  demoMode.enabled = false;
-});
 import * as integrationClientRequests from '@/modules/integrationClients/requests';
 import type {
   CreateIntegrationClientInput,
@@ -22,6 +13,16 @@ import type { Mock, Mocked } from 'vitest';
 import { ZodError } from 'zod';
 import IntegrationClientsTable from './IntegrationClientsTable';
 import Integrations from './Integrations';
+
+const demoMode = vi.hoisted(() => ({ enabled: false }));
+vi.mock('@/core/config/demo', () => ({
+  get isDemo() {
+    return demoMode.enabled;
+  },
+}));
+beforeEach(() => {
+  demoMode.enabled = false;
+});
 
 const providerMocks = vi.hoisted(() => ({ projects: vi.fn(), workspace: vi.fn() }));
 vi.mock('@/modules/organizations/WorkspaceProvider', () => ({ useWorkspace: providerMocks.workspace }));
