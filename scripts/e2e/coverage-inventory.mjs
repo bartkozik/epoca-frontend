@@ -1,11 +1,16 @@
 import path from 'node:path';
 
+/** @param {unknown} value @returns {value is Record<string, unknown>} */
+const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+/** @param {unknown} value @param {string} label @param {{optional?: boolean}} [options] @returns {unknown[]} */
 const assertArrayField = (value, label, { optional = false } = {}) => {
   if (value === undefined && optional) return [];
   if (!Array.isArray(value)) throw new Error(`Playwright ${label} must be an array`);
   return value;
 };
 
+/** @param {unknown} file @param {string} rootDir @param {string} repositoryRoot */
 const normalizeSpec = (file, rootDir, repositoryRoot) => {
   if (typeof file !== 'string' || file.trim() === '') throw new Error('Playwright spec file must be non-empty');
   const absolute = path.isAbsolute(file) ? file : path.resolve(rootDir, file);
@@ -16,6 +21,7 @@ const normalizeSpec = (file, rootDir, repositoryRoot) => {
   return relative.split(path.sep).join('/');
 };
 
+/** @param {unknown} tags @returns {string[]} */
 const normalizeTags = (tags) => {
   if (!Array.isArray(tags)) throw new Error('Playwright spec tags must be an array');
   return tags.map((tag) => {
@@ -26,27 +32,29 @@ const normalizeTags = (tags) => {
   });
 };
 
+/** @param {string} json @param {{repositoryRoot?: string}} [options] @returns {import("./coverage-validator.mjs").InventoryItem[]} */
 export const parsePlaywrightInventory = (json, { repositoryRoot = process.cwd() } = {}) => {
+  /** @type {unknown} */
   let report;
   try {
     report = JSON.parse(json);
   } catch {
     throw new Error('Invalid Playwright JSON reporter output');
   }
-  if (report === null || typeof report !== 'object' || Array.isArray(report)) {
+  if (!isRecord(report)) {
     throw new Error('Invalid Playwright JSON reporter root');
   }
   const errors = assertArrayField(report.errors, 'errors');
   if (errors.length > 0) throw new Error(`Playwright reporter errors: ${JSON.stringify(errors)}`);
   const suites = assertArrayField(report.suites, 'suites');
   const rootDir =
-    report.config && typeof report.config === 'object' && typeof report.config.rootDir === 'string'
-      ? report.config.rootDir
-      : repositoryRoot;
+    isRecord(report.config) && typeof report.config.rootDir === 'string' ? report.config.rootDir : repositoryRoot;
+  /** @type {import("./coverage-validator.mjs").InventoryItem[]} */
   const inventory = [];
 
+  /** @param {unknown} suite @param {string[]} parents @param {boolean} fileSuite */
   const visitSuite = (suite, parents, fileSuite) => {
-    if (suite === null || typeof suite !== 'object' || Array.isArray(suite)) {
+    if (!isRecord(suite)) {
       throw new Error('Playwright suite must be an object');
     }
     if (typeof suite.title !== 'string' || suite.title.trim() === '') {
@@ -57,7 +65,7 @@ export const parsePlaywrightInventory = (json, { repositoryRoot = process.cwd() 
     const titleParts = fileSuite ? parents : [...parents, suite.title.trim()];
 
     for (const spec of specs) {
-      if (spec === null || typeof spec !== 'object' || Array.isArray(spec)) {
+      if (!isRecord(spec)) {
         throw new Error('Playwright spec must be an object');
       }
       if (typeof spec.title !== 'string' || spec.title.trim() === '') {
@@ -71,9 +79,7 @@ export const parsePlaywrightInventory = (json, { repositoryRoot = process.cwd() 
 
       for (const playwrightTest of tests) {
         if (
-          playwrightTest === null ||
-          typeof playwrightTest !== 'object' ||
-          Array.isArray(playwrightTest) ||
+          !isRecord(playwrightTest) ||
           typeof playwrightTest.projectName !== 'string' ||
           playwrightTest.projectName.trim() === ''
         ) {

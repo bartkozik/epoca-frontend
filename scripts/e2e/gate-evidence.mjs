@@ -1509,9 +1509,6 @@ const lstatIfExists = async (candidate) => {
   }
 };
 
-// Security boundary: allowedRoot and its ancestors must not be concurrently mutated by another same-UID process.
-// Portable Node APIs lack openat/renameat directory binding, so escapes and static symlinks are rejected here,
-// while that same-UID TOCTOU race remains outside this helper's guarantees.
 /**
  * @param {unknown} outputPath
  * @param {unknown} allowedRoot

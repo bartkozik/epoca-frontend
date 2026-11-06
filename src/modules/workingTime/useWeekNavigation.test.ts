@@ -5,7 +5,6 @@ import { useWeekNavigation } from './useWeekNavigation';
 describe('useWeekNavigation', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    // Wednesday 2026-07-29 -- ISO week Monday is 2026-07-27.
     vi.setSystemTime(new Date(2026, 6, 29, 12, 0));
   });
 

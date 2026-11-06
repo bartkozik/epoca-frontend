@@ -2,9 +2,6 @@ import { MAX_NAME_LENGTH } from '@/core/utils/constants';
 import { z } from 'zod';
 import { RawClient } from '../types';
 
-// Takes RawClient[] rather than Client[] -- this only reads `.name`/`.id`, both present on the raw
-// wire shape, so callers can pass a query result's `results` directly without deriving the fuller
-// Client (RawClient + archived/projects/etc.) just to satisfy this uniqueness check.
 export const ClientFormSchema = (
   clients: RawClient[],
   currentClientId?: string,

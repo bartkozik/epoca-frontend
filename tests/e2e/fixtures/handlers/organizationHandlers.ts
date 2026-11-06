@@ -104,8 +104,6 @@ export const organizationHandlers: MockHandler[] = [
     id: 'organization-users',
     method: 'GET',
     path: /^\/organizations\/epoca-e2e\/users$/,
-    // Workspace lists ask with includeArchived=true; reports also add includeArchivedMembers=true. The e2e
-    // world has no archived memberships, so both get the same list. Any other query is a test bug.
     handle: (request, runtime) => {
       const { includeArchived, includeArchivedMembers, ...unexpected } = request.query;
       const isTrue = (values: readonly string[] | undefined): boolean => values?.length === 1 && values[0] === 'true';

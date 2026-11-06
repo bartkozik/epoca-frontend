@@ -20,14 +20,11 @@ vi.mock('@/core/api/Api', () => ({
   },
 }));
 
-// api.get/post/patch are vi.fn() mocks (see vi.mock('@/core/api/Api', ...) above); Axios's own
-// third-party types still carry a `this` requirement on these methods that we can't annotate
-// away, causing a false positive here.
 // eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
-// eslint-disable-next-line vitest/unbound-method -- see getMock above.
+// eslint-disable-next-line vitest/unbound-method
 const postMock = api.post as MockedFunction<typeof api.post>;
-// eslint-disable-next-line vitest/unbound-method -- see getMock above.
+// eslint-disable-next-line vitest/unbound-method
 const patchMock = api.patch as MockedFunction<typeof api.patch>;
 
 const actor = {
@@ -419,7 +416,7 @@ describe('normalizeIntegrationClientProblem', () => {
   });
 
   it('classifies a page rejected by IntegrationClientPageSchema.parse as validation, not unexpected', async () => {
-    resolveGet({ results: [] }); // missing `count` -- fails IntegrationClientPageSchema's shape check
+    resolveGet({ results: [] });
 
     const rejection = listIntegrationClients('acme', { pageSize: 20, pageNumber: 1 });
     await expect(rejection).rejects.toThrow();

@@ -11,10 +11,8 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 const optionsViewport = (page: Page): Locator => page.getByTestId('multi-search-options');
 const filterInput = (page: Page, translatedLabel: string): Locator =>
   page.getByRole('combobox', { name: `${translatedLabel}:`, exact: true });
-// An option's accessible name starts with its label, followed by the client, archive tag and hours.
 const option = (page: Page, label: string): Locator =>
   page.getByRole('option', { name: new RegExp(`^${escapeRegExp(label)}(?: |$)`) });
-// Group headings, the divider and the archived toggle are list rows next to the options.
 const listRows = (page: Page): Locator => page.getByRole('listbox').locator(':scope > li');
 const clearButton = (page: Page, translatedLabel: string): Locator =>
   page
@@ -50,8 +48,6 @@ test('@mr @multi-search-sections dzieli opcje na zaznaczone, z godzinami i bez g
   await expect(input).toHaveAttribute('aria-expanded', 'true');
   await expect(input).toHaveValue('');
   await expect(input).toHaveAttribute('placeholder', 'Szukaj projektu');
-  // Opening a list starts loading the hours, and the option order is frozen while a list is open, so the
-  // groups that the hours produce appear when the list opens again.
   await expect(option(page, 'Alpha Project')).toContainText('08:00');
   await input.press('Escape');
   await input.click();
@@ -83,7 +79,6 @@ test('@mr @multi-search-sections dzieli opcje na zaznaczone, z godzinami i bez g
   await input.fill('');
   await input.press('Escape');
 
-  // The user list counts hours inside the selected project only.
   const userInput = filterInput(page, 'Użytkownik');
   await userInput.click();
   await expect(listRows(page).nth(0)).toHaveText(/^Regular User/);
@@ -94,7 +89,6 @@ test('@mr @multi-search-sections dzieli opcje na zaznaczone, z godzinami i bez g
   await expect(page.getByRole('option')).toHaveCount(25);
   await userInput.press('Escape');
 
-  // Swapping Alpha for Beta in place leaves no user with hours.
   await input.click();
   await option(page, 'Alpha Project').click();
   await option(page, 'Beta Project').click();
@@ -238,7 +232,6 @@ test('@full @multi-search-mobile zachowuje jeden scroll na telefonie i komputerz
     await userInput.press('Escape');
   }
 
-  // With Regular User picked, the archived project has no hours and folds into the archived group.
   const userInput = filterInput(page, 'Użytkownik');
   await userInput.click();
   await option(page, 'Regular User').click();

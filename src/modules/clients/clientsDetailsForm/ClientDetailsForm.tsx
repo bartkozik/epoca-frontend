@@ -1,5 +1,5 @@
-import { isDemo } from '@/core/config/demo';
 import { ROLE_PERMISSIONS } from '@/app/routing/rolePermissions';
+import { isDemo } from '@/core/config/demo';
 import { useToast } from '@/core/providers/toastProvider';
 import Button from '@/core/theme/button';
 import Confirmation, { ConfirmationAction } from '@/core/theme/confirmation';
@@ -59,20 +59,16 @@ const ClientDetailsForm = ({ client }: ClientDetailsFormProps): JSX.Element => {
     [clientFormErrors.clientName],
   );
 
-  // Reseeds the local draft whenever the underlying client record changes identity (a
-  // different client was navigated to) -- matches Authentication.tsx's seed-once-per-record
-  // pattern, but keyed on `id` since a background refetch of the SAME client should not
-  // discard an in-progress edit.
   useEffect(() => {
     setClientName(name);
     setClientColor(color || colorVariables.colorClientBlue);
     setClientTexture(resolveClientTexture(texture));
     setLogoURL(logo || '');
     setSelectedType(type);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deliberately keyed on id only, see comment above
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string): void => {
+  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: keyof ClientFormErrors): void => {
     const newValue = e.target.value;
 
     switch (fieldName) {
@@ -121,8 +117,6 @@ const ClientDetailsForm = ({ client }: ClientDetailsFormProps): JSX.Element => {
       {
         onSuccess: (_data, { isCurrentlyArchived }) => {
           addToast({ content: i18n.t(getToggleClientArchiveToastKey(isCurrentlyArchived, 'success')) });
-          // Same fromListSearch carried in via GoBack's router state (see from-list-search.ts) -- the archived
-          // client drops out of view through the status filter anyway, no reason to also reset it.
           navigate(`${clientsPaths.main}${readFromListSearch(location.state)}`);
         },
         onError: (error, { isCurrentlyArchived }) => {

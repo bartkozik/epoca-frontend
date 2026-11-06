@@ -59,9 +59,6 @@ export function deleteUnit(organizationSlug: string, workUnitId: string): Promis
   return api.delete(`/organizations/${organizationSlug}/work-units/${workUnitId}`);
 }
 
-// Promise<void>, not a unit-returning type: useEditUnitMutation only invalidates the units query on
-// success and never reads this response body, so the return type doesn't promise a validated
-// RawUnit nobody gets. See clients/requests.ts's editClient for the precedent.
 export async function editUnit(
   organizationSlug: string,
   workUnitId: string,
@@ -78,9 +75,6 @@ export async function editUnit(
       headers: { 'Idempotency-Key': idempotencyKey },
     },
   );
-  // Still validated as a boundary check (CLAUDE.md's response-validation convention) -- a
-  // malformed or empty PATCH echo is logged, not thrown, since no caller reads this value and
-  // throwing here would fail an edit the backend actually applied.
   const parsed = RawUnitSchema.safeParse(response.data);
   if (!parsed.success) {
     // eslint-disable-next-line no-console
@@ -88,8 +82,6 @@ export async function editUnit(
   }
 }
 
-// Promise<void> for the same reason as editUnit above -- models/unitReorder.model.ts's mutations
-// (the reorder/move-to-date flows) chain off this only for its side effect, never its data.
 export async function updateUnitDate(organizationSlug: string, workUnitId: string, date: string): Promise<void> {
   const response = await api.patch<unknown>(`/organizations/${organizationSlug}/work-units/${workUnitId}`, {
     date,

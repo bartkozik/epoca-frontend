@@ -61,8 +61,6 @@ const MembersTable = (): JSX.Element => {
   );
 
   const handleDetailsClick = (memberId: string): void => {
-    // Threads the list's search string through router state so MemberProjectsTable's GoBack
-    // (and its own navigate back to this list) can restore the sort instead of resetting it.
     navigate(teamSettingsPaths.userDetails(memberId), { state: withFromListSearch(location.search) });
   };
 

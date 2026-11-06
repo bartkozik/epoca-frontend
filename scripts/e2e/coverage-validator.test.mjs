@@ -10,6 +10,7 @@ import {
   trustedCoverageMapPath,
 } from './load-coverage-map.mjs';
 
+/** @template T @param {T} value @returns {T} */
 const clone = (value) => structuredClone(value);
 
 const loadedFixture = loadCoverageFixture();
@@ -18,13 +19,15 @@ const expectedBackfillIds = loadedFixture.expectedBackfillIds;
 
 const makeReport = (coverageMap = completeCoverageMap) => {
   const identities = new Set();
-  const browserEntries = coverageMap.filter((entry) => {
-    if (entry.kind !== 'e2e') return false;
-    const identity = `${entry.target.project}\0${entry.spec}\0${entry.title}`;
-    if (identities.has(identity)) return false;
-    identities.add(identity);
-    return true;
-  });
+  const browserEntries = coverageMap
+    .filter((entry) => entry.kind === 'e2e')
+    .filter((entry) => {
+      if (entry.kind !== 'e2e') return false;
+      const identity = `${entry.target.project}\0${entry.spec}\0${entry.title}`;
+      if (identities.has(identity)) return false;
+      identities.add(identity);
+      return true;
+    });
 
   return {
     config: { rootDir: '/repo' },
@@ -55,6 +58,7 @@ const validate = (coverageMap = completeCoverageMap, overrides = {}) =>
     ...overrides,
   });
 
+/** @param {(entry: (typeof import("./fixtures/coverage-map.fixture.ts"))["coverageMap"][number]) => boolean} predicate @param {(entry: (typeof import("./fixtures/coverage-map.fixture.ts"))["coverageMap"][number]) => unknown} update */
 const mutateEntry = (predicate, update) => {
   const map = clone(completeCoverageMap);
   const index = map.findIndex(predicate);
@@ -66,6 +70,7 @@ const mutateEntry = (predicate, update) => {
 const loadedRealMap = loadCoverageMap();
 
 const makeFederatedInventories = (source = loadedRealMap) => {
+  /** @type {import("./coverage-validator.mjs").FederatedInventories} */
   const inventories = {
     worlds: { mock: [], live: [], 'local-proxy': [] },
     'work-unit-overrides': { controlled: [] },
@@ -73,7 +78,7 @@ const makeFederatedInventories = (source = loadedRealMap) => {
     invitations: { live: [] },
   };
   const identities = new Set();
-  for (const entry of source.coverageMap.filter(({ kind }) => kind === 'e2e')) {
+  for (const entry of source.coverageMap.filter((entry) => entry.kind === 'e2e')) {
     const identity = `${entry.suite}\0${entry.config}\0${entry.project}\0${entry.spec}\0${entry.title}`;
     if (identities.has(identity)) continue;
     identities.add(identity);
@@ -143,13 +148,17 @@ void test('CT-521 live lifecycle is an explicit unexecuted disposable-infrastruc
     command: 'node .yarn/releases/yarn-4.18.0.cjs test:e2e:live:oauth-client',
     requires: ['protected disposable review stack', 'independent infrastructure janitor'],
   });
-  assert.equal(oauthClient.some(({ kind, config }) => kind === 'e2e' && config === 'live'), false);
+  assert.equal(
+    oauthClient.some(({ kind, config }) => kind === 'e2e' && config === 'live'),
+    false,
+  );
 });
 
 void test('coverage validation requires exactly one CT-521 pending gate and rejects a live browser claim', () => {
   const missingPending = clone(loadedRealMap.coverageMap).filter(({ kind }) => kind !== 'pending-infrastructure');
   assert.throws(() => validateFederated({ coverageMap: missingPending }), /CT-521.*exactly one pending/i);
 
+  /** @type {import("./coverage-validator.mjs").CoverageEntry[]} */
   const liveClaim = clone(loadedRealMap.coverageMap);
   liveClaim.push({
     kind: 'e2e',
@@ -245,6 +254,7 @@ void test('requires an exact unique project, spec, and full-title inventory matc
   );
 
   const pathOnly = inventoryFor().filter((item) => !(item.spec === entry.spec && item.title === entry.title));
+  assert.ok(entry && entry.kind === 'e2e');
   pathOnly.push({ ...inventoryFor()[0], spec: entry.spec, title: 'same path but not the full title' });
   assert.throws(
     () => validateCoverageMap({ coverageMap: completeCoverageMap, expectedBackfillIds, inventory: pathOnly }),
@@ -269,6 +279,7 @@ void test('exact inventory matches enforce primary tier and visual classificatio
   const fullEntry = completeCoverageMap.find(
     ({ kind, id, tier }) => kind === 'e2e' && id === 'CT-533' && tier === 'full',
   );
+  /** @param {import("./coverage-validator.mjs").InventoryItem[]} source @param {import("./coverage-validator.mjs").LegacyE2EEntry} coverage @param {string[]} tags */
   const replaceTags = (source, coverage, tags) =>
     source.map((item) =>
       item.projectName === coverage.target.project && item.spec === coverage.spec && item.title === coverage.title
@@ -322,6 +333,7 @@ void test('exact inventory matches enforce primary tier and visual classificatio
 });
 
 void test('rejects mixed, invalid, and wrong E2E target shapes', () => {
+  /** @type {Array<(entry: Record<string, unknown> & {target?: Record<string, unknown>}) => unknown>} */
   const cases = [
     (entry) => ({ ...entry, target: { ...entry.target, world: 'world-1', actor: 'owner' } }),
     (entry) => ({ ...entry, target: { world: 'world-6', actor: 'owner', project: 'mock-chromium' } }),
@@ -339,6 +351,7 @@ void test('rejects mixed, invalid, and wrong E2E target shapes', () => {
 });
 
 void test('gate variants reject browser fields, missing evidence fields, and unknown keys', () => {
+  /** @type {Array<(entry: {evidence: Record<string, unknown>}) => unknown>} */
   const technicalCases = [
     (entry) => ({ ...entry, world: 'world-1' }),
     (entry) => ({ ...entry, actor: 'owner' }),
@@ -357,6 +370,7 @@ void test('gate variants reject browser fields, missing evidence fields, and unk
     assert.throws(() => validate(map), /gate|technical evidence|unknown/i);
   }
 
+  /** @type {Array<(entry: {evidence: Record<string, unknown>}) => unknown>} */
   const externalCases = [
     (entry) => ({
       ...entry,
@@ -398,6 +412,7 @@ void test('gate variants reject browser fields, missing evidence fields, and unk
 });
 
 void test('infrastructure is only the exact non-backfill CT-530 data shape', () => {
+  /** @type {Array<(entry: Record<string, unknown> & {target?: Record<string, unknown>}) => unknown>} */
   const cases = [
     (entry) => ({ ...entry, id: 'CT-999' }),
     (entry) => ({ ...entry, backfill: true }),
@@ -413,12 +428,13 @@ void test('infrastructure is only the exact non-backfill CT-530 data shape', () 
 void test('CT-533 requires its four distinct behavioral case IDs and exact world-4 owner targets', () => {
   assert.deepEqual(
     completeCoverageMap
-      .filter(({ id }) => id === 'CT-533')
+      .filter((entry) => entry.kind === 'e2e' && entry.id === 'CT-533')
       .map(({ title }) => title.match(/@multi-search-[\w-]+/)[0].slice(1))
       .sort(),
-    Object.keys(MULTI_SEARCH_CASES).sort()
+    Object.keys(MULTI_SEARCH_CASES).sort(),
   );
 
+  /** @type {import("./coverage-validator.mjs").CoverageEntry[]} */
   const removed = clone(completeCoverageMap);
   removed.splice(
     removed.findIndex(({ id }) => id === 'CT-533'),
@@ -527,6 +543,7 @@ void test('accepted final boundary covers pivot, backend pivot, auth containment
   const livePivot = loadedRealMap.coverageMap.find(
     ({ kind, id, config }) => kind === 'e2e' && id === 'CT-535' && config === 'live',
   );
+  assert.ok(ct520 && ct520.kind === 'gate' && ct520.evidence.type === 'external');
   assert.equal(ct520.evidence.provider, 'gitlab');
   assert.equal(ct522, undefined, 'AI-skill QA is independent and must not gate CT-530');
   assert.equal(livePivot?.spec, 'tests/e2e/live/cross-stack.spec.ts');
@@ -566,6 +583,7 @@ void test('federated worlds accept executable full-tier primary tags for a regis
 });
 
 void test('federated worlds reject live, local, and cross-project primary-tag mis-tagging', () => {
+  /** @type {{config: string, projectName: string, tags: string[]}[]} */
   const cases = [
     { config: 'live', projectName: 'live-chromium', tags: ['mr'] },
     { config: 'local-proxy', projectName: 'local-proxy-chromium', tags: ['live'] },
@@ -676,7 +694,7 @@ void test('override baseline requires 16 unique exact identities while allowing 
 
 void test('coverage tuples must exist literally in their registry target', () => {
   const mismatch = clone(loadedRealMap.coverageMap);
-  const entry = mismatch.find(({ kind, id }) => kind === 'e2e' && id === 'CT-533');
+  const entry = mismatch.find((candidate) => candidate.kind === 'e2e' && candidate.id === 'CT-533');
   entry.project = 'mock-firefox';
   entry.tier = 'mr';
   const inventories = makeFederatedInventories();
@@ -690,21 +708,41 @@ void test('coverage tuples must exist literally in their registry target', () =>
 });
 
 void test('multi-search wording may change while stable cases remain discoverable', () => {
-  const changed = mutateEntry(({ id }) => id === 'CT-533', (entry) => ({
-    ...entry, title: entry.title.replace('dzieli zaznaczone i pozostałe opcje oraz filtruje obie sekcje', 'filters both option sections'),
-  }));
+  const changed = mutateEntry(
+    ({ id }) => id === 'CT-533',
+    (entry) => ({
+      ...entry,
+      title: ('title' in entry ? entry.title : '').replace(
+        'dzieli zaznaczone i pozostałe opcje oraz filtruje obie sekcje',
+        'filters both option sections',
+      ),
+    }),
+  );
   assert.doesNotThrow(() => validate(changed));
 });
 
 void test('multi-search rejects duplicate, unknown, multiple case tags and changed tiers', () => {
-  for (const replacement of ['@multi-search-transfer', '@multi-search-unknown', '@multi-search-sections @multi-search-transfer']) {
-    const changed = mutateEntry(({ title }) => title?.includes('@multi-search-sections'), (entry) => ({
-      ...entry, title: entry.title.replace('@multi-search-sections', replacement),
-    }));
+  for (const replacement of [
+    '@multi-search-transfer',
+    '@multi-search-unknown',
+    '@multi-search-sections @multi-search-transfer',
+  ]) {
+    const changed = mutateEntry(
+      (entry) => 'title' in entry && entry.title.includes('@multi-search-sections'),
+      (entry) => ({
+        ...entry,
+        title: ('title' in entry ? entry.title : '').replace('@multi-search-sections', replacement),
+      }),
+    );
     assert.throws(() => validate(changed), /four distinct required cases/);
   }
-  const changed = mutateEntry(({ title }) => title?.includes('@multi-search-mobile'), (entry) => ({
-    ...entry, tier: 'mr', title: entry.title.replace('@full', '@mr'),
-  }));
+  const changed = mutateEntry(
+    (entry) => 'title' in entry && entry.title.includes('@multi-search-mobile'),
+    (entry) => ({
+      ...entry,
+      tier: 'mr',
+      title: ('title' in entry ? entry.title : '').replace('@full', '@mr'),
+    }),
+  );
   assert.throws(() => validate(changed), /required tier and spec/);
 });

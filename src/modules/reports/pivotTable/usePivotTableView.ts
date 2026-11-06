@@ -21,12 +21,6 @@ export interface PivotTableView {
   resetLayout: () => void;
 }
 
-// Layout is per-(user, organization) persisted config, not server-state -- it lives in local
-// state backed by localStorage, not the TanStack Query cache. Reloads whenever the (userId,
-// organizationSlug) identity changes, mirroring the removed pivot table store's former
-// cache-key-scoped `layout` getter. Unlike that store's moveField/applyFilter/setOption, this
-// hook does not itself trigger a data refetch -- PivotTable.tsx's usePivotTableQuery call does
-// that by depending on `layout` in its query key.
 export function usePivotTableView(): PivotTableView {
   const auth = useAuth();
   const workspace = useWorkspace();

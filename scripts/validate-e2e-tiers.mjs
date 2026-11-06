@@ -28,6 +28,7 @@ const tierCommands = Object.freeze([
   },
 ]);
 
+/** @param {{repositoryRoot: string, environment?: NodeJS.ProcessEnv}} options */
 export const buildPlaywrightListSpawnOptions = ({ repositoryRoot: cwd, environment = process.env }) => ({
   cwd,
   encoding: 'utf8',

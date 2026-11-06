@@ -11,6 +11,7 @@ const repositoryRoot = fileURLToPath(new URL('..', import.meta.url));
 export const PLAYWRIGHT_COVERAGE_LIST_TIMEOUT_MS = 60_000;
 const OAUTH_CLIENT_MOCK_GREP = '@mr.*@oauth-client|@oauth-client.*@mr';
 
+/** @param {import("./e2e/coverage-validator.mjs").SuiteRegistry} suiteRegistry */
 export const buildCoverageInventoryCommands = (suiteRegistry) => {
   validateSuiteRegistry(suiteRegistry);
   return Object.entries(suiteRegistry).flatMap(([suite, { configs }]) =>
@@ -18,6 +19,7 @@ export const buildCoverageInventoryCommands = (suiteRegistry) => {
   );
 };
 
+/** @param {{repositoryRoot: string, environment?: NodeJS.ProcessEnv}} options @returns {import("node:child_process").SpawnSyncOptionsWithStringEncoding} */
 export const buildPlaywrightCoverageListSpawnOptions = ({ repositoryRoot: cwd, environment = process.env }) => ({
   cwd,
   encoding: 'utf8',
@@ -27,6 +29,7 @@ export const buildPlaywrightCoverageListSpawnOptions = ({ repositoryRoot: cwd, e
   killSignal: 'SIGKILL',
 });
 
+/** @param {string} label @param {import("node:child_process").SpawnSyncReturns<string>} result @param {string} cwd */
 const validateCoverageListRun = (label, result, cwd) => {
   if (result?.error?.code === 'ETIMEDOUT') {
     throw new Error(`${label} Playwright list timed out after ${PLAYWRIGHT_COVERAGE_LIST_TIMEOUT_MS} ms`);
@@ -41,12 +44,14 @@ const validateCoverageListRun = (label, result, cwd) => {
   return parsePlaywrightInventory(result.stdout, { repositoryRoot: cwd });
 };
 
+/** @param {{suiteRegistry: import("./e2e/coverage-validator.mjs").SuiteRegistry, cwd?: string, environment?: NodeJS.ProcessEnv, spawn?: typeof spawnSync}} options @returns {import("./e2e/coverage-validator.mjs").FederatedInventories} */
 export const collectCoverageInventories = ({
   suiteRegistry,
   cwd = repositoryRoot,
   environment = process.env,
   spawn = spawnSync,
 } = {}) => {
+  /** @type {import("./e2e/coverage-validator.mjs").FederatedInventories} */
   const inventories = {};
   for (const { suite, config, file } of buildCoverageInventoryCommands(suiteRegistry)) {
     const runs = [
@@ -59,16 +64,7 @@ export const collectCoverageInventories = ({
         ? [
             {
               label: `${suite}/${config}/oauth-client-targeted`,
-              args: [
-                playwrightCli,
-                'test',
-                '--list',
-                '--reporter=json',
-                '--grep',
-                OAUTH_CLIENT_MOCK_GREP,
-                '-c',
-                file,
-              ],
+              args: [playwrightCli, 'test', '--list', '--reporter=json', '--grep', OAUTH_CLIENT_MOCK_GREP, '-c', file],
               environment: { ...environment, PLAYWRIGHT_OAUTH_CLIENT_TARGETED: 'true' },
             },
           ]

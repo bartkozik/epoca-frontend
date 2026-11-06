@@ -18,9 +18,6 @@ export interface UseFilteredReportedUnitsArgs {
   isLoadingReportData: boolean;
 }
 
-// Named-args object rather than positional parameters -- three of the five arguments
-// (selectedClients/selectedProjects/selectedUsers) share the exact same SelectedItemsMap type,
-// so a positional signature can't catch an accidental swap at the call site.
 export function useFilteredReportedUnits({
   reportedUnits,
   selectedClients,
@@ -37,7 +34,6 @@ export function useFilteredReportedUnits({
 
     return dateSortedUnits.filter((unit) => {
       if (unit.state !== UnitState.Active) return false;
-      // The report lists time only; notes stay in the calendar and the pivot table.
       if (unit.entryType !== WorkUnitEntryType.Worklog) return false;
 
       const projectClient = unit.effectiveProjectClient;

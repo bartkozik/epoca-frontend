@@ -10,7 +10,6 @@ interface OverrideProjects {
   resolveClient: (id: string | null) => string | null;
 }
 
-// Catalog resolution is session-scoped; historical names never pass through this helper.
 export function useOverrideProjects(
   base: WorkUnitOverrideResponse | null,
   projectId: string | null | undefined,

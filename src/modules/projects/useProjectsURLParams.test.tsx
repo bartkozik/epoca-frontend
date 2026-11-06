@@ -11,8 +11,6 @@ const ProjectsHarness = (): JSX.Element => {
   const navigate = useNavigate();
   const params = useProjectsURLParams();
 
-  // Counts actual URL commits (not renders/keystrokes) so a test can assert the debounced query
-  // write only lands once, instead of once per keystroke.
   const searchChangesRef = useRef(0);
   const prevSearchRef = useRef(location.search);
   if (location.search !== prevSearchRef.current) {
@@ -33,8 +31,8 @@ const ProjectsHarness = (): JSX.Element => {
       <button onClick={() => params.setSelectedStatus(ProjectStatus.Archived)}>set archived</button>
       <button onClick={() => params.updateSort(SortColumn.Project)}>sort by project</button>
       <button onClick={() => params.resetFilters()}>reset</button>
-      {/* mirrors the real app: clicking into a project's details page is a push navigation away
-          from /projects, unrelated to the replace-based filter updates above */}
+      {
+}
       <button onClick={() => navigate('/projects/project-1/project-details')}>open project details</button>
     </>
   );
@@ -104,7 +102,6 @@ describe('useProjectsURLParams', () => {
 
     await user.click(screen.getByRole('button', { name: 'set query' }));
 
-    // query itself (the controlled input's value) updates instantly, ahead of the URL
     expect(screen.getByTestId('query')).toHaveTextContent('acme');
     await waitFor(() => expect(screen.getByTestId('search')).toHaveTextContent('q=acme'));
   });
@@ -125,8 +122,6 @@ describe('useProjectsURLParams', () => {
 
     await user.click(screen.getByRole('button', { name: 'sort by project' }));
 
-    // Guards against a naive two-setters implementation losing one change (both build off the
-    // same pre-navigate snapshot).
     expect(screen.getByTestId('sort-column')).toHaveTextContent(SortColumn.Project);
     expect(screen.getByTestId('sort-direction')).toHaveTextContent(SortDirection.Asc);
     expect(screen.getByTestId('search')).toHaveTextContent('sortColumn=Project');
@@ -143,7 +138,6 @@ describe('useProjectsURLParams', () => {
     expect(screen.getByTestId('status')).toHaveTextContent(ProjectStatus.Active);
   });
 
-  // Sort isn't one of the filters this reset button clears.
   it('leaves the sort untouched when resetting filters', async () => {
     const user = userEvent.setup();
     renderApp('/projects?status=Archived');
@@ -166,8 +160,6 @@ describe('useProjectsURLParams', () => {
     expect(screen.getByTestId('search')).toHaveTextContent('unrelated=keep-me');
   });
 
-  // Regression guard: Projects.tsx used to hold query/status in local useState, which a full
-  // unmount/remount (navigating to details and back) reset to defaults.
   it('restores a selected filter after navigating to project details and back', async () => {
     const user = userEvent.setup();
     renderApp('/projects');
@@ -183,8 +175,6 @@ describe('useProjectsURLParams', () => {
     expect(await screen.findByTestId('status')).toHaveTextContent(ProjectStatus.Archived);
   });
 
-  // Regression guard: ProjectsBoard used to hold sort in local useState, reset by the same
-  // unmount/remount as above.
   it('restores the sort after navigating to project details and back', async () => {
     const user = userEvent.setup();
     renderApp('/projects');
@@ -235,9 +225,7 @@ describe('useProjectsURLParams', () => {
       fireEvent.change(input, { target: { value: 'acm' } });
       fireEvent.change(input, { target: { value: 'acme' } });
 
-      // the controlled input/query reflects the last keystroke instantly
       expect(screen.getByTestId('query')).toHaveTextContent('acme');
-      // but nothing has been written to the URL yet
       expect(screen.getByTestId('search')).toHaveTextContent('');
       expect(screen.getByTestId('search-changes')).toHaveTextContent('0');
 

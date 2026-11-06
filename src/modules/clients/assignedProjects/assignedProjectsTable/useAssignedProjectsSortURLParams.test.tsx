@@ -73,8 +73,6 @@ describe('useAssignedProjectsSortURLParams', () => {
     expect(screen.getByTestId('search')).toHaveTextContent('');
   });
 
-  // Regression guard: ClientDetails' GoBack link reads fromListSearch off router state (see
-  // from-list-search.ts's readFromListSearch); this hook's own `replace` navigate must not drop it.
   it('forwards existing router state through its own navigate call', async () => {
     const user = userEvent.setup();
     renderApp({ pathname: '/clients/client-1/assigned-projects', state: { fromListSearch: '?status=Archived' } });

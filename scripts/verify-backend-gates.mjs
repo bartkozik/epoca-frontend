@@ -14,6 +14,7 @@ const BACKEND_JOB = 'test_backend';
 const testResultsRoot = fileURLToPath(new URL('../test-results', import.meta.url));
 const defaultOutputPath = fileURLToPath(new URL('../test-results/backend-gates.json', import.meta.url));
 
+/** @param {NodeJS.ProcessEnv} env @param {string} name */
 const requireEnv = (env, name) => {
   const value = env[name];
   if (typeof value !== 'string' || value.trim() === '') throw new Error(`${name} is required`);

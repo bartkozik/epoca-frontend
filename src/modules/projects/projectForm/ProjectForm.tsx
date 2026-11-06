@@ -57,8 +57,6 @@ function ProjectForm({ onCancel, project, withoutClientSelect = false }: Project
   const projectNameInputWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Project user selection lives in the shared projects provider, so a new project form must not
-    // inherit members picked or loaded by a previously opened form (e.g. one opened from a client).
     if (!project) setSelectedProjectMembers([]);
     void fetchContextOrganizationUsers().then((users) => {
       if (project) {
@@ -70,7 +68,6 @@ function ProjectForm({ onCancel, project, withoutClientSelect = false }: Project
         setSelectedProjectOwners(currentUser ? [organizationUserToUser(currentUser)] : []);
       }
     });
-    // Re-run for a different project or workspace user, not for background user-list updates.
   }, [
     fetchContextOrganizationUsers,
     initializeProjectData,

@@ -132,16 +132,6 @@ export const WorkUnitOverrideSchema = z
 
 export type WorkUnitOverride = z.infer<typeof WorkUnitOverrideSchema>;
 
-// projectClient/effectiveProjectClient are required, not nullable. This is
-// the same WorkUnitDto as the plain work-units endpoint -- backend WorkUnitOverrideService.currentDto
-// wraps WorkUnitDtoService.prepareDto and only adds the override metadata on top -- so both fields
-// come from the same projectClientMap.get(workUnit.projectId) / .get(workUnit.effectiveProjectId)
-// lookup, which yields None only on a Map.get miss (a dangling/orphaned clientId; see
-// workingTime/models/unitDto.model.ts's ClientProjectSchema comment for the full backend trace).
-// effectiveProjectId always resolves to a real ProjectId (overrideState.projectId.getOrElse(projectId)),
-// so effectiveProjectClient: null is equally a dangling reference, NOT a legitimate "no override
-// applied" state -- that concept is override.projectId: null below. Treat a null here like any other
-// malformed load-bearing field and reject the response.
 export const WorkUnitOverrideResponseSchema = z
   .object({
     id: CanonicalUuidSchema,

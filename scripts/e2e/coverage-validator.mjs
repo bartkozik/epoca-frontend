@@ -53,7 +53,6 @@ const EXPECTED_SUITE_REGISTRY = Object.freeze({
       live: {
         file: 'playwright.invitation-live.config.ts',
         tagPolicy: 'primary-tag',
-        // Explicit local invocation against InvitationBrowserTestMain; never the staging live job.
         targets: [{ project: 'invitation-live-chromium', tier: 'live', ciJob: 'manual-owned-runtime' }],
       },
     },

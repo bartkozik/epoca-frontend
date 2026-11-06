@@ -15,7 +15,6 @@ const findStyleRule = (selector: string): CSSStyleRule | undefined => {
   return rule;
 };
 
-// Feature styles that used to re-add the same ring locally because Button removed it.
 const formerLocalFocusPatches = [
   'src/core/theme/confirmation/Confirmation.module.scss',
   'src/modules/teamSettings/integrations/IntegrationClientConfirmationModal.module.scss',

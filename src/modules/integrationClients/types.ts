@@ -18,11 +18,6 @@ export type { IntegrationClientAuditEvent, IntegrationClientAuditPage } from './
 export type IntegrationClientProjectAccessInput =
   { mode: 'AllProjects' } | { mode: 'SelectedProjects'; projectIds: readonly string[] };
 
-// Deliberately hand-written rather than a schema z.infer: these are the TS-level contract every
-// caller (the form layer, the mutation hooks) builds and passes around with readonly arrays, while
-// CreateIntegrationClientInputSchema/UpdateIntegrationClientInputSchema (integrationClientCreate/
-// Update.model.ts) validate that same shape at the requests.ts API boundary as a runtime safety
-// net -- a plain z.infer would be a mutable-array duplicate, not a genuine alternative.
 export interface CreateIntegrationClientInput {
   name: string;
   scopes: readonly OAuthScope[];

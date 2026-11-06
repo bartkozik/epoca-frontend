@@ -6,8 +6,6 @@ import { showModuleErrorToast } from '@/core/utils/helpers';
 import { useAuth } from '@/modules/auth/AuthProvider';
 import { useClientProjectsQuery } from '@/modules/clients/hooks/useClientProjectsQuery';
 import { Client } from '@/modules/clients/types';
-// Cross-module consumer inside the `clients` lazy chunk -- imports the concrete `routes.ts` file,
-// not the `@/modules/projects` barrel, per guarded()'s doc comment in permissionRoute/index.ts.
 import { projectsPaths } from '@/modules/projects/routes';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +28,6 @@ const ClientProjectsList = ({ client, onProjectAdd }: ClientProjectsListProps): 
   const clientProjectsQuery = useClientProjectsQuery(client.id, isProjectsDropdownOpen);
   const projects = clientProjectsQuery.data?.results ?? [];
 
-  // Same rationale as Clients.tsx's clientsQuery.isError effect.
   useEffect(() => {
     if (clientProjectsQuery.isError)
       showModuleErrorToast(clientProjectsQuery.error, { default: t('toast_message.projects.data_fetch_error') });

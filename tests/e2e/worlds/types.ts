@@ -100,7 +100,6 @@ export interface WorldIntegrationClient {
 }
 
 export interface WorldIntegrationAuditEvent {
-  /** Private fixture association used only by the mock handler; never returned by the API. */
   clientId: string;
   id: string;
   occurredAt: string;

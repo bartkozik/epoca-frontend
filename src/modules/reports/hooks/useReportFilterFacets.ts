@@ -26,16 +26,10 @@ interface UseReportFilterFacetsArgs {
 interface UseReportFilterFacetsResult {
   status: FilterFacetsStatus;
   facets: FilterFacets | null;
-  /** Starts loading on first use (e.g. when a filter list opens); later periods load automatically. */
   request: () => void;
   retry: () => void;
 }
 
-/**
- * Per-option hours for the report filters. One pivot query per period (client × project × user);
- * each option's hours are then computed in the browser with the other filters applied, so a click in a
- * list never needs a request. Only roles that may read pivot tables get hours.
- */
 export function useReportFilterFacets({
   fromDate,
   toDate,

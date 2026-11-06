@@ -15,12 +15,9 @@ const DEFAULT_FILTER_TYPE = ClientFilterType.All;
 const DEFAULT_SORT_COLUMN = SortColumn.Client;
 const DEFAULT_SORT_DIRECTION = SortDirection.Desc;
 
-// The only two columns ClientsBoard actually renders as sortable -- keeps a stray/stale URL value
-// from selecting a column the board has no comparator for.
 const VALID_SORT_COLUMNS: SortColumn[] = [SortColumn.Client, SortColumn.DateAdded];
 
-// Safari throttles history.replaceState to ~100 calls/30s and throws past that; writing the URL
-// on every keystroke in the search box can hit it. Debounce the URL write, not the input itself.
+// Debounce URL writes to avoid Safari history.replaceState rate limits.
 const QUERY_URL_WRITE_DELAY_MS = 300;
 
 const isClientStatus = (value: string): value is ClientStatus =>
@@ -52,9 +49,6 @@ export interface UseClientsURLParamsReturn {
   resetFilters: () => void;
 }
 
-// Persists the clients list's search/status/type filters and ClientsBoard's sort through the URL
-// instead of local useState, so a round trip through a client's details page (which fully unmounts
-// this route) restores them on the way back, same as reports/filterPanel's URL-backed filters.
 export const useClientsURLParams = (): UseClientsURLParamsReturn => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -70,23 +64,15 @@ export const useClientsURLParams = (): UseClientsURLParamsReturn => {
   const selectedStatus = parseStatus(searchParams);
   const selectedFilterType = parseFilterType(searchParams);
 
-  // query is local state so the controlled search input stays instant; the URL write for it is
-  // debounced below instead of happening on every keystroke.
   const [query, setQueryState] = useState(urlQuery);
   const debouncedQuery = useDebounce(query, QUERY_URL_WRITE_DELAY_MS);
 
-  // Each call snapshots `searchParams` fresh off this render, mutates a copy, and replaces the URL
-  // wholesale (it doesn't merge with whatever's in the address bar at navigate-time). Calling two
-  // of this hook's setters back-to-back in the same handler would have the second call's snapshot
-  // miss the first call's not-yet-rendered change, silently dropping it.
   const updateURL = (mutate: (params: URLSearchParams) => void): void => {
     const nextParams = new URLSearchParams(searchParams.toString());
     mutate(nextParams);
     navigate({ search: nextParams.toString() }, { replace: true });
   };
 
-  // Re-sync local query state when the URL's own param changes from outside typing -- browser
-  // back/forward restoring a previous /clients visit, or resetFilters below.
   useEffect(() => {
     setQueryState(urlQuery);
   }, [urlQuery]);

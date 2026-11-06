@@ -24,7 +24,7 @@ test('a lifecycle deadline cancels stalled response-body work before guarded fin
         const response = await boundedFetch(
           'https://staging.example.test/api',
           { method: 'GET', signal },
-          (_input, init) => {
+          (_input: RequestInfo | URL, init?: RequestInit) => {
             init?.signal?.addEventListener('abort', () => events.push('fetch-signal-aborted'), { once: true });
             return Promise.resolve(
               new Response(

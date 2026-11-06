@@ -17,24 +17,15 @@ export function useIntegrationClientQuery(
     queryFn: () =>
       requests.getIntegrationClient(organizationSlug, clientId).catch((error: unknown) => {
         const problem = normalizeIntegrationClientProblem(error);
-        // Deliberately does NOT removeQueries its own key here -- this queryFn is that query's own
-        // active fetch, and removing it mid-flight orphans the observer so it never sees the reject.
-        // The error state alone (read via this hook's .error) is enough for a caller to react to.
+        // Removing this actively fetching query would orphan its observer before it receives the rejection.
         if (problem.kind === 'client-not-found') {
           evictIntegrationClientFromLists(queryClient, organizationSlug, clientId);
         }
-        // IntegrationClientProblem is a typed value, not an Error -- callers pattern-match on .kind.
         // eslint-disable-next-line @typescript-eslint/only-throw-error
         throw problem;
       }),
     enabled: organizationSlug !== '' && clientId !== '',
-    // Opening a client's details must confirm the server's current version before lifecycle actions
-    // (which carry that version for optimistic-concurrency checks) are enabled. This hook's observer
-    // stays mounted continuously in Integrations.tsx -- only `clientId` toggles between a real id and
-    // '' (disabled) as the details view opens/closes -- so `refetchOnMount` never applies (it only
-    // governs true observer-subscribe events, not an already-mounted observer's key changing).
-    // staleTime: 0 instead makes every re-enable (closed -> reopened) a genuine network read, since
-    // TanStack re-checks staleness whenever `enabled` flips back to true.
+    // The observer stays mounted across reopenings; staleTime: 0 forces a fresh version before lifecycle actions.
     staleTime: 0,
   });
 }

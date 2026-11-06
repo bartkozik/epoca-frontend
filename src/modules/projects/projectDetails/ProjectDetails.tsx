@@ -18,7 +18,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import modalStyles from '../Projects.module.scss';
 import { projectsPaths } from '../routes';
 
-//
 
 function ProjectDetails(): JSX.Element | null {
   const { t } = useTranslation();
@@ -35,7 +34,6 @@ function ProjectDetails(): JSX.Element | null {
     [projectQuery.data, modelProject],
   );
 
-  // Share the selected query result with the assignment form and client-page edit modal.
   useEffect(() => {
     setSelectedProject(project ?? null);
   }, [project, setSelectedProject]);
@@ -66,9 +64,6 @@ function ProjectDetails(): JSX.Element | null {
 
   const onTabClick = (value: string): void | undefined => {
     if (!projectId) return;
-    // Forward state (not search) so fromListSearch survives the tab switch, while
-    // AssignedMemberTable's own sort params intentionally still reset (see
-    // useAssignedMembersSortURLParams.ts).
     navigate(projectsPaths.details(projectId, value), { state: location.state as unknown });
   };
 

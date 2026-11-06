@@ -18,9 +18,6 @@ export interface UndoWorkUnitOverrideVariables {
   dto: UndoWorkUnitOverrideRequest;
 }
 
-// Deliberately no onMutate/onSuccess/onError: useWorkUnitOverride.ts's own mutate() awaits the
-// real response and handles the accept/conflict/terminal orchestration itself, exactly as it does
-// with the raw request functions. These hooks stay pessimistic primitives.
 export function useReplaceWorkUnitOverrideMutation(): UseMutationResult<
   WorkUnitOverrideResponse,
   unknown,

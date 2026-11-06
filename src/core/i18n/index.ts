@@ -10,6 +10,5 @@ export const resources = {
   },
 };
 
-//After adding the new language add it to domain/type/Language enum
 
 export const availableLanguages = ['en', 'pl'];

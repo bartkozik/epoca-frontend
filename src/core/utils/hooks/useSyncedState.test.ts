@@ -22,11 +22,9 @@ describe('useSyncedState', () => {
     act(() => result.current[1]('local'));
     expect(result.current[0]).toBe('local');
 
-    // Re-rendering with the SAME external value must not clobber the local update.
     rerender({ value: 'a' });
     expect(result.current[0]).toBe('local');
 
-    // Only a genuinely new external value resyncs it.
     rerender({ value: 'b' });
     expect(result.current[0]).toBe('b');
   });
@@ -38,7 +36,6 @@ describe('useSyncedState', () => {
     act(() => result.current[1]([]));
     expect(result.current[0]).toEqual([]);
 
-    // Deep-equal to `first`, but a different reference -- still treated as an external change.
     const sameContentNewReference = [{ id: '1' }];
     rerender({ value: sameContentNewReference });
 

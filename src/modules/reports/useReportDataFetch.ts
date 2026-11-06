@@ -32,8 +32,6 @@ export const useReportDataFetch = (): { isLoadingData: boolean } => {
     showModuleErrorToast(error, { default: t('toast_message.common.data_fetch_error') });
   }, [error, t]);
 
-  // Retrying a failed query with no cached data reports isLoading again. Keep open report
-  // editors mounted after the first attempt settles; a new organization gets its own lifecycle.
   const isLoadingData = metadataLoading && (initialLoad.slug !== contextOrganizationSlug || !initialLoad.settled);
   return { isLoadingData };
 };

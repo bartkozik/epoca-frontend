@@ -38,9 +38,6 @@ export async function addNewOrganization(name: string, slug: string): Organizati
   return { ...response, data: RawOrganizationSchema.parse(response.data) };
 }
 
-// Promise<void>, not OrganizationReturn: nothing reads editOrganization's response (zero callers
-// today), so a malformed or empty PATCH echo is logged, not thrown -- matching editClient's/
-// updateUser's rationale in clients/requests.ts and users/requests.ts.
 export async function editOrganization(organizationSlug: string, name: string): Promise<void> {
   const response = await api.patch<unknown>(`/organizations/${organizationSlug}`, { name });
   const parsed = RawOrganizationSchema.safeParse(response.data);
@@ -54,7 +51,6 @@ export function deleteOrganization(organizationSlug: string): OrganizationDelete
   return api.delete(`/organizations/${organizationSlug}`);
 }
 
-/** includeArchivedMembers also returns people whose membership was archived (marked archived: true). */
 export async function getOrganizationUsers(
   slug: string,
   includeArchived = false,

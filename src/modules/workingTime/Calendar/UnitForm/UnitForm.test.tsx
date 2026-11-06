@@ -529,8 +529,6 @@ describe('UnitForm entry types', () => {
     fireEvent.submit(screen.getByRole('button', { name: 'common.update' }));
 
     expect(submitEdit).toHaveBeenCalledTimes(1);
-    // submitEdit's argument order is (workUnitId, dto, shouldFinalize) -- the dto is the second
-    // argument, unlike the old store's editUnit(dto, unitId, shouldFinalize).
     expect(submitEdit.mock.calls[0][0]).toBe('unit-1');
     expect(submitEdit.mock.calls[0][1]).not.toHaveProperty('entryType');
     expect(submitEdit.mock.calls[0][1]).toMatchObject({

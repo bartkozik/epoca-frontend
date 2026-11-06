@@ -18,8 +18,6 @@ export function useUpdateOrganizationMutation(): UseMutationResult<void, unknown
       void queryClient.invalidateQueries({ queryKey: organizationsQueryKey(), exact: false });
       void queryClient.invalidateQueries({ queryKey: organizationQueryKey(slug), exact: false });
       if (slug === workspace.contextOrganizationSlug) {
-        // The active workspace query reports refresh errors; avoid another toast or
-        // an unhandled rejection after the edit itself has already succeeded.
         void workspace.getContextOrganizationBySlug(slug).catch(() => undefined);
       }
     },

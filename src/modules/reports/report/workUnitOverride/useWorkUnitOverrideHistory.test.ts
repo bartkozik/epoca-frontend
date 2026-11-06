@@ -188,10 +188,6 @@ it.each(['organizationSlug', 'workUnitId', 'isOpen', 'canViewHistory', 'unmount'
 );
 
 it('coalesces a resetKey session sharing organization/work unit/pinned version with the still-loading prior one', async () => {
-  // Unlike the other "ignores late history" cases, a resetKey-only change keeps the query key
-  // (org, workUnitId, upToVersion, page) identical to the still-loading prior session's, so the
-  // cache shares the single in-flight request instead of firing a second one. The new session is
-  // not stale here -- the shared response is its own legitimate page, so it must be adopted.
   const pending = deferred();
   get.mockReturnValueOnce(pending.promise);
   const initial = props();
@@ -220,9 +216,6 @@ it('clears cached history on 403 even if the owner still renders the same worklo
 });
 
 it('does not silently retry a terminal 403 before session-end fires, even with retries enabled by default', async () => {
-  // createQueryWrapper hardcodes retry: false on the whole client, which would mask a regression
-  // in this hook's own retry: false override on fetchQuery. This test instead mirrors the shared
-  // queryClient's real default (retry: 1), so a dropped override would surface as a second call.
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1 } } });
   const wrapperWithDefaultRetry = ({ children }: { children: ReactNode }): ReactElement =>
     createElement(QueryClientProvider, { client: queryClient }, children);

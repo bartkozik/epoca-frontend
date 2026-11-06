@@ -28,16 +28,9 @@ vi.mock('react-i18next', async () => ({
 vi.mock('react-router-dom', async () => ({
   ...(await vi.importActual('react-router-dom')),
   useNavigate: () => vi.fn(),
-  // ClientRow reads this to thread the list's search string into the details navigation's router
-  // state (see from-list-search.ts's readFromListSearch) -- unmocked, the real hook throws outside a Router.
   useLocation: () => ({ search: '' }),
 }));
 
-// ClientsBoard's archive-toggle toast path calls the `i18next` singleton directly (not via
-// useTranslation), matching ClientForm.test.tsx's established mock for the same reason -- the
-// real, uninitialized i18next instance would otherwise resolve every key to ''. `use`/`init` stay
-// chainable no-ops rather than being omitted, in case any transitively-imported module still
-// touches the singleton at load time.
 vi.mock('i18next', () => {
   const instance = {
     t: (key: string) => key,
@@ -118,8 +111,6 @@ describe('ClientsBoard', () => {
     await user.click(within(dialog).getByRole('button', { name: /common\.archive/ }));
 
     await waitFor(() => expect(archiveClientMock).toHaveBeenCalledWith('acme', 'client-1'));
-    // isCurrentlyArchived was false, so a successful *archive* request now shows archive_success --
-    // see clientArchive.model.ts's getToggleClientArchiveToastKey for the direction mapping.
     await waitFor(() =>
       expect(addToastMock).toHaveBeenCalledWith({ content: 'toast_message.clients.archive_success' }),
     );
@@ -151,8 +142,6 @@ describe('ClientsBoard', () => {
     const dialog = screen.getByRole('dialog');
     await user.click(within(dialog).getByRole('button', { name: /common\.archive/ }));
 
-    // Matches the pre-migration store method's .finally(), which always closed the confirmation
-    // modal regardless of outcome -- the modal close isn't gated on the mutation settling.
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });

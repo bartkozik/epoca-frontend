@@ -85,10 +85,6 @@ describe('useIntegrationClientQuery', () => {
     expect(queryClient.getQueryData(listKey)).toEqual({ count: 0, results: [] });
   });
 
-  // Query keys are namespaced by clientId, so two clients' detail fetches -- even overlapping,
-  // resolving out of order -- land in independent cache entries rather than one clobbering the
-  // other. This is the replacement for IntegrationClientsStore's hand-rolled per-client read
-  // sequence tracking (clientReadSequences).
   it('keeps independent cache entries per clientId when fetches for two different clients overlap', async () => {
     const deferred = (): { promise: Promise<typeof validClient>; resolve: (value: typeof validClient) => void } => {
       let resolve: (value: typeof validClient) => void = () => undefined;
@@ -99,9 +95,6 @@ describe('useIntegrationClientQuery', () => {
     };
     const first = deferred();
     const second = deferred();
-    // getIntegrationClientMock's loosened `unknown as ReturnType<typeof vi.fn>` cast (matching this
-    // repo's established mocking pattern) infers mockImplementationOnce's callback as void-returning,
-    // so eslint can't see it actually matches getIntegrationClient's real Promise-returning signature.
     getIntegrationClientMock
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       .mockImplementationOnce(() => first.promise)
@@ -113,7 +106,6 @@ describe('useIntegrationClientQuery', () => {
     renderHook(() => useIntegrationClientQuery('acme', secondClientId), { wrapper });
     await waitFor(() => expect(getIntegrationClientMock).toHaveBeenCalledTimes(2));
 
-    // Resolve the second client's fetch first, then the first client's -- out of order.
     second.resolve({ ...validClient, clientId: secondClientId, name: 'Second client' });
     first.resolve({ ...validClient, name: 'First client' });
 

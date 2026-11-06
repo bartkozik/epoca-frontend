@@ -30,7 +30,7 @@ export interface BaseInputProps {
   name: string;
   onBlur?: (value: FocusEvent<HTMLInputElement, Element>) => void;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onClick?: (value) => void;
+  onClick?: React.MouseEventHandler<HTMLInputElement>;
   onKeyDown?: (value: React.KeyboardEvent<HTMLInputElement>) => void;
   placeholder?: string;
   readOnly?: boolean;
@@ -104,31 +104,21 @@ export interface SelectProps<T> extends BaseInputProps {
 }
 
 export interface MultiSearchOptionMeta {
-  /** Right-aligned value shown in the option row, e.g. hours in the current context. */
   trailing?: string;
-  /** The option has no data in the current context; it is listed in a muted group but stays selectable. */
   inactive?: boolean;
 }
 
 export interface MultiSearchProps extends Omit<BaseInputProps, 'value' | 'onChange'> {
   items: SelectOption[];
-  /** Selected option values (controlled). */
   value: string[];
-  /** Called only on user interaction, with the full new selection. */
   onChange: (values: string[]) => void;
-  /** Closed-field text when nothing is selected, e.g. "All users". */
   allLabel?: string;
-  /** Search box placeholder while the list is open. */
   searchPlaceholder?: string;
   optionMeta?: Record<string, MultiSearchOptionMeta>;
-  /** Heading of the muted group for options marked `inactive`. */
   inactiveGroupLabel?: string;
-  /** Status line shown above the options, e.g. when per-option values could not be loaded. */
   metaStatus?: ReactNode;
-  /** Called every time the list opens; use it to load per-option values lazily. */
   onOpen?: () => void;
   emptyItemsMessage?: string;
-  /** Aligns the list with the field's right edge (for fields at the right edge of a row). */
   alignRight?: boolean;
 }
 

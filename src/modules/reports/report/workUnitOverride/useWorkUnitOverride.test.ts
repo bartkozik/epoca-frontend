@@ -39,8 +39,6 @@ vi.mock('./requests', () => ({
   deleteWorkUnitOverride: vi.fn(),
   undoWorkUnitOverride: vi.fn(),
 }));
-// Forwards to the `let refresh` below at call time (not at factory-eval time), so beforeEach can
-// keep reassigning a fresh mock per test the way it always has.
 vi.mock('@/modules/reports/hooks/useReportedUnits', () => ({
   refreshReportedUnits: (...args: unknown[]) => refresh(...(args as [])),
 }));
@@ -157,8 +155,6 @@ describe('correction controller stepwise undo', () => {
       void result.current.save();
     });
     expect(result.current.undoTarget).toEqual(original);
-    // mutateAsync issues the request a microtask after the synchronous guard above admits it,
-    // so the call has to be awaited into existence before asserting it happened exactly once.
     await waitFor(() => expect(undo).toHaveBeenCalled());
     expect(undo).toHaveBeenCalledExactlyOnceWith('acme', workUnitId, {
       expectedRevision: 8,

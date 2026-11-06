@@ -29,13 +29,6 @@ vi.mock('@/modules/organizations/WorkspaceProvider', () => ({ useWorkspace: prov
 vi.mock('@/modules/projects/ProjectsProvider', () => ({ useProjects: providerMocks.projects }));
 vi.mock('@/modules/integrationClients/requests');
 
-// IntegrationClientFormModal and IntegrationClientDetailsModal each have their own dedicated test
-// file (IntegrationClientFormModal.test.tsx, IntegrationClientDetailsModal.test.tsx) covering their
-// internal rendering/validation -- this file mocks them down to their props so orchestration tests
-// here exercise what Integrations.tsx itself is responsible for (which hook gets called with what,
-// selection/focus/notice state) without re-driving their full internal UI. IntegrationClientsTable
-// has no dedicated test file (its own describe block below covers it) and IntegrationClientConfirmationModal
-// has no dedicated test file either, so both stay real here.
 interface FormModalProps {
   client?: IntegrationClient;
   mode: 'create' | 'edit' | 'renew';
@@ -279,9 +272,6 @@ const renderIntegrations = (
     return workspaceContext;
   });
   providerMocks.projects.mockReturnValue(projectsContext);
-  // staleTime defaults to 0 (TanStack's own default), NOT the production QueryClient's 60s default
-  // (src/core/api/queryClient.ts) -- tests that need to exercise "cached but still within staleTime"
-  // behavior (e.g. a conflict-resolution refetch) must opt in via this option.
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, staleTime: options.staleTime ?? 0 } },
   });
@@ -339,8 +329,6 @@ describe('Integrations list loading', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       "We received data we couldn't verify. Please try again or contact support if this keeps happening.",
     );
-    // Still a retryable state -- retrying is reasonable even for a validation failure (e.g. the
-    // underlying bad record could since have been fixed server-side).
     expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
   });
 
@@ -379,9 +367,6 @@ describe('Integrations list loading', () => {
 
     await user.click(screen.getByRole('button', { name: 'Load more' }));
 
-    // Regresses to "0 integration clients" and the button unmounting entirely (hasMore derives from
-    // count) if count is read from the newest page's own (still in-flight) data instead of the most
-    // recently loaded page that actually has data.
     expect(screen.getByText('2 integration clients')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Loading more integration clients…' })).toBeInTheDocument();
 
@@ -407,9 +392,6 @@ describe('Integrations list loading', () => {
     });
 
     expect(await screen.findByText('Client new-client-1')).toBeInTheDocument();
-    // Without resetting the accumulated page count, switching organizations after loading 2 pages
-    // fires 2 parallel requests for the new organization (one of which likely doesn't exist there)
-    // instead of just page 1 -- a 4th call here means that burst happened.
     expect(requestsMock.listIntegrationClients).toHaveBeenCalledTimes(3);
     expect(requestsMock.listIntegrationClients).toHaveBeenNthCalledWith(3, 'new-org', { pageSize: 20, pageNumber: 1 });
   });
@@ -553,8 +535,6 @@ describe('Integrations edit and renew orchestration', () => {
     const client = createClient('client-1', { status: 'Active', version: 1 });
     requestsMock.listIntegrationClients.mockResolvedValueOnce({ count: 1, results: [client] });
     requestsMock.getIntegrationClient
-      // Primes the detail query cache -- this response would still be "fresh" under the
-      // production-like 60s staleTime used below, so a naive fetchQuery would short-circuit to it.
       .mockResolvedValueOnce(createClient('client-1', { status: 'Active', version: 1 }))
       .mockResolvedValueOnce(createClient('client-1', { status: 'Expired', version: 2 }));
     const user = userEvent.setup();
@@ -604,9 +584,6 @@ describe('Integrations edit and renew orchestration', () => {
     });
 
     expect(caughtError).toMatchObject({ kind: 'client-not-found' });
-    // Every other not-found path in this module evicts the client from cached list pages; a
-    // conflict-resolution refresh from the edit form must too, or the row stays visible and
-    // clickable in the table after the client is confirmed gone.
     const listedClient = queryClient
       .getQueriesData<{ results: IntegrationClient[] }>({ queryKey: ['integrationClients', 'acme'] })
       .flatMap(([, data]) => data?.results ?? [])
@@ -678,8 +655,6 @@ describe('Integrations details and audit orchestration', () => {
 
     act(() => detailsModalPropsRef.current!.onLoadMoreAudit());
 
-    // The same count-reads-0-while-in-flight bug as the client list would flip this false and hide
-    // the "load more" control mid-fetch.
     expect(detailsModalPropsRef.current?.auditHasNextPage).toBe(true);
 
     secondAuditPage.resolve({ count: 2, results: [createAuditEvent('event-2')] });
@@ -693,9 +668,6 @@ describe('Integrations details and audit orchestration', () => {
     requestsMock.listIntegrationClients.mockResolvedValueOnce({ count: 1, results: [client] });
     const secondRead = deferred<IntegrationClient>();
     requestsMock.getIntegrationClient
-      // First open primes the detail cache -- under a production-like 60s staleTime, a naive
-      // isDetailFresh (isSuccess alone) would treat that cached value as fresh on reopen with no
-      // second network read at all.
       .mockResolvedValueOnce(client)
       .mockReturnValueOnce(secondRead.promise);
     const user = userEvent.setup();
@@ -912,8 +884,6 @@ describe('Integrations lifecycle orchestration', () => {
     await user.click(screen.getByRole('button', { name: 'Rotate secret now' }));
 
     expect(await screen.findByText('This integration client is no longer available.')).toBeInTheDocument();
-    // Every other not-found path in this module evicts the client from cached list pages; the
-    // not-active reconciliation read must too, or the row stays visible and clickable.
     const listedClient = queryClient
       .getQueriesData<{ results: IntegrationClient[] }>({ queryKey: ['integrationClients', 'acme'] })
       .flatMap(([, data]) => data?.results ?? [])

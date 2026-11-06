@@ -21,7 +21,6 @@ export function useEditUnitMutation(): UseMutationResult<void, unknown, EditUnit
       requests.editUnit(organizationSlug, workUnitId, dto, shouldFinalize, idempotencyKey),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['units'], exact: false });
-      // Refresh the report query after edits made from either view.
       void getReportedUnits();
     },
   });

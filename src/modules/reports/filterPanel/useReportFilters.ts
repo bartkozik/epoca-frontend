@@ -54,7 +54,6 @@ export function useReportFilters(): ReportFilters {
   const projectsContext = useProjects();
 
   const { clients } = useClients();
-  // Archived members stay in the list: their entries are still in reports.
   const contextOrganizationUsers = useReportUsers();
   const { reportedProjects } = projectsContext;
 

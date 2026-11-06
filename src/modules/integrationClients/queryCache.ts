@@ -12,9 +12,6 @@ export function evictIntegrationClientFromLists(
     { queryKey: [INTEGRATION_CLIENTS_LIST_KEY, organizationSlug], exact: false },
     (page) => {
       if (page === undefined) return page;
-      // Guard against double-decrementing count when a client is evicted twice for the same
-      // not-found error (e.g. the details query and the audit-events query 404 concurrently and
-      // both call this) -- only recompute a page that actually still contains the client.
       const wasPresent = page.results.some((client) => client.clientId === clientId);
       if (!wasPresent) return page;
       return {

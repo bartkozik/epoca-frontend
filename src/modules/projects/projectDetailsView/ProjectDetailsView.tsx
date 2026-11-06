@@ -42,8 +42,6 @@ function ProjectDetailsView(): JSX.Element | null {
       {
         onSuccess: () => {
           addToast({ content: i18n.t(getToggleProjectArchiveToastKey(isCurrentlyArchived, 'success')) });
-          // Navigates only on success now (unlike the old toggleArchiveFlag, which always
-          // navigated away since its internal .catch swallowed errors).
           navigate(`${projectsPaths.main}${readFromListSearch(location.state)}`);
         },
         onError: (error) => {
@@ -71,15 +69,10 @@ function ProjectDetailsView(): JSX.Element | null {
       label: t('projects.project_details_view.input.client_or_category.label'),
       value: client?.name || t('projects.project_details_view.input.client_or_category.value'),
       color: client?.color,
-    }, //fallback only till BE fix
+    },
     { label: t('projects.project_details_view.input.created_at.label'), value: formattedCreatedAt },
   ];
 
-  // Dialog copy must track the snapshotted projectToArchive, not the live selectedProject --
-  // selectedProject re-mirrors useProjectQuery and can change from a background refetch while the
-  // dialog is open, which would otherwise let the button say "Unarchive" while the mutation (built
-  // from the snapshot in handleStatusChange) sends an archive request, or vice versa. Falls back to
-  // the live value only while the dialog is closed (projectToArchive is null), when it's unused.
   const confirmationArchived = projectToArchive?.archived ?? archived;
 
   const confirmationActions: ConfirmationAction[] = [

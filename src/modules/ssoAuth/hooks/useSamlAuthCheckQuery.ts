@@ -9,9 +9,6 @@ import i18n from 'i18next';
 
 export type { SamlAuthCheck } from '@/modules/ssoAuth/models/samlDto.model';
 
-// CT-553: the toast lives in `retry`, which runs once per real failed fetch (never for a cached
-// error read on remount), so it fires exactly once when no retry is left. Only 'temporary'
-// failures get one retry; a 4xx is definitive.
 export function useSamlAuthCheckQuery(): UseQueryResult<SamlAuthCheck> {
   return useQuery({
     queryKey: samlAuthCheckQueryKey(TEMPORARY_ITERATORS_SLUG),

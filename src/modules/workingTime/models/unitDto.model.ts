@@ -37,15 +37,6 @@ export const UnitsDtoSchema = z
   })
   .strip();
 
-// All fields required, none .catch()'d: a unit whose projectClient is missing or malformed should
-// drop out of the enclosing tolerantArray entirely, matching the old
-// filterNonNullItems(data.workUnits.results, 'projectClient') behavior this schema replaces.
-//
-// projectClient: null is not a legitimate "no client" state -- it's a
-// dangling reference, same as RawProjectSchema.client above. WorkUnitDtoService.getProjectClientMap
-// only produces None via a Map.get miss over project.clientId (required, never Option), and neither
-// ClientRepository nor ProjectRepository support hard-delete (archived rows included too), so this
-// should be structurally impossible. Drop the unit like any other malformed load-bearing field.
 export const ClientProjectSchema = z
   .object({
     projectName: z.string(),
@@ -54,9 +45,6 @@ export const ClientProjectSchema = z
     clientName: z.string(),
     clientColor: z.string(),
     clientTexture: z.string(),
-    // The backend represents a missing description as Option[ProjectDescription], serialized as
-    // null. The UI treats it as display-only text, so normalize it to an empty string rather
-    // than dropping the otherwise valid work unit from calendar and report responses.
     projectDescription: z
       .string()
       .nullable()
@@ -64,13 +52,6 @@ export const ClientProjectSchema = z
   })
   .strip();
 
-// id/date required, not .catch()'d, so a genuinely broken unit (no identity, no date to place it
-// on the calendar) still throws inside RawUnitSchema.parse and gets dropped by the enclosing
-// tolerantArray in RawUnitResultsSchema rather than rendered wrong. state/entryType are z.nativeEnum
-// WITHOUT .catch(): an unrecognized value should drop the unit (via the enclosing tolerantArray),
-// not be silently coerced into a real state/type it isn't -- mirrors projectDto.model.ts's
-// RawProjectUserSchema.role. projectClient is required (see ClientProjectSchema above) for the same
-// reason. Everything else is tolerant, matching wire data nothing here treats as load-bearing.
 export const RawUnitSchema = z
   .object({
     entryType: z.nativeEnum(WorkUnitEntryType),
@@ -103,13 +84,6 @@ export const RawUnitResultsSchema = z
   })
   .strip();
 
-// Report rows reuse the override DTO's field shapes (WorkUnitOverrideResponseSchema.shape) for the
-// fields the reports endpoint adds or types differently: taskId, userFullName,
-// effectiveProjectClient, effectiveTaskId, revision and override stay optional/tolerant here.
-// projectClient is required, the same as for calendar units above: projects and clients are never
-// hard-deleted, so a null projectClient is a dangling-reference symptom (see the comment on
-// ClientProjectSchema and on WorkUnitOverrideResponseSchema), and such a row drops out of the
-// enclosing tolerantArray rather than rendering with an unknown project.
 export const RawReportedUnitSchema = RawUnitSchema.extend({
   projectClient: WorkUnitOverrideResponseSchema.shape.projectClient,
   taskId: WorkUnitOverrideResponseSchema.shape.taskId.optional().catch(undefined),

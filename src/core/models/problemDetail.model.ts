@@ -2,8 +2,6 @@ import { z } from 'zod';
 
 export const ProblemDetailSchema = z.object({ type: z.string() }).strip();
 
-// Unbounded delays must remain exact, safe integers. Bounded consumers can instead
-// clamp a decimal header before it becomes a timer delay.
 export const RetryAfterSecondsSchema = z.union([
   z.number().int().nonnegative().safe(),
   z

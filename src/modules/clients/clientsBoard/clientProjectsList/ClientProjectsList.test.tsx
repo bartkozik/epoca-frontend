@@ -19,9 +19,6 @@ vi.mock('@/modules/organizations/WorkspaceProvider', () => ({
 vi.mock('@/modules/clients/requests', () => ({ getClientProjects: vi.fn() }));
 const getClientProjectsMock = requests.getClientProjects as unknown as ReturnType<typeof vi.fn>;
 
-// Spinner's real implementation drives framer-motion's AnimatePresence, which is awkward to assert
-// on directly. Stand it up as a plain marker keyed off the `loading` prop instead -- same approach
-// this repo already uses for other async-loading children (e.g. ReportBoard.test.tsx).
 vi.mock('@/core/theme/spinner', () => ({
   __esModule: true,
   default: ({ loading }: { loading?: boolean }): JSX.Element | null => (loading ? <div role="status" /> : null),
@@ -47,8 +44,6 @@ const client: Client = {
   projects: [],
 };
 
-// projectCount > 0 so the component takes the projectsDropdownList branch (toggle button), not the
-// zero-projects addProjectBtn branch -- that's the path the on-demand query behavior lives on.
 const clientWithProjects: Client = { ...client, projectCount: 2 };
 
 const toggleButtonName = 'clients.clients_board.client_project_list.button.project_count.label';
@@ -111,8 +106,6 @@ describe('ClientProjectsList', () => {
 
     await userEvent.click(screen.getByRole('button', { name: toggleButtonName }));
 
-    // Regex (not an exact string) because the link's accessible name also picks up the mocked
-    // project-file icon's rendered text alongside the project name span.
     expect(await screen.findByRole('link', { name: /Website Revamp/ })).toBeVisible();
     expect(screen.getByRole('link', { name: /Mobile App/ })).toBeVisible();
   });

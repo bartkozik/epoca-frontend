@@ -8,10 +8,6 @@ import { projectHandlers } from './projectHandlers';
 
 const PROJECT_URL = `http://127.0.0.1:5173/__e2e_api/organizations/epoca-e2e/projects/${IDS.projectLarge}`;
 
-// CT-559: the frontend validates this endpoint's response with ProjectPatchResultSchema (flat
-// clientId, no nested client/projectUsers), not RawProjectSchema (the list/get DTO shape) --
-// mismatched mock output here previously slipped past every other test and only broke @mr
-// specs that actually save an edit.
 test('project PATCH response satisfies ProjectPatchResultSchema, not the list/get DTO shape @mr @technical', async () => {
   const runtime = createWorldRuntime(buildWorld('world-4'));
   const original = runtime.state.projects.find(({ id }) => id === IDS.projectLarge);

@@ -4,11 +4,20 @@ import { runAggregateE2E } from '../run-e2e-aggregate.mjs';
 
 for (const tier of ['ci', 'all']) {
   void test(`${tier} listing forwards --list to every child and marks discovery only`, () => {
+    /** @type {[string, string[], import("node:child_process").SpawnSyncOptions][]} */
     const calls = [];
-    assert.equal(runAggregateE2E({ tier, listOnly: true, environment: {}, spawnImpl: (...args) => {
-      calls.push(args);
-      return { status: 0 };
-    } }), 0);
+    assert.equal(
+      runAggregateE2E({
+        tier,
+        listOnly: true,
+        environment: {},
+        spawnImpl: (executable, args, options) => {
+          calls.push([executable, args, options]);
+          return { status: 0 };
+        },
+      }),
+      0,
+    );
     assert.equal(calls.length, 4);
     for (const [, argv, options] of calls) {
       assert.equal(argv.at(-1), '--list');
@@ -19,7 +28,16 @@ for (const tier of ['ci', 'all']) {
 
 void test('aggregate stops on failure and preserves termination errors', () => {
   let calls = 0;
-  assert.equal(runAggregateE2E({ tier: 'ci', spawnImpl: () => { calls += 1; return { status: 7 }; } }), 7);
+  assert.equal(
+    runAggregateE2E({
+      tier: 'ci',
+      spawnImpl: () => {
+        calls += 1;
+        return { status: 7 };
+      },
+    }),
+    7,
+  );
   assert.equal(calls, 1);
   assert.throws(() => runAggregateE2E({ tier: 'ci', spawnImpl: () => ({ signal: 'SIGTERM' }) }), /SIGTERM/);
   assert.throws(() => runAggregateE2E({ tier: 'unknown', spawnImpl: () => assert.fail('must not spawn') }), /Unknown/);

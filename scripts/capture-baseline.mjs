@@ -1,12 +1,13 @@
-// scripts/capture-baseline.mjs
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { parseBaselineReport } from './baseline-report.mjs';
 
+/** @param {string} command @param {string[]} args */
 const run = (command, args) => execFileSync(command, args, { encoding: 'utf8' }).trim();
 
-// Rethrows failures prefixed with the step name so the log makes clear which step broke.
+/** @param {string} label @param {string} command @param {string[]} args */
 const runStep = (label, command, args) => {
   console.log(`Running ${label}...`);
   try {
@@ -16,8 +17,10 @@ const runStep = (label, command, args) => {
   }
 };
 
+/** @param {string} path */
 const sha256File = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
 
+/** @param {string} dir @returns {string[]} */
 const walk = (dir) => {
   const out = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -44,8 +47,6 @@ const lockfileSha = sha256File('yarn.lock');
 const nodeVersion = process.version;
 const yarnVersion = run('node', ['.yarn/releases/yarn-4.18.0.cjs', '--version']);
 
-// Vitest's `json` reporter deliberately mirrors Jest's --json report shape, so this parses the
-// same fields as before.
 runStep('test suite', 'node', [
   '.yarn/releases/yarn-4.18.0.cjs',
   'vitest',
@@ -55,29 +56,13 @@ runStep('test suite', 'node', [
 ]);
 let jestReport;
 try {
-  jestReport = JSON.parse(readFileSync('target/baseline-jest-report.json', 'utf8'));
+  jestReport = parseBaselineReport(readFileSync('target/baseline-jest-report.json', 'utf8'));
 } catch (error) {
   throw new Error(`reading/parsing test report failed: ${error.message}`, { cause: error });
 }
 const jestSuiteCount = jestReport.numTotalTestSuites;
 const jestTestCount = jestReport.numTotalTests;
 const jestSnapshotCount = jestReport.snapshot?.total;
-
-// A test run that collected nothing is exactly as wrong as one whose report is malformed, so
-// fail loudly on a missing/non-integer field rather than writing `undefined` or a misleading 0
-// into the accepted baseline.
-for (const [fieldName, value] of [
-  ['numTotalTestSuites', jestSuiteCount],
-  ['numTotalTests', jestTestCount],
-  ['snapshot.total', jestSnapshotCount],
-]) {
-  if (!Number.isInteger(value) || (value === 0 && fieldName !== 'snapshot.total')) {
-    throw new Error(
-      `test report field "${fieldName}" is missing, not an integer, or zero (got ${JSON.stringify(value)}) — ` +
-        'the --json report shape may have changed or the test run produced no results.',
-    );
-  }
-}
 
 runStep('lint', 'node', ['.yarn/releases/yarn-4.18.0.cjs', 'lint', '-f', 'json', '-o', 'target/baseline-lint.json']);
 const lintFindingsSha = sha256File('target/baseline-lint.json');
@@ -91,14 +76,10 @@ let buildFiles, bundleBytes, jsChunks, chunkManifestSha;
 try {
   buildFiles = walk('build');
   bundleBytes = buildFiles.reduce((total, path) => total + statSync(path).size, 0);
-  // build/assets/env.template.js and other passthrough static files also end in .js but
-  // aren't real JS bundle chunks, so scope to the actual code-split output directory.
   jsChunks = walk(join('build', 'static', 'js')).filter((path) => path.endsWith('.js'));
 
   if (jsChunks.length === 0) {
-    throw new Error(
-      'No JS chunks found under build/static/js — build output looks incomplete or misconfigured',
-    );
+    throw new Error('No JS chunks found under build/static/js — build output looks incomplete or misconfigured');
   }
 
   const chunkManifest = jsChunks

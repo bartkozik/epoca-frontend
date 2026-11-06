@@ -308,8 +308,6 @@ test('installed routing aborts unknown same-origin fetches before the CRA proxy 
   await page.goto('/login');
   await expect(page.getByTestId('loginEmailInput')).toBeVisible();
   expect(responses.some((url) => new URL(url).pathname === '/src/main.tsx')).toBe(true);
-  // Unlike CRA's production-style content-hashed `/static/media/...` output, Vite's dev server
-  // serves imported assets straight from their source-relative path with no hash.
   await expect
     .poll(() => responses.some((url) => /\/src\/core\/theme\/assets\/svg\/new-logo\.svg$/.test(new URL(url).pathname)))
     .toBe(true);
@@ -399,8 +397,6 @@ test('installed routing closes unexpected WebSockets with the mock policy @mr @t
   await installMockApi(page, runtime);
   await page.goto('/login');
   await expect(page.getByTestId('loginEmailInput')).toBeVisible();
-  // Vite's HMR client connects with a per-server-instance random `token` query param (unlike CRA's
-  // fixed `/ws` path), so match on origin + root pathname rather than an exact URL.
   await expect
     .poll(() =>
       openedWebSockets.some((url) => {

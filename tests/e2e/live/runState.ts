@@ -85,7 +85,7 @@ export const assertNoExistingLiveRunState = async ({
 export const acquireLiveRunLock = async (identity: LiveRunIdentity, lockPath = LIVE_LOCK_PATH): Promise<void> => {
   const parsed = parseIdentity(identity);
   await mkdir(path.dirname(lockPath), { recursive: true });
-  let handle;
+  let handle: Awaited<ReturnType<typeof open>> | undefined;
   try {
     handle = await open(lockPath, 'wx', 0o600);
     await handle.writeFile(`${JSON.stringify(parsed, null, 2)}\n`, 'utf8');
@@ -139,7 +139,7 @@ export const writeLiveRunManifestExclusive = async (
   const serialized = serializeLiveRunManifest(manifest);
   await mkdir(path.dirname(manifestPath), { recursive: true });
   const temporaryPath = `${manifestPath}.${process.pid}.${Date.now()}.tmp`;
-  let handle;
+  let handle: Awaited<ReturnType<typeof open>> | undefined;
   try {
     handle = await open(temporaryPath, 'wx', 0o600);
     await handle.writeFile(serialized, 'utf8');

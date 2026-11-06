@@ -80,17 +80,10 @@ describe('useUpdateIntegrationClientMutation', () => {
     expect(queryClient.getQueryData(listKey)).toEqual({ count: 0, results: [] });
   });
 
-  // Regression test for a confirmed race: organizationSlug used to be a hook argument closed over
-  // by mutationFn/onSuccess, so those callbacks ran with whatever organization the component had
-  // re-rendered to by the time the save resolved -- a save started in 'acme' could land in whatever
-  // organization the user had since switched to, and 'acme's own list/detail cache never refreshed.
-  // organizationSlug now travels in the mutation's own variables, so each call's result is written
-  // using the organization it was actually submitted for, regardless of what resolves first.
   it('writes each result under the organization it was submitted for, even when a save for a different organization resolves first', async () => {
     const acmeClient = { clientId, name: 'Acme rename', version: 5 };
     const otherClient = { clientId, name: 'Other rename', version: 5 };
     const acmeSave = deferred<typeof acmeClient>();
-    // Same rationale as integrationClientGetQuery.model.test.ts's overlapping-fetch test.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     updateIntegrationClientMock.mockImplementation((organizationSlug: string) =>
       organizationSlug === 'acme' ? acmeSave.promise : Promise.resolve(otherClient),
@@ -118,12 +111,6 @@ describe('useUpdateIntegrationClientMutation', () => {
     expect(queryClient.getQueryData(integrationClientQueryKey('other-org', clientId))).toEqual(otherClient);
   });
 
-  // Regression test for a confirmed race: the details modal keeps its GET query mounted with
-  // staleTime: 0, so opening it starts a network read that can still be in flight when a save
-  // completes. Without cancelling that read first, its (older) response can resolve after the
-  // save's onSuccess and silently roll the cache back -- reproduced here as a version-2-to-1
-  // rollback -- leaving the UI showing stale details and a follow-up action hitting a stale-version
-  // conflict against data the user never actually saw change.
   it('does not let an in-flight details fetch overwrite a save that completed while it was pending', async () => {
     const clientV1 = { clientId, name: 'Reporting warehouse', version: 1 };
     const clientV2 = { clientId, name: 'Renamed', version: 2 };
@@ -148,12 +135,7 @@ describe('useUpdateIntegrationClientMutation', () => {
     });
     expect(queryClient.getQueryData(integrationClientQueryKey('acme', clientId))).toEqual(clientV2);
 
-    // Resolving the earlier GET now, after the save already completed, is the reproduction: without
-    // cancelling it first, this is exactly what rolls the cache back from v2 to v1.
     detailsGet.resolve(clientV1);
-    // Flush the now-settled promise's microtasks (and any macrotask react-query schedules off of
-    // it) before asserting nothing changed -- otherwise a still-pending overwrite could pass
-    // unnoticed if we asserted immediately.
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(queryClient.getQueryData(integrationClientQueryKey('acme', clientId))).toEqual(clientV2);

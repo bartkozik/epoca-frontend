@@ -1,16 +1,13 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { access, appendFile, mkdtemp, mkdir, readFile, rename, symlink, writeFile } from 'node:fs/promises';
+import { access, appendFile, mkdir, mkdtemp, readFile, rename, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import {
-  ArtifactScanError,
-  createLinuxDescriptorTraversalAdapter,
-} from './artifact-scanner.mjs';
-import { scanAndPublishArtifactsForTest as scanAndPublishArtifacts } from './artifact-scanner.test-support.mjs';
+import { ArtifactScanError, createLinuxDescriptorTraversalAdapter } from './artifact-scanner.mjs';
 import * as productionScanner from './artifact-scanner.mjs';
+import { scanAndPublishArtifactsForTest as scanAndPublishArtifacts } from './artifact-scanner.test-support.mjs';
 
 const sandbox = async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'epoca-artifact-scan-'));
@@ -30,7 +27,10 @@ void test('production scanner exports and CLI source expose only the secure Linu
   ]);
   const productionSource = await readFile(fileURLToPath(new URL('./artifact-scanner.mjs', import.meta.url)), 'utf8');
   assert.doesNotMatch(productionSource, /test-support|ForTest|ControlledTest|traversalAdapter/);
-  const ciSource = await readFile(path.join(path.dirname(fileURLToPath(import.meta.url)), '../..', '.gitlab-ci.yml'), 'utf8');
+  const ciSource = await readFile(
+    path.join(path.dirname(fileURLToPath(import.meta.url)), '../..', '.gitlab-ci.yml'),
+    'utf8',
+  );
   assert.doesNotMatch(ciSource, /artifact-scanner\.test-support\.mjs/);
 });
 
@@ -45,7 +45,7 @@ void test('quarantines raw URL-encoded Base64 JSON-escaped and known-prefix repr
     jsonEscaped: JSON.stringify(secret).slice(1, -1),
     oauthCredentialPrefix: ['epc', 'secret', 'v1', 'fixture', 'credential'].join('_'),
     base64OAuthCredentialPrefix: Buffer.from(['epc', 'secret', 'v1', 'encoded', 'fixture'].join('_')).toString(
-      'base64'
+      'base64',
     ),
     basicAuthorization: `${['Authorization', 'Basic'].join(': ')} ${Buffer.from('fixture-pair').toString('base64')}`,
     bearerJwtShape: `${['Bearer', 'eyJmaXh0dXJl'].join(' ')}.eyJjb250cmFjdCI.e30`,
@@ -54,7 +54,7 @@ void test('quarantines raw URL-encoded Base64 JSON-escaped and known-prefix repr
     deterministicSentinelPrefix: ['OAUTH_CLIENT', 'SECRET', 'SENTINEL'].join('_'),
   };
   await Promise.all(
-    Object.entries(representations).map(([name, value]) => writeFile(path.join(paths.source, `${name}.txt`), value))
+    Object.entries(representations).map(([name, value]) => writeFile(path.join(paths.source, `${name}.txt`), value)),
   );
 
   let failure;
@@ -72,7 +72,7 @@ void test('quarantines raw URL-encoded Base64 JSON-escaped and known-prefix repr
   assert.ok(failure instanceof ArtifactScanError);
   assert.deepEqual(
     new Set(failure.categories),
-    new Set(['raw', 'url-encoded', 'base64', 'base64url', 'json-escaped', 'credential-prefix', 'credential-field'])
+    new Set(['raw', 'url-encoded', 'base64', 'base64url', 'json-escaped', 'credential-prefix', 'credential-field']),
   );
   assert.ok(failure.locations.length >= Object.keys(representations).length);
   assert.equal(failure.message.includes(secret), false);
@@ -99,15 +99,23 @@ void test('copies only a clean scan into a newly-created safe-artifacts director
   });
 
   assert.equal(result.findings, 0);
-  assert.equal(await readFile(path.join(paths.safe, 'results', 'junit.xml'), 'utf8'), '<testsuite tests="1" failures="0"/>');
+  assert.equal(
+    await readFile(path.join(paths.safe, 'results', 'junit.xml'), 'utf8'),
+    '<testsuite tests="1" failures="0"/>',
+  );
   await assert.rejects(access(path.join(paths.safe, 'results', 'private-run-state.json')), /ENOENT/);
 });
 
 void test('rejects overlapping or ambiguous artifact path roles before deleting source evidence', async () => {
+  /** @type {Array<(paths: {root: string, source: string}) => import("./artifact-scanner-core.mjs").RunArtifactScanOptions>} */
   const cases = [
     ({ root, source }) => ({ sources: [source], safeDirectory: source, quarantineDirectory: path.join(root, 'q') }),
     ({ root, source }) => ({ sources: [source], safeDirectory: path.join(root, 'safe'), quarantineDirectory: source }),
-    ({ root, source }) => ({ sources: [source], safeDirectory: path.join(source, 'safe'), quarantineDirectory: path.join(root, 'q') }),
+    ({ root, source }) => ({
+      sources: [source],
+      safeDirectory: path.join(source, 'safe'),
+      quarantineDirectory: path.join(root, 'q'),
+    }),
     ({ root }) => ({
       sources: [path.join(root, 'safe', 'source')],
       safeDirectory: path.join(root, 'safe'),
@@ -161,7 +169,7 @@ void test('rejects overlapping or ambiguous artifact path roles before deleting 
     await assert.rejects(
       scanAndPublishArtifacts({ ...options, secrets: [] }),
       (error) => error instanceof ArtifactScanError && error.categories.includes('path-contract'),
-      `path-role case ${caseIndex + 1}`
+      `path-role case ${caseIndex + 1}`,
     );
     assert.equal(await readFile(evidence, 'utf8'), 'must remain');
   }
@@ -179,7 +187,7 @@ void test('fails closed on symbolic links and configured scan bounds', async () 
       quarantineDirectory: linked.quarantine,
       secrets: [],
     }),
-    (error) => error instanceof ArtifactScanError && error.categories.includes('symbolic-link')
+    (error) => error instanceof ArtifactScanError && error.categories.includes('symbolic-link'),
   );
 
   const bounded = await sandbox();
@@ -193,7 +201,7 @@ void test('fails closed on symbolic links and configured scan bounds', async () 
       secrets: [],
       limits: { maxFiles: 10, maxFileBytes: 4, maxTotalBytes: 32 },
     }),
-    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound')
+    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound'),
   );
 });
 
@@ -218,7 +226,7 @@ void test('quarantines Basic serialization and credential field vocabulary acros
     authorizationField: 'authorization = fixture-value',
   };
   await Promise.all(
-    Object.entries(fixtures).map(([name, value]) => writeFile(path.join(paths.source, `${name}.txt`), value))
+    Object.entries(fixtures).map(([name, value]) => writeFile(path.join(paths.source, `${name}.txt`), value)),
   );
 
   let failure;
@@ -253,7 +261,7 @@ void test('quarantines form-plus lowercase-percent and Base64url secret represen
     base64url: Buffer.from(secret).toString('base64url'),
   };
   await Promise.all(
-    Object.entries(fixtures).map(([name, value]) => writeFile(path.join(paths.source, `${name}.txt`), value))
+    Object.entries(fixtures).map(([name, value]) => writeFile(path.join(paths.source, `${name}.txt`), value)),
   );
 
   let failure;
@@ -288,7 +296,7 @@ void test('decodes URL-safe runtime credential prefixes whose Base64 and Base64u
       quarantineDirectory: paths.quarantine,
       secrets: [],
     }),
-    (error) => error instanceof ArtifactScanError && error.categories.includes('credential-prefix')
+    (error) => error instanceof ArtifactScanError && error.categories.includes('credential-prefix'),
   );
   await assert.rejects(access(paths.safe), /ENOENT/);
 });
@@ -315,7 +323,10 @@ void test('quarantines credential-bearing path components without exposing unsaf
   assert.ok(failure.categories.includes('credential-prefix'));
   assert.match(failure.message, /source-1:entry-[a-f0-9]{12}/);
   assert.equal(failure.message.includes(unsafeComponent), false);
-  assert.equal(failure.locations.some((location) => location.includes(unsafeComponent)), false);
+  assert.equal(
+    failure.locations.some((location) => location.includes(unsafeComponent)),
+    false,
+  );
   await assert.rejects(access(paths.safe), /ENOENT/);
 });
 
@@ -341,7 +352,10 @@ void test('scans every configured source path component without exposing an unsa
   assert.ok(failure instanceof ArtifactScanError);
   assert.ok(failure.categories.includes('credential-prefix'));
   assert.equal(failure.message.includes(unsafeParent), false);
-  assert.equal(failure.locations.some((location) => location.includes(unsafeParent)), false);
+  assert.equal(
+    failure.locations.some((location) => location.includes(unsafeParent)),
+    false,
+  );
   await assert.rejects(access(paths.safe), /ENOENT/);
 });
 
@@ -382,7 +396,7 @@ void test('a later publication failure removes stale and partially-built safe ou
       secrets: [],
       publishFiles: ['results/first.xml', 'results/missing.xml'],
     }),
-    (error) => error instanceof ArtifactScanError && error.categories.includes('publish-contract')
+    (error) => error instanceof ArtifactScanError && error.categories.includes('publish-contract'),
   );
   await assert.rejects(access(paths.safe), /ENOENT/);
 });
@@ -403,7 +417,7 @@ void test('applies configured file bounds across all source trees', async () => 
       secrets: [],
       limits: { maxFiles: 1, maxFileBytes: 16, maxTotalBytes: 16 },
     }),
-    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound')
+    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound'),
   );
   await assert.rejects(access(paths.safe), /ENOENT/);
 });
@@ -424,7 +438,7 @@ void test('applies configured total byte bounds across all source trees', async 
       secrets: [],
       limits: { maxFiles: 10, maxFileBytes: 16, maxTotalBytes: 10 },
     }),
-    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound')
+    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound'),
   );
   await assert.rejects(access(paths.safe), /ENOENT/);
 });
@@ -444,7 +458,7 @@ void test('a finding in a later source quarantines every source without publishi
       quarantineDirectory: paths.quarantine,
       secrets: [],
     }),
-    ArtifactScanError
+    ArtifactScanError,
   );
   await assert.rejects(access(paths.safe), /ENOENT/);
   assert.equal(await access(path.join(paths.quarantine, 'source-1')).then(() => true), true);
@@ -479,7 +493,7 @@ void test('rejects a parent directory swapped to a symlink during traversal with
     }),
     (error) =>
       error instanceof ArtifactScanError &&
-      (error.categories.includes('symbolic-link') || error.categories.includes('snapshot-race'))
+      (error.categories.includes('symbolic-link') || error.categories.includes('snapshot-race')),
   );
   assert.equal(swapped, true);
   await assert.rejects(access(paths.safe), /ENOENT/);
@@ -508,7 +522,7 @@ void test('rejects a same-inode file growth during bounded reading without readi
         },
       },
     }),
-    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound')
+    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound'),
   );
   assert.equal(grew, true);
   await assert.rejects(access(paths.safe), /ENOENT/);
@@ -527,7 +541,7 @@ void test('bounds deeply and widely nested empty directory entries across the wh
       secrets: [],
       limits: { maxFiles: 10, maxEntries: 4, maxDepth: 8, maxPathBytes: 128 },
     }),
-    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound')
+    (error) => error instanceof ArtifactScanError && error.categories.includes('scan-bound'),
   );
   await assert.rejects(access(paths.safe), /ENOENT/);
 });
@@ -580,7 +594,7 @@ void test(
     } finally {
       await adapter.close(root);
     }
-  }
+  },
 );
 
 void test(
@@ -595,12 +609,12 @@ void test(
     const result = spawnSync(
       process.execPath,
       [fileURLToPath(new URL('./artifact-scanner.mjs', import.meta.url)), paths.safe, paths.quarantine, paths.source],
-      { encoding: 'utf8', timeout: 5_000 }
+      { encoding: 'utf8', timeout: 5_000 },
     );
 
     assert.equal(result.status, 1);
     assert.match(result.stderr, /requires Linux \/proc\/self\/fd support/);
     assert.equal(result.stdout, '');
     await assert.rejects(access(paths.safe), /ENOENT/);
-  }
+  },
 );

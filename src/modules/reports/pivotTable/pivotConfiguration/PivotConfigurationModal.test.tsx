@@ -19,11 +19,6 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-// The new nesting-guard tests below (disableClickOutside / disableEscapeClickClose) need the
-// real useOnClickOutside/useKeyDown behavior to exercise the actual Modal click-outside and
-// Escape handling. Import the individual hook modules directly rather than the '@/core/utils/hooks'
-// barrel: the barrel re-exports unrelated hooks (e.g. useDataFetch, useInitializeLanguage)
-// that pull in the app's i18n setup and would need a much heavier mock here.
 vi.mock('@/core/utils/hooks', async () => {
   const { useOnClickOutside } = await import('@/core/utils/hooks/useOnClickOutside');
   const { useKeyDown, KeyBoardEventType } = await import('@/core/utils/hooks/useKeyDown');

@@ -2,8 +2,6 @@ import i18n from 'i18next';
 import { z } from 'zod';
 import { formatValidationMessage, handleValidationErrors } from './handle-validation-errors';
 
-// Matches this repo's convention (e.g. auth/login/Login.test.tsx) of mocking i18next directly
-// rather than relying on the real resourcesToBackend-loaded translation resources in a unit test.
 vi.mock('i18next', () => ({
   __esModule: true,
   default: { t: vi.fn((key: string) => key) },

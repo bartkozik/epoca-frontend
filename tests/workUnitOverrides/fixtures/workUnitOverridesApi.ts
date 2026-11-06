@@ -587,7 +587,6 @@ async function installControlledApi(
     const request = route.request();
     const url = new URL(request.url());
     if (!['127.0.0.1', 'localhost'].includes(url.hostname)) {
-      // Never allow external fonts, analytics, auth or API calls to escape the fixture.
       await route.abort('blockedbyclient');
       return;
     }

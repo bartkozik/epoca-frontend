@@ -29,8 +29,6 @@ beforeEach(() => {
   providerMocks.projects.mockReturnValue({ removeAllProjects: removeAllProjectsMock });
   providerMocks.workspace.mockReturnValue({ resetContextOrganizationId: resetContextOrganizationIdMock });
   queryClient.clear();
-  // The real, shared queryClient retries once by default -- avoids adding react-query's retry
-  // backoff delay to the rejected-request assertion below.
   queryClient.setDefaultOptions({ queries: { retry: false } });
 });
 

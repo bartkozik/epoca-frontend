@@ -33,13 +33,12 @@ function UserAvatarMenu({ setIsMenuOpen }: UserAvatarMenuProps): JSX.Element {
   const { contextOrganizationLoggedInUser, fetchContextOrganizationUsers } = workspace;
   const hasMoreThanOneOrganization = useHasMoreThanOneOrganization();
   const checkoutFromWorkspace = useCheckoutFromWorkspace();
-  // Refresh the profile briefly after login to pick up asynchronous avatar synchronization.
   const { data: loggedInUserProfile } = useUserQuery(loggedInUser?.id, { refreshAvatar: true });
   const profileUser = loggedInUserProfile ? toUser(loggedInUserProfile, loggedInUser?.id) : undefined;
   const avatarUser = profileUser
     ? {
         ...profileUser,
-        // GET /users/:id returns no identities. Keep an already authorized email for Gravatar.
+        // GET /users/:id omits identities; preserve the authorized email for Gravatar.
         email:
           normalizeGravatarEmail(profileUser.email) ??
           normalizeGravatarEmail(contextOrganizationLoggedInUser?.email) ??
@@ -51,9 +50,6 @@ function UserAvatarMenu({ setIsMenuOpen }: UserAvatarMenuProps): JSX.Element {
   const [isSelectLanguageModalOpen, setIsSelectLanguageModalOpen] = useState(false);
 
   useEffect(() => {
-    // Rejects (with no reason) as a guard clause when the context organization slug or logged-in
-    // user isn't set yet -- e.g. this component can mount briefly between login and the
-    // organization slug landing in state.
     fetchContextOrganizationUsers().catch(() => undefined);
   }, []);
 

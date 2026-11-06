@@ -67,7 +67,6 @@ const UserInitialsAvatarContent = <T extends DisplayableUser>({
   );
 };
 
-// A different user or source starts a fresh image attempt; failed URLs never leak into the next user.
 const UserInitialsAvatar = <T extends DisplayableUser>(props: UserInitialsAvatarProps<T>): JSX.Element => (
   <UserInitialsAvatarContent {...props} key={JSON.stringify([props.item.id, props.item.avatar, props.item.email])} />
 );

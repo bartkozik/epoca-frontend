@@ -26,7 +26,6 @@ export const ProjectAccessModeSchema = z.enum(['AllProjects', 'SelectedProjects'
 
 export type ProjectAccessMode = z.infer<typeof ProjectAccessModeSchema>;
 
-// Shared by the audit metadata, version-input, and update-input schemas.
 export const PositiveVersionSchema = z.number().int().positive();
 
 export const IntegrationClientActorSchema = z
@@ -89,7 +88,6 @@ export const IntegrationClientSchema = z
 
 export type IntegrationClient = z.infer<typeof IntegrationClientSchema>;
 
-// Returned by both create and rotate-secret -- shared here rather than duplicated per-operation.
 export const OneTimeIntegrationClientSecretSchema = z
   .object({
     client: IntegrationClientSchema,

@@ -20,14 +20,13 @@ vi.mock('@/core/api/Api', () => ({
   },
 }));
 
-// api mock, see src/modules/integrationClients/requests.test.ts for the full rationale.
 // eslint-disable-next-line vitest/unbound-method
 const deleteMock = api.delete as MockedFunction<typeof api.delete>;
-// eslint-disable-next-line vitest/unbound-method -- see deleteMock above.
+// eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
-// eslint-disable-next-line vitest/unbound-method -- see deleteMock above.
+// eslint-disable-next-line vitest/unbound-method
 const postMock = api.post as MockedFunction<typeof api.post>;
-// eslint-disable-next-line vitest/unbound-method -- see deleteMock above.
+// eslint-disable-next-line vitest/unbound-method
 const putMock = api.put as MockedFunction<typeof api.put>;
 
 const freshWorkUnit = (): Record<string, unknown> => ({

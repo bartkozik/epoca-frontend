@@ -61,8 +61,6 @@ function Clients(): JSX.Element {
 
   useTitle(t('common.clients'));
 
-  // useClientsQuery has no error toast of its own, and an HTTP 500 isn't a network error the api
-  // interceptor already handles -- without this a failed fetch looked like an empty list.
   useEffect(() => {
     if (clientsQuery.isError)
       showModuleErrorToast(clientsQuery.error, { default: t('toast_message.clients.data_fetch_error') });
@@ -117,8 +115,6 @@ function Clients(): JSX.Element {
       action: () => {
         setIsAddClientProjectConfirmationOpen(false);
         setSelectedProject(null);
-        // selectedClient was set by ClientForm's onCreated handler right after client creation,
-        // just above -- guard rather than assert non-null in case that assumption ever breaks.
         if (selectedClient) openAddClientProjectModal(selectedClient);
       },
       buttonType: 'outlined',

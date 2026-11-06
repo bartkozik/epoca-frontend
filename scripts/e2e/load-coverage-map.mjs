@@ -1,21 +1,21 @@
 import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
-
-const require = createRequire(import.meta.url);
-const ts = require('typescript');
+import ts from 'typescript';
 
 export const trustedCoverageFixturePath = fileURLToPath(new URL('./fixtures/coverage-map.fixture.ts', import.meta.url));
 export const trustedCoverageMapPath = fileURLToPath(new URL('../../tests/e2e/coverage-map.ts', import.meta.url));
 
+/** @param {string} detail @returns {never} */
 const fail = (detail) => {
   throw new Error(`Coverage source must contain trusted static data only: ${detail}`);
 };
 
+/** @param {import("typescript").Node} node @param {import("typescript").SyntaxKind} kind */
 const hasModifier = (node, kind) =>
   Boolean(ts.canHaveModifiers(node) && ts.getModifiers(node)?.some((modifier) => modifier.kind === kind));
 
+/** @param {import("typescript").Expression} node @returns {import("typescript").Expression} */
 const unwrapDataExpression = (node) => {
   if (
     ts.isParenthesizedExpression(node) ||
@@ -28,6 +28,7 @@ const unwrapDataExpression = (node) => {
   return node;
 };
 
+/** @param {import("typescript").Expression} input @param {string} path */
 const assertDataExpression = (input, path) => {
   const node = unwrapDataExpression(input);
   if (
@@ -83,9 +84,15 @@ const assertDataExpression = (input, path) => {
   fail(`${path} uses ${ts.SyntaxKind[node.kind]}`);
 };
 
+/** @param {string} source @param {string} fileName */
 const assertTrustedSource = (source, fileName) => {
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.ES2022, true, ts.ScriptKind.TS);
-  if (sourceFile.parseDiagnostics.length > 0) fail(`invalid TypeScript in ${fileName}`);
+  if (
+    ts
+      .transpileModule(source, { reportDiagnostics: true })
+      .diagnostics?.some((diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error)
+  )
+    fail(`invalid TypeScript in ${fileName}`);
 
   for (const statement of sourceFile.statements) {
     if (
@@ -108,6 +115,7 @@ const assertTrustedSource = (source, fileName) => {
   return sourceFile;
 };
 
+/** @param {unknown} value @param {string} [path] @returns {unknown} */
 const clonePlainData = (value, path = 'exports') => {
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
   if (typeof value === 'number') {
@@ -118,6 +126,7 @@ const clonePlainData = (value, path = 'exports') => {
   if (typeof value !== 'object') fail(`${path} contains non-data output`);
   if (Object.getOwnPropertySymbols(value).length > 0) fail(`${path} contains symbol keys`);
 
+  /** @type {Record<string, unknown>} */
   const output = {};
   for (const key of Object.keys(value)) {
     if (key === '__proto__' || key === 'prototype' || key === 'constructor') fail(`${path}.${key} is not allowed`);
@@ -128,6 +137,7 @@ const clonePlainData = (value, path = 'exports') => {
   return output;
 };
 
+/** @param {string} source @param {string} [fileName] @returns {Record<string, unknown>} */
 export const loadCoverageMapSource = (source, fileName = 'coverage-map.ts') => {
   if (typeof source !== 'string') fail('source must be a string');
   assertTrustedSource(source, fileName);
@@ -144,17 +154,24 @@ export const loadCoverageMapSource = (source, fileName = 'coverage-map.ts') => {
   const errors = transpiled.diagnostics?.filter(({ category }) => category === ts.DiagnosticCategory.Error) ?? [];
   if (errors.length > 0) fail(`TypeScript transpilation failed for ${fileName}`);
 
-  const exportsObject = Object.create(null);
+  /** @type {Record<string, unknown>} */
+  const exportsObject = {};
+  Object.setPrototypeOf(exportsObject, null);
   const moduleObject = { exports: exportsObject };
-  const sandbox = Object.create(null);
+  /** @type {Record<string, unknown>} */
+  const sandbox = {};
+  Object.setPrototypeOf(sandbox, null);
   sandbox.module = moduleObject;
   sandbox.exports = exportsObject;
   const context = vm.createContext(sandbox, { codeGeneration: { strings: false, wasm: false } });
   const script = new vm.Script(transpiled.outputText, { filename: fileName });
   script.runInContext(context, { timeout: 100 });
-  return clonePlainData(moduleObject.exports);
+  const cloned = clonePlainData(moduleObject.exports);
+  if (cloned === null || typeof cloned !== 'object' || Array.isArray(cloned)) fail('exports must be an object');
+  return Object.fromEntries(Object.entries(cloned));
 };
 
+/** @returns {typeof import("./fixtures/coverage-map.fixture.ts")} */
 export const loadCoverageFixture = () => {
   const loaded = loadCoverageMapSource(readFileSync(trustedCoverageFixturePath, 'utf8'), trustedCoverageFixturePath);
   const keys = Object.keys(loaded).sort();
@@ -164,6 +181,7 @@ export const loadCoverageFixture = () => {
   return loaded;
 };
 
+/** @returns {typeof import("../../tests/e2e/coverage-map.ts")} */
 export const loadCoverageMap = () => {
   const loaded = loadCoverageMapSource(readFileSync(trustedCoverageMapPath, 'utf8'), trustedCoverageMapPath);
   const keys = Object.keys(loaded).sort();

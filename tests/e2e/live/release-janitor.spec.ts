@@ -17,7 +17,6 @@ test('CT-527 janitor reuses exact bound ownership cleanup', async () => {
   mkdirSync(lockDirectory, { recursive: true, mode: 0o700 });
   assertPrivateStateRoot(lockDirectory);
   await withReleaseLock(path.join(lockDirectory, `${runId}-deploy.lock`), async () => {
-    // Another janitor may have completed between discovery and lock acquisition.
     if (!existsSync(LIVE_MANIFEST_PATH)) return;
     const identity = await readActiveLiveRunIdentity();
     if (identity.runId !== runId) throw new Error('Janitor run binding differs');

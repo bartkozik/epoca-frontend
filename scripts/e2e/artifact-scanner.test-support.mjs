@@ -1,11 +1,7 @@
 import { constants } from 'node:fs';
 import { lstat, open, opendir } from 'node:fs/promises';
 import path from 'node:path';
-import {
-  TraversalAdapterError,
-  runArtifactScan,
-  sameIdentityAndMetadata,
-} from './artifact-scanner-core.mjs';
+import { runArtifactScan, sameIdentityAndMetadata, TraversalAdapterError } from './artifact-scanner-core.mjs';
 
 const openFlags = constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK;
 
@@ -15,6 +11,7 @@ const validateChildName = (name) => {
   }
 };
 
+/** @param {string} target */
 const openPathNode = async (target) => {
   try {
     return { handle: await open(target, openFlags), path: target };
@@ -25,6 +22,7 @@ const openPathNode = async (target) => {
   }
 };
 
+/** @param {string} target */
 const directoryEntries = async function* (target) {
   const directory = await opendir(target);
   try {
@@ -32,11 +30,12 @@ const directoryEntries = async function* (target) {
     while ((entry = await directory.read()) !== null) yield entry.name;
   } finally {
     await directory.close().catch((error) => {
-      if (error?.code !== 'ERR_DIR_CLOSED') throw error;
+      if (!(error instanceof Error) || !('code' in error) || error.code !== 'ERR_DIR_CLOSED') throw error;
     });
   }
 };
 
+/** @returns {import("./artifact-scanner-core.mjs").TraversalAdapter<import("./artifact-scanner-core.mjs").TraversalNode & {path: string}>} */
 const createControlledTestTraversalAdapter = () => ({
   openRoot: (source) => openPathNode(source),
   openChild(parent, name) {
@@ -48,7 +47,10 @@ const createControlledTestTraversalAdapter = () => ({
     const descriptorStatus = await node.handle.stat();
     const pathStatus = await lstat(node.path);
     if (pathStatus.isSymbolicLink()) throw new TraversalAdapterError('symbolic-link');
-    if (!sameIdentityAndMetadata(expected, descriptorStatus) || !sameIdentityAndMetadata(descriptorStatus, pathStatus)) {
+    if (
+      !sameIdentityAndMetadata(expected, descriptorStatus) ||
+      !sameIdentityAndMetadata(descriptorStatus, pathStatus)
+    ) {
       throw new TraversalAdapterError('snapshot-race');
     }
     return descriptorStatus;
@@ -56,5 +58,6 @@ const createControlledTestTraversalAdapter = () => ({
   close: (node) => node.handle.close(),
 });
 
+/** @param {import("./artifact-scanner-core.mjs").RunArtifactScanOptions} options */
 export const scanAndPublishArtifactsForTest = (options) =>
   runArtifactScan(options, createControlledTestTraversalAdapter);

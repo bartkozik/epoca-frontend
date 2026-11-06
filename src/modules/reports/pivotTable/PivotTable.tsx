@@ -47,8 +47,6 @@ function PivotTable(): JSX.Element {
   const { t, i18n } = useTranslation();
   const [isConfigurationModalOpen, setIsConfigurationModalOpen] = useState(false);
   const [isExportBarOpen, setIsExportBarOpen] = useState(false);
-  // A count, not a boolean: each filter field renders its own independent PivotFilterPopover,
-  // so a single instance closing must not clear this while a sibling one is still open.
   const [openFilterCount, setOpenFilterCount] = useState(0);
   const [latestFilters, setLatestFilters] = useState<ReportQuerySnapshot | null>(null);
   const exportTriggerRef = useRef<HTMLButtonElement>(null);

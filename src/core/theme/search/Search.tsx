@@ -138,9 +138,6 @@ const Search = <T extends SelectOption | ProjectStatusOption>({
                           [styles.highlightedDropdownOption]: i === highlightedIndex,
                         })}
                         onClick={(event) => {
-                          // Container's own onClick always opens the menu -- without stopping
-                          // propagation here, selecting an item would bubble into it and reopen
-                          // the dropdown right after this handler closes it.
                           event.stopPropagation();
                           handleItemClick(item);
                         }}

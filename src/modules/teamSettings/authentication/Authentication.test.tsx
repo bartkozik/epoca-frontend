@@ -79,9 +79,6 @@ describe('Authentication', () => {
     );
   });
 
-  // Regression test for the fix that stopped a background refetch from silently discarding an
-  // in-progress edit: the draft is seeded from query data only once (draft === null), never again
-  // just because the query's data reference changes.
   it('does not overwrite an in-progress edit when the query refetches in the background', () => {
     const { rerender } = render(<Authentication />);
     useSamlConfigQueryMock.mockReturnValue({ data: rawSamlConfig, isLoading: false, error: null } as never);
@@ -90,8 +87,6 @@ describe('Authentication', () => {
 
     fireEvent.change(screen.getByDisplayValue('original-cert'), { target: { value: 'still-editing' } });
 
-    // Simulate a background refetch returning a *different* server value while the admin is
-    // mid-edit -- a new object reference for samlConfigQuery.data.
     useSamlConfigQueryMock.mockReturnValue({
       data: { ...rawSamlConfig, idpCert: 'someone-else-changed-this' },
       isLoading: false,

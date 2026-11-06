@@ -25,7 +25,6 @@ type InvitationFormProps = {
   onClose: () => void;
 };
 
-// Remount on reopen or organization change to reset the draft and idempotency key.
 const InvitationForm = (props: InvitationFormProps): JSX.Element | null => {
   return props.isOpen ? <InvitationFormSession key={props.organizationSlug} {...props} /> : null;
 };

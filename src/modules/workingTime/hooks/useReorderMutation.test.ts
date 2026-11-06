@@ -14,9 +14,6 @@ import { createElement, type ReactElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 
-// Pinned because the algorithms under test compare `new Date('YYYY-MM-DD')` (parsed as UTC
-// midnight) against local calendar days -- the same tz-sensitivity WorkingTimeStore already has.
-// Literal date assertions below would otherwise shift in a negative-offset timezone.
 const originalTimeZone = process.env.TZ;
 process.env.TZ = 'UTC';
 afterAll(() => {
@@ -131,7 +128,6 @@ describe('computeReorderPlan', () => {
       createUnit('unit-c', '2026-07-28', 2),
     ];
 
-    // unit-c takes unit-a's index 0; unit-a (0) and unit-b (1) are both >= 0 so both shift by one.
     expect(computeReorderPlan(units, 'unit-c', 'unit-a')).toEqual({
       movedUnitId: 'unit-c',
       formattedDate: '2026-07-28',
@@ -261,9 +257,6 @@ const dto = { dateFrom: '2026-07-27', dateTo: '2026-08-02' };
 const queryKey = unitsQueryKey('acme', dto);
 
 let queryClient: QueryClient;
-// createElement instead of JSX: this file stays `.ts` (matching this repo's
-// check-file/filename-naming-convention, which only exempts `use*.test.tsx` from PascalCase),
-// so it can't use JSX syntax, which only parses in `.tsx`.
 const wrapper = ({ children }: { children: ReactNode }): ReactElement =>
   createElement(QueryClientProvider, { client: queryClient }, children);
 

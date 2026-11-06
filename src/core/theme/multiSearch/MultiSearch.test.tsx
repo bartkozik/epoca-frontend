@@ -64,7 +64,6 @@ const combobox = (): HTMLElement => screen.getByRole('combobox', { name: 'Projec
 const openList = (): void => {
   fireEvent.click(combobox());
 };
-// Test builds render SVG imports as their file name; leave them out of the visible option text.
 const optionLabels = (): string[] =>
   screen.getAllByRole('option').map(
     (element) =>

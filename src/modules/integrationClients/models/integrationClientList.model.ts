@@ -20,8 +20,6 @@ export const IntegrationClientListParamsSchema = IntegrationClientPaginationSche
 
 export type IntegrationClientListParams = z.infer<typeof IntegrationClientListParamsSchema>;
 
-// Reject the whole page on an invalid client or sensitive field; tolerantArray would silently
-// hide a contract breach in this security-sensitive list.
 export const IntegrationClientPageSchema = z
   .object({
     count: z.number().int().nonnegative(),

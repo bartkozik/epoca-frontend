@@ -86,7 +86,6 @@ export interface WorkUnitOverrideController extends Omit<ReturnType<typeof useOv
   reviewAndReapply: () => void;
 }
 
-/** Owns a fresh worklog snapshot independently of report rows and their active filters. */
 export function useWorkUnitOverride({
   isOpen,
   workUnitId,
@@ -127,8 +126,6 @@ export function useWorkUnitOverride({
   const callbacks = useRef({ onClose });
   callbacks.current = { onClose };
   const projects = useOverrideProjects(base, draft.projectId, clientId, sessionKey);
-  // Actions retain the generation that created them. Reading the current generation
-  // when an old callback executes would grant it access to a newer session.
   const actionGeneration = guard.current.generation;
   const isCurrent = (generation: number): boolean =>
     guard.current.generation === generation &&
@@ -187,14 +184,7 @@ export function useWorkUnitOverride({
     setDraft(draftFrom(data));
     setClient((data.override.projectId === null ? data.projectClient : data.effectiveProjectClient)?.clientId ?? null);
   };
-  // fetchQuery already wrote this response into the cache before any caller checks access
-  // (loadFresh calls it post-fetch). A response the user has zero access to must not linger
-  // there for gcTime after we've decided to discard it -- evict it immediately rather than
-  // leaving it reachable via queryClient.getQueryData for any future reader of this key. Split
-  // out from hasFreshAccess below so loadFresh can evict even when its own session has since gone
-  // stale (generation/org changed while the fetch was in flight) -- eviction is always safe to
-  // run, but hasFreshAccess's terminal(...) call is not: it ends the *current* session, which
-  // would be wrong to invoke on behalf of an abandoned, stale one.
+  // Evict inaccessible data even if the initiating session has changed; fetchQuery cached it before access was checked.
   const evictIfZeroAccess = (data: WorkUnitOverrideResponse): boolean => {
     const { canEdit, canDelete, canViewHistory } = data.override.permissions;
     if (canEdit || canDelete || canViewHistory) return false;
@@ -210,7 +200,6 @@ export function useWorkUnitOverride({
     if (!hasFreshAccess(data)) return;
     setBase(data);
     currentSource.current = data;
-    // Mirror the accepted mutation response into the cache: only loadFresh goes through fetchQuery.
     queryClient.setQueryData(workUnitOverrideQueryKey(organizationSlug, workUnitId as string), data);
     adoptDraft(data);
     setConflict(null);
@@ -233,15 +222,7 @@ export function useWorkUnitOverride({
     setLoading(true);
     setLoadError(null);
     try {
-      // staleTime/retry are pinned locally: the shared client's defaults (1 minute, 1 retry) would
-      // hand back a cached snapshot and silently retry, and this load exists to obtain the exact
-      // current revision for optimistic concurrency. Neither option stops fetchQuery from reusing
-      // an already in-flight request for this key -- e.g. a fast close+reopen of the same work unit
-      // would otherwise adopt the abandoned session's stale in-flight response. Cancel it first so
-      // this call always gets its own fresh request; deliberately not awaited -- cancellation flips
-      // the query's fetch state synchronously, and awaiting first would let another loadFresh call
-      // (e.g. the very session being abandoned) register its own fetchQuery in between, recreating
-      // the same dedup race this is meant to close.
+      // Cancel the prior fetch before reading a fresh revision; staleTime: 0 alone still deduplicates in-flight requests.
       void queryClient.cancelQueries({ queryKey: workUnitOverrideQueryKey(organizationSlug, workUnitId) });
       const data = await queryClient.fetchQuery({
         queryKey: workUnitOverrideQueryKey(organizationSlug, workUnitId),
@@ -249,8 +230,6 @@ export function useWorkUnitOverride({
         staleTime: 0,
         retry: false,
       });
-      // Runs regardless of whether this session is still current -- see evictIfZeroAccess's own
-      // comment for why this can't wait for the currency check below.
       evictIfZeroAccess(data);
       if (!isCurrent(generation) || sequence !== loadSequence.current) return;
       if (!hasFreshAccess(data)) return;
@@ -284,8 +263,6 @@ export function useWorkUnitOverride({
         if (reconciliation.intent.kind === 'undo') adoptDraft(data);
         setConflict({ ...reconciliation, current: data, proposal });
         setNeedsFresh(null);
-        // Another writer or our lost response may have changed membership and totals.
-        // Refreshing the report does not claim that this ambiguous write succeeded.
         await refreshReport(generation);
       } else {
         adoptDraft(data);
@@ -299,7 +276,6 @@ export function useWorkUnitOverride({
       if (isCurrent(generation) && sequence === loadSequence.current) setLoading(false);
     }
   };
-  // Layout cleanup invalidates promises before a new organization/worklog can paint.
   useLayoutEffect(() => {
     const generation = guard.current.generation + 1;
     guard.current = { generation, inFlight: false };
@@ -310,7 +286,6 @@ export function useWorkUnitOverride({
       sessionClosed.current = true;
       guard.current = { generation: guard.current.generation + 1, inFlight: false };
     };
-    // This effect creates sessions; requests and callbacks must not restart a session.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionKey]);
 
@@ -371,7 +346,6 @@ export function useWorkUnitOverride({
     setMutationAccepted(false);
     const generation = actionGeneration;
     try {
-      // mutateAsync resolves with the unwrapped response: the mutation hooks read `.data` themselves.
       const data =
         intent.kind === 'undo'
           ? await undoMutation.mutateAsync({ organizationSlug, workUnitId, dto: intent.request })
@@ -454,8 +428,6 @@ export function useWorkUnitOverride({
       await loadFresh(actionGeneration);
     },
     close: () => {
-      // The wrapper confirms discard before this final close. Invalidate synchronously:
-      // React state and the parent's isOpen prop may not update before another action.
       if (isActionCurrent() && !guard.current.inFlight) endSession();
     },
     discardDraft: () => {

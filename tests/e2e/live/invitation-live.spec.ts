@@ -118,7 +118,7 @@ for (const scenario of [
       await expect(accept.getByTestId('invitationPassword')).toBeVisible();
       if (scenario.width === 390)
         await accept.screenshot({ path: testInfo.outputPath('invitation-recipient-mobile.png') });
-      // Only status codes leave the browser. Never persist the summary CSRF or response bodies.
+      // Only status codes leave the browser; never persist CSRF or response bodies.
       const statuses = await accept.evaluate(async (password) => {
         const statuses: number[] = [];
         for (const wrong of [undefined, 'wrong-csrf']) {

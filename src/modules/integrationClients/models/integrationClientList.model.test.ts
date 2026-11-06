@@ -93,8 +93,6 @@ describe('evictIntegrationClientFromLists', () => {
   });
 
   it('does not double-decrement count when called again for an already-evicted client', () => {
-    // Reproduces two concurrent not-found reads (e.g. the details query and the audit-events query
-    // 404ing at once) both calling this on the same client.
     const queryClient = new QueryClient();
     const key = integrationClientsQueryKey('acme', { pageNumber: 1, pageSize: 20 });
     queryClient.setQueryData(key, { count: 2, results: [validClient, { ...validClient, clientId: 'other' }] });

@@ -5,6 +5,7 @@ assert.ok(baseUrl, 'base URL is required');
 assert.ok(expectedVersion, 'expected version is required');
 assert.ok(expectedPrefix !== undefined, 'expected prefix is required (pass "" for root)');
 
+/** @param {string} url */
 const fetchWithRetry = async (url) => {
   let lastError;
   for (let attempt = 0; attempt < 20; attempt += 1) {
@@ -31,14 +32,21 @@ assert.match(html, /<div id="root"><\/div>/);
 
 assert.doesNotMatch(html, /__PUBLIC_URL__/, 'entrypoint.sh did not rewrite the __PUBLIC_URL__ token');
 if (expectedPrefix !== '') {
-  assert.ok(html.includes(`src="${expectedPrefix}/assets/env.js"`), `expected asset href prefixed with ${expectedPrefix}`);
+  assert.ok(
+    html.includes(`src="${expectedPrefix}/assets/env.js"`),
+    `expected asset href prefixed with ${expectedPrefix}`,
+  );
 } else {
   assert.ok(html.includes('src="/assets/env.js"'), 'expected root-relative asset href');
 }
 
-// Entry points with stable URLs must be revalidated so a deployment is picked up on the next load.
+/** @param {Response} response @param {string} label */
 const assertNoCache = (response, label) =>
-  assert.equal(response.headers.get('cache-control'), 'no-cache', `${label} must be served with Cache-Control: no-cache`);
+  assert.equal(
+    response.headers.get('cache-control'),
+    'no-cache',
+    `${label} must be served with Cache-Control: no-cache`,
+  );
 assertNoCache(spaResponse, 'SPA fallback index.html');
 assertNoCache(await fetchWithRetry(`${baseUrl}/`), 'directory index.html');
 assertNoCache(await fetchWithRetry(`${baseUrl}/index.html`), 'index.html');
@@ -46,7 +54,6 @@ const envResponse = await fetchWithRetry(`${baseUrl}/assets/env.js`);
 assertNoCache(envResponse, 'env.js');
 assert.match(envResponse.headers.get('content-type') ?? '', /javascript/);
 
-// Content-hashed bundles keep nginx's default caching behaviour.
 const bundlePath = html.match(/src="([^"]*\/static\/js\/[^"]+\.js)"/)?.[1];
 assert.ok(bundlePath, 'expected a content-hashed entry bundle in index.html');
 const bundleResponse = await fetchWithRetry(new URL(bundlePath, `${baseUrl}/`).href);

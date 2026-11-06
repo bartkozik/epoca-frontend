@@ -30,15 +30,10 @@ export function unarchiveClient(organizationSlug: string, clientId: string): Pro
   return api.post(`/organizations/${organizationSlug}/clients/${clientId}/unarchive`);
 }
 
-// Promise<void>, not ClientReturn: useUpdateClientMutation only drives cache invalidation, it never
-// reads the response body, so the return type doesn't promise a validated RawClient nobody gets.
 export async function editClient(organizationSlug: string, args: EditClientDto): Promise<void> {
   const { clientId, ...data } = args;
 
   const response = await api.patch<unknown>(`/organizations/${organizationSlug}/clients/${clientId}`, data);
-  // Still validated as a boundary check (CLAUDE.md's response-validation convention) -- a
-  // malformed or empty PATCH echo is logged, not thrown, since no caller reads this value and
-  // throwing here would fail an edit the backend actually applied.
   const parsed = RawClientSchema.safeParse(response.data);
   if (!parsed.success) {
     // eslint-disable-next-line no-console

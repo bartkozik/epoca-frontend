@@ -1,9 +1,3 @@
-// Separate from handle-validation-errors.test.ts, which mocks 'i18next' entirely -- that proves
-// handleValidationErrors calls i18n.t(), but not that the real, app-initialized i18next instance
-// actually resolves a key or falls back to an already-resolved sentence verbatim (the entire
-// safety argument for touching this shared helper, see its own comment). This file imports the
-// real @/core/i18n/i18n (triggering its .use().init() chain) unmocked, matching the pattern in
-// core/i18n/i18n.test.ts.
 import i18n from '@/core/i18n/i18n';
 import { z } from 'zod';
 import { formatValidationMessage, handleValidationErrors } from './handle-validation-errors';

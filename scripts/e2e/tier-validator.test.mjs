@@ -109,8 +109,6 @@ const protectedEnvironmentRules = [
   { if: '$CI_PIPELINE_SOURCE == "web"', when: 'manual', allow_failure: false },
 ];
 
-// Resolve every concrete job from the parsed file, including inherited rules. Unsupported
-// selectors fail closed so a new CI job cannot silently escape the release contracts.
 const selectionSchema = z.object({
   extends: z.string().optional(),
   rules: z.array(ruleSchema).optional(),

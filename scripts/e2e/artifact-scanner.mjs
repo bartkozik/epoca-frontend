@@ -4,9 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   ArtifactScanError,
-  TraversalAdapterError,
   runArtifactScan,
   sameIdentityAndMetadata,
+  TraversalAdapterError,
 } from './artifact-scanner-core.mjs';
 
 export { ArtifactScanError };
@@ -19,12 +19,14 @@ const validateChildName = (name) => {
   }
 };
 
+/** @param {import("node:fs").Dir} directory */
 const closeDirectory = async (directory) => {
   await directory.close().catch((error) => {
-    if (error?.code !== 'ERR_DIR_CLOSED') throw error;
+    if (!(error instanceof Error) || !('code' in error) || error.code !== 'ERR_DIR_CLOSED') throw error;
   });
 };
 
+/** @param {string} target */
 const openDescriptorNode = async (target) => {
   try {
     return { handle: await open(target, openFlags) };
@@ -35,6 +37,7 @@ const openDescriptorNode = async (target) => {
   }
 };
 
+/** @param {string} target */
 const directoryEntries = async function* (target) {
   const directory = await opendir(target);
   try {
@@ -45,10 +48,12 @@ const directoryEntries = async function* (target) {
   }
 };
 
+/** @returns {import("./artifact-scanner-core.mjs").TraversalAdapter & {descriptorPath: (node: import("./artifact-scanner-core.mjs").TraversalNode) => string}} */
 export const createLinuxDescriptorTraversalAdapter = () => {
   if (process.platform !== 'linux') {
     throw new Error('Secure artifact traversal requires Linux /proc/self/fd support');
   }
+  /** @param {import("./artifact-scanner-core.mjs").TraversalNode} node */
   const descriptorPath = (node) => `/proc/self/fd/${node.handle.fd}`;
   return {
     descriptorPath,
@@ -80,7 +85,10 @@ export const createLinuxDescriptorTraversalAdapter = () => {
     async assertBound(node, expected) {
       const descriptorStatus = await node.handle.stat();
       const procStatus = await stat(descriptorPath(node));
-      if (!sameIdentityAndMetadata(expected, descriptorStatus) || !sameIdentityAndMetadata(descriptorStatus, procStatus)) {
+      if (
+        !sameIdentityAndMetadata(expected, descriptorStatus) ||
+        !sameIdentityAndMetadata(descriptorStatus, procStatus)
+      ) {
         throw new TraversalAdapterError('snapshot-race');
       }
       return descriptorStatus;
@@ -89,6 +97,7 @@ export const createLinuxDescriptorTraversalAdapter = () => {
   };
 };
 
+/** @param {import("./artifact-scanner-core.mjs").RunArtifactScanOptions} options */
 export const scanAndPublishArtifacts = (options) => runArtifactScan(options, createLinuxDescriptorTraversalAdapter);
 
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);

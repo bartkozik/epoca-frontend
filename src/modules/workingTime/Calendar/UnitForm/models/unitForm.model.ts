@@ -1,9 +1,6 @@
 import { convertTimeFormat, formatValidationMessage } from '@/core/utils/helpers';
 import { z } from 'zod';
 
-// Duration validation for a Worklog entry only -- a Note entry never carries a duration. maxDuration
-// is a genuine runtime value (a project's max-loggable-hours business rule), so it stays a parameter
-// rather than something to make static.
 const durationWithinLimitSchema = (maxDuration: number): z.ZodType<string> =>
   z
     .string()

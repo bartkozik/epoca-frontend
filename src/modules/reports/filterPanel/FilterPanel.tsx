@@ -21,7 +21,6 @@ import { useFilterPanelURLParams } from './useFilterPanelURLParams';
 import { useReportDateRangeURL } from './useReportDateRangeURL';
 import type { ReportFilters } from './useReportFilters';
 
-// Several quick picks in a list cost one report request.
 const FILTER_APPLY_DELAY_MS = 250;
 const HOURS_PENDING = '––:––';
 const HOURS_NONE = '—';
@@ -29,7 +28,6 @@ const HOURS_NONE = '—';
 interface FilterPanelProps {
   filters: ReportFilters;
   onApplyFilters?: (snapshot: ReportQuerySnapshot) => void | Promise<void>;
-  /** Right side of the results bar under the filters, e.g. the entry count and total. */
   summary?: ReactNode;
 }
 
@@ -138,7 +136,6 @@ function FilterPanel({ filters, onApplyFilters, summary }: FilterPanelProps): JS
     [setSelectedDateRange],
   );
 
-  // Apply after React commits the new selection, so query filters and UI share one state.
   useEffect(() => {
     if (!pendingApply) return undefined;
     const run = (): void => {

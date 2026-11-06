@@ -58,8 +58,6 @@ test('ct-513-info-icon-follow-up @mr @visual keeps project InfoIcon and Tooltip 
   expect(fontEvidence.faces).toEqual(
     expect.arrayContaining([expect.objectContaining({ status: 'loaded', weight: '400' })])
   );
-  // Unlike CRA's production-style content-hashed `/static/media/...` output, Vite's dev server
-  // serves imported assets straight from their source-relative path with no hash.
   expect(finishedFontRequests).toEqual(
     expect.arrayContaining([expect.stringMatching(/\/src\/core\/theme\/fonts\/Poppins-Regular\.ttf(?:$|\?)/)])
   );

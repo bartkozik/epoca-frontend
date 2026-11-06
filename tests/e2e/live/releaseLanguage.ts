@@ -11,7 +11,6 @@ export const selectReleaseLanguage = async (page: Page, language: ReleaseLanguag
   await expect
     .poll(() => page.evaluate(() => localStorage.getItem(`IteratorsEpoca__user__lang_${window.location.hostname}`)))
     .toBe(language);
-  // A full navigation must restore the chosen app language, independently of browser locale.
   await page.reload();
   await expect(page.getByRole('link', { name: label, exact: true })).toBeVisible();
 };

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, readFile, readdir, rm, symlink } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, readFile, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
@@ -27,6 +27,7 @@ const PIPELINE_URL = 'https://gitlab.company-5897fee414.example.invalid/epoca/ep
 const JOB_URL = 'https://gitlab.company-5897fee414.example.invalid/epoca/epoca/-/jobs/84';
 const textEncoder = new TextEncoder();
 
+/** @param {{chunks: (string | Uint8Array)[], contentLength?: number, url?: string, status?: number, headers?: Record<string, string>}} options */
 const makeStreamingResponse = ({
   chunks,
   contentLength,
@@ -56,7 +57,7 @@ const makeStreamingResponse = ({
       url,
       headers: responseHeaders,
       body,
-      json: () => Promise.resolve(JSON.parse(allBytes.toString('utf8'))),
+      json: () => Promise.resolve(/** @type {unknown} */ (JSON.parse(allBytes.toString('utf8')))),
       arrayBuffer: () => {
         state.arrayBufferCalls += 1;
         return Promise.resolve(allBytes.buffer);
@@ -66,6 +67,7 @@ const makeStreamingResponse = ({
   };
 };
 
+/** @param {{items: unknown[], page: number, totalPages: number, nextPage: number | null, link?: string}} options */
 const makeJsonPageResponse = ({ items, page, totalPages, nextPage, link }) => {
   const json = JSON.stringify(items);
   const headers = {
@@ -154,7 +156,7 @@ void test('external evidence accepts only provider-native identity, exact SHA, s
     {
       ...externalDocument,
       gates: externalDocument.gates.map((gate, index) =>
-        index === 0 ? { ...gate, jobUrl: 'https://attacker.example/job/84' } : gate
+        index === 0 ? { ...gate, jobUrl: 'https://attacker.example/job/84' } : gate,
       ),
     },
   ];
@@ -177,19 +179,22 @@ void test('trusted fixture yields only the exact backend OAuth external gate', (
         job: 'oauth_e2e',
         artifact: 'oauth-e2e-evidence.json',
       },
-    ]
+    ],
   );
 });
 
 void test('external gate selection rejects broader projects, wrong jobs/artifacts, and unknown keys', () => {
   const { coverageMap } = loadCoverageFixture();
   const index = coverageMap.findIndex(({ id }) => id === 'CT-520');
+  /** @param {unknown} evidence */
   const mutate = (evidence) => {
     const candidate = structuredClone(coverageMap);
     candidate[index].evidence = evidence;
     return candidate;
   };
-  const source = coverageMap[index].evidence;
+  const gate = coverageMap[index];
+  assert.equal(gate.kind, 'gate');
+  const source = gate.evidence;
   const invalid = [
     { ...source, projectId: 'epoca' },
     { ...source, projectId: 'epoca/epoca/frontend' },
@@ -230,7 +235,7 @@ void test('GitLab evidence URLs require the canonical project, resource type, an
       resource: 'jobs',
       id: 7,
     }),
-    encodedProjectUrl
+    encodedProjectUrl,
   );
 
   for (const webUrl of [
@@ -245,7 +250,7 @@ void test('GitLab evidence URLs require the canonical project, resource type, an
     assert.throws(
       () => assertSafeGitLabWebUrl(TRUSTED_API_BASE, webUrl, 'pipeline URL', expectedPipeline),
       /canonical GitLab web path|safe HTTPS/i,
-      webUrl
+      webUrl,
     );
   }
 });
@@ -263,7 +268,7 @@ void test('untrusted GitLab origins are rejected before fetch can receive a toke
         token: 'test-job-token',
         pathSegments: ['projects', 'epoca/epoca', 'pipelines'],
       }),
-    /trusted GitLab API/i
+    /trusted GitLab API/i,
   );
   assert.equal(fetchCalls, 0);
 });
@@ -334,7 +339,7 @@ void test('external artifacts use the same bounded streaming rules for missing, 
   });
   await assert.rejects(
     () => gateEvidence.readGitLabArtifact(oversized.response, 'oversized artifact'),
-    /maximum artifact size/i
+    /maximum artifact size/i,
   );
   assert.equal(oversized.state.cancelled, true);
   assert.equal(oversized.state.arrayBufferCalls, 0);
@@ -342,15 +347,17 @@ void test('external artifacts use the same bounded streaming rules for missing, 
   const lying = makeStreamingResponse({ chunks: ['artifact'], contentLength: 3 });
   await assert.rejects(
     () => gateEvidence.readGitLabArtifact(lying.response, 'lying artifact'),
-    /declared content-length/i
+    /declared content-length/i,
   );
   assert.equal(lying.state.arrayBufferCalls, 0);
 });
 
 void test('bounded pagination finds exact pipelines and jobs on page two using only rebuilt trusted URLs', async () => {
   assert.equal(typeof gateEvidence.gitLabGetAllPages, 'function');
+  /** @type {{href: string, options: RequestInit}[]} */
   const requests = [];
-  const pagedFetch = (pages) => (request, options) => {
+  /** @param {Parameters<typeof makeJsonPageResponse>[0][]} pages */
+  const pagedFetch = (pages) => (/** @type {URL} */ request, /** @type {RequestInit} */ options) => {
     requests.push({ href: request.href, options });
     const page = Number(request.searchParams.get('page'));
     const pageResponse = makeJsonPageResponse(pages[page - 1]);
@@ -406,18 +413,18 @@ void test('bounded pagination finds exact pipelines and jobs on page two using o
   assert.equal(requests.length, 4);
   assert.deepEqual(
     requests.map(({ href }) => new URL(href).searchParams.get('page')),
-    ['1', '2', '1', '2']
+    ['1', '2', '1', '2'],
   );
   assert.equal(
     requests.every(({ href }) => new URL(href).origin === 'https://gitlab.company-5897fee414.example.invalid'),
-    true
+    true,
   );
   assert.equal(
     requests.every(
       ({ options }) =>
-        options.method === 'GET' && options.redirect === 'manual' && options.headers['Accept-Encoding'] === 'identity'
+        options.method === 'GET' && options.redirect === 'manual' && options.headers['Accept-Encoding'] === 'identity',
     ),
-    true
+    true,
   );
 });
 
@@ -455,7 +462,7 @@ void test('pagination rejects off-origin links, invalid next pages, and an unbou
 
   for (const { response, pattern } of cases) {
     let calls = 0;
-    const fetchImpl = (request) => {
+    const fetchImpl = (/** @type {URL} */ request) => {
       calls += 1;
       const pageResponse = makeJsonPageResponse(response);
       pageResponse.response.url = request.href;
@@ -471,7 +478,7 @@ void test('pagination rejects off-origin links, invalid next pages, and an unbou
           search: { sha: SHA },
           label: 'unsafe pages',
         }),
-      pattern
+      pattern,
     );
     assert.equal(calls, 1);
   }
@@ -492,9 +499,9 @@ void test('atomic evidence writes reject escapes and symlinked parents', async (
         path.join(allowedRoot, 'linked', 'backend-gates.json'),
         backendDocument,
         validateBackendEvidenceDocument,
-        { allowedRoot }
+        { allowedRoot },
       ),
-    /symlink/i
+    /symlink/i,
   );
   assert.deepEqual(await readdir(outsideRoot), []);
 
@@ -504,9 +511,9 @@ void test('atomic evidence writes reject escapes and symlinked parents', async (
         path.join(allowedRoot, '..', 'escaped.json'),
         backendDocument,
         validateBackendEvidenceDocument,
-        { allowedRoot }
+        { allowedRoot },
       ),
-    /escapes.*allowed root/i
+    /escapes.*allowed root/i,
   );
 });
 
@@ -518,11 +525,11 @@ void test('atomic evidence writes remove temporary files after a real rename fai
   await mkdir(outputPath, { recursive: true });
 
   await assert.rejects(() =>
-    writeEvidenceAtomically(outputPath, backendDocument, validateBackendEvidenceDocument, { allowedRoot })
+    writeEvidenceAtomically(outputPath, backendDocument, validateBackendEvidenceDocument, { allowedRoot }),
   );
   assert.deepEqual(
     (await readdir(allowedRoot)).filter((name) => name.endsWith('.tmp')),
-    []
+    [],
   );
 });
 
@@ -544,18 +551,18 @@ void test('pipeline and job selection requires exact successful SHA and exact su
         { id: 41, sha: SHA, status: 'success', web_url: 'https://gitlab.example/p/41' },
         { id: 42, sha: SHA, status: 'success', web_url: PIPELINE_URL },
       ],
-      SHA
+      SHA,
     ).id,
-    42
+    42,
   );
   assert.throws(
     () =>
       selectExactSuccessfulPipeline([{ id: 42, sha: 'f'.repeat(40), status: 'success', web_url: PIPELINE_URL }], SHA),
-    /exact successful pipeline/i
+    /exact successful pipeline/i,
   );
   assert.throws(
     () => selectExactSuccessfulPipeline([{ id: 42, sha: SHA, status: 'failed', web_url: PIPELINE_URL }], SHA),
-    /exact successful pipeline/i
+    /exact successful pipeline/i,
   );
 
   assert.equal(
@@ -564,17 +571,17 @@ void test('pipeline and job selection requires exact successful SHA and exact su
         { id: 83, name: 'oauth_e2e', status: 'success', web_url: 'https://gitlab.example/j/83' },
         { id: 84, name: 'oauth_e2e', status: 'success', web_url: JOB_URL },
       ],
-      'oauth_e2e'
+      'oauth_e2e',
     ).id,
-    84
+    84,
   );
   assert.throws(
     () =>
       selectExactSuccessfulJob([{ id: 84, name: 'test_backend', status: 'success', web_url: JOB_URL }], 'oauth_e2e'),
-    /exact successful job/i
+    /exact successful job/i,
   );
   assert.throws(
     () => selectExactSuccessfulJob([{ id: 84, name: 'oauth_e2e', status: 'failed', web_url: JOB_URL }], 'oauth_e2e'),
-    /exact successful job/i
+    /exact successful job/i,
   );
 });

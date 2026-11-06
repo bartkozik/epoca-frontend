@@ -8,12 +8,6 @@ vi.mock('@/core/api/Api', () => ({
   default: { post: vi.fn() },
 }));
 
-// `./requests`, `./types`, and `./pivotTable/constants` are real (unmocked) modules — only
-// `@/core/api/Api` above is mocked — so these can be plain static imports rather than something
-// requiring deferred/dynamic resolution. `it.each(...)` below reads `SpreadsheetFormat` while
-// Vitest collects tests (synchronously, before any `beforeAll` runs), so it specifically needs to
-// be available immediately; a static import (unlike a top-level `await import(...)`, which this
-// project's `tsconfig.json` doesn't support) satisfies that too.
 const mockPost = vi.mocked(apiModule.post);
 
 beforeEach(() => {

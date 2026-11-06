@@ -93,9 +93,6 @@ export function WorkspaceProvider({ children }: React.PropsWithChildren): JSX.El
       });
       return modelContextUsers(users, loggedInUserId, projects);
     } catch {
-      // The subscribed queries report the failure through the workspace toast effects. Keep this
-      // imperative bridge resolved so forms and fire-and-forget mutation callbacks don't leak a
-      // rejected promise after the error has already been handled.
       return [];
     }
   }, [loggedInUserId, slug]);

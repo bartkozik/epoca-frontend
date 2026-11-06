@@ -37,10 +37,6 @@ const snapshot: PivotExportSnapshot = {
   memberIdentities: [],
   maxDisplayValueCellCount: 9_600,
 };
-// A real (not stubbed-out) presentation object: the mutation hook calls the real
-// `serializePivotExportRequest`, which canonicalizes and validates every field, so an
-// under-specified fixture (e.g. `{}`) throws a TypeError before `requests.exportPivotTable` is
-// ever reached.
 const presentation: PivotExportPresentation = {
   fieldLabels: {
     [PIVOT_KEY.USER]: 'User',

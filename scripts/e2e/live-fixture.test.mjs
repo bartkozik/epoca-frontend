@@ -3,10 +3,9 @@ import { mkdtemp, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { z } from 'zod';
 import { ensureLiveArchiveFixture } from './live-fixture.mjs';
 
-// Returns a resolved Promise (not a bare Response) so every fetchImpl call site below can stay
-// a plain `return jsonResponse(...)` -- fetchImpl's declared return type is Promise<Response>.
 const jsonResponse = (body, status = 200) =>
   Promise.resolve(new Response(status === 204 ? null : body === null ? '' : JSON.stringify(body), { status }));
 
@@ -23,12 +22,14 @@ const environment = {
   LIVE_FIXTURE_SOURCE_WORK_UNIT_ID: 'source-unit',
 };
 
+/** @param {boolean} archived */
 const user = (archived) => ({
   id: 'fixture-user',
   archived,
   identities: [{ type: 'MailAddress', value: environment.LIVE_FIXTURE_USER_EMAIL }],
 });
 
+/** @param {unknown[]} results */
 const unitsResponse = (results) => ({ workUnits: { results } });
 
 const makeOutput = async () => {
@@ -37,13 +38,15 @@ const makeOutput = async () => {
 };
 
 void test('creates one dedicated work unit, deassigns its organization membership and preserves the account', async () => {
+  /** @type {{url: string, method: string, body?: unknown, authorization?: string, deviceId?: string, idempotencyKey?: string}[]} */
   const requests = [];
   let deassigned = false;
   let fixtureCreated = false;
+  /** @param {string | URL} input @param {{method?: string, body?: string, headers?: Record<string, string>}} [init] */
   const fetchImpl = (input, init = {}) => {
     const url = new URL(input);
     const method = init.method ?? 'GET';
-    const body = init.body ? JSON.parse(init.body) : undefined;
+    const body = init.body ? z.record(z.unknown()).parse(JSON.parse(init.body)) : undefined;
     requests.push({
       url: url.href,
       method,
@@ -78,7 +81,7 @@ void test('creates one dedicated work unit, deassigns its organization membershi
     }
     if (url.pathname.endsWith('/work-units') && url.searchParams.get('id') === 'source-unit') {
       return jsonResponse(
-        unitsResponse([{ id: 'source-unit', userId: 'fixture-user', projectClient: { projectId: 'project-id' } }])
+        unitsResponse([{ id: 'source-unit', userId: 'fixture-user', projectClient: { projectId: 'project-id' } }]),
       );
     }
     if (url.pathname.endsWith('/work-units')) {
@@ -86,8 +89,8 @@ void test('creates one dedicated work unit, deassigns its organization membershi
         unitsResponse(
           fixtureCreated
             ? [{ id: 'fixture-unit', userId: 'fixture-user', description: 'E2E CT-530 archived fixture' }]
-            : []
-        )
+            : [],
+        ),
       );
     }
     return jsonResponse({ error: 'unexpected' }, 404);
@@ -110,12 +113,12 @@ void test('creates one dedicated work unit, deassigns its organization membershi
   assert.equal(requests.filter(({ url }) => url.endsWith('/users/deassign')).length, 1);
   assert.equal(
     requests.some(({ url, method }) => method === 'DELETE' && url.includes('/users/')),
-    false
+    false,
   );
   const deviceIds = requests.filter(({ url }) => url.includes('/api/v1/')).map(({ deviceId }) => deviceId);
   assert.equal(
     deviceIds.every((deviceId) => /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(deviceId)),
-    true
+    true,
   );
   assert.equal(new Set(deviceIds).size, 1);
   const create = requests.find(({ url, method }) => url.endsWith('/work-units') && method === 'POST');
@@ -134,16 +137,18 @@ void test('creates one dedicated work unit, deassigns its organization membershi
     await readFile(outputPath, 'utf8'),
     'PLAYWRIGHT_LIVE_ALLOWED_ORG_ID=organization-id\n' +
       'PLAYWRIGHT_LIVE_ARCHIVED_USER_ID=fixture-user\n' +
-      'PLAYWRIGHT_LIVE_ARCHIVED_WORK_UNIT_ID=fixture-unit\n'
+      'PLAYWRIGHT_LIVE_ARCHIVED_WORK_UNIT_ID=fixture-unit\n',
   );
 });
 
 void test('reuses an already deassigned fixture without employee login, mutation or duplication', async () => {
+  /** @type {{url: string, method: string, body?: unknown, authorization?: string, deviceId?: string, idempotencyKey?: string}[]} */
   const requests = [];
+  /** @param {string | URL} input @param {{method?: string, body?: string, headers?: Record<string, string>}} [init] */
   const fetchImpl = (input, init = {}) => {
     const url = new URL(input);
     const method = init.method ?? 'GET';
-    const body = init.body ? JSON.parse(init.body) : undefined;
+    const body = init.body ? z.record(z.unknown()).parse(JSON.parse(init.body)) : undefined;
     requests.push({ url: url.href, method, body });
     if (url.pathname === '/assets/env.js')
       return Promise.resolve(new Response("window.__ENV__ = { API_BASE_URL: '/api/v1' };"));
@@ -156,7 +161,7 @@ void test('reuses an already deassigned fixture without employee login, mutation
     }
     if (url.pathname.endsWith('/work-units')) {
       return jsonResponse(
-        unitsResponse([{ id: 'fixture-unit', userId: 'fixture-user', description: 'E2E CT-530 archived fixture' }])
+        unitsResponse([{ id: 'fixture-unit', userId: 'fixture-user', description: 'E2E CT-530 archived fixture' }]),
       );
     }
     return jsonResponse({ error: 'unexpected' }, 404);
@@ -167,19 +172,21 @@ void test('reuses an already deassigned fixture without employee login, mutation
   assert.equal(requests.filter(({ url }) => url.endsWith('/auth/login')).length, 1);
   assert.equal(
     requests.some(({ url, method }) => method === 'POST' && !url.endsWith('/auth/login')),
-    false
+    false,
   );
   assert.equal(
     requests.some(({ url }) => url.endsWith('/users/deassign')),
-    false
+    false,
   );
 });
 
 void test('fails closed before mutation when the source work unit belongs to another user', async () => {
+  /** @type {{url: string, method: string, body?: unknown, authorization?: string, deviceId?: string, idempotencyKey?: string}[]} */
   const requests = [];
+  /** @param {string | URL} input @param {{method?: string, body?: string, headers?: Record<string, string>}} [init] */
   const fetchImpl = (input, init = {}) => {
     const url = new URL(input);
-    const body = init.body ? JSON.parse(init.body) : undefined;
+    const body = init.body ? z.record(z.unknown()).parse(JSON.parse(init.body)) : undefined;
     requests.push({ url: url.href, method: init.method ?? 'GET' });
     if (url.pathname === '/assets/env.js')
       return Promise.resolve(new Response("window.__ENV__ = { API_BASE_URL: '/api/v1' };"));
@@ -192,7 +199,7 @@ void test('fails closed before mutation when the source work unit belongs to ano
     if (url.pathname.endsWith('/users')) return jsonResponse([user(false)]);
     if (url.pathname.endsWith('/work-units') && url.searchParams.get('id') === 'source-unit') {
       return jsonResponse(
-        unitsResponse([{ id: 'source-unit', userId: 'another-user', projectClient: { projectId: 'project-id' } }])
+        unitsResponse([{ id: 'source-unit', userId: 'another-user', projectClient: { projectId: 'project-id' } }]),
       );
     }
     if (url.pathname.endsWith('/work-units')) return jsonResponse(unitsResponse([]));
@@ -201,19 +208,20 @@ void test('fails closed before mutation when the source work unit belongs to ano
 
   await assert.rejects(
     ensureLiveArchiveFixture({ env: environment, fetchImpl, outputPath: await makeOutput() }),
-    /belongs to another user/
+    /belongs to another user/,
   );
   assert.equal(
     requests.some(({ url }) => url.endsWith('/users/deassign')),
-    false
+    false,
   );
   assert.equal(
     requests.some(({ url, method }) => url.endsWith('/work-units') && method === 'POST'),
-    false
+    false,
   );
 });
 
 void test('rejects a runtime API outside the exact configured path', async () => {
+  /** @param {string | URL} input @param {{method?: string, body?: string, headers?: Record<string, string>}} [init] */
   const fetchImpl = (input) => {
     const url = new URL(input);
     if (url.pathname === '/assets/env.js')
@@ -223,7 +231,7 @@ void test('rejects a runtime API outside the exact configured path', async () =>
 
   await assert.rejects(
     ensureLiveArchiveFixture({ env: environment, fetchImpl, outputPath: await makeOutput() }),
-    /differs from the approved/
+    /differs from the approved/,
   );
 });
 

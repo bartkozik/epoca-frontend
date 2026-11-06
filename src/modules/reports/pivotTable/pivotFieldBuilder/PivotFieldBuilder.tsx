@@ -37,8 +37,6 @@ interface DropTarget {
   index: number;
 }
 
-// The area or field under the pointer wins; the nearest centre only decides keyboard moves and drops
-// outside every area. Areas are wide rows, so their centres say little about where the pointer is.
 const collisionDetection: CollisionDetection = (args) => {
   const underPointer = pointerWithin(args);
   return underPointer.length > 0 ? underPointer : closestCenter(args);

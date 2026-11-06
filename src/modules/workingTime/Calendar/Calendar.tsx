@@ -86,8 +86,6 @@ function Calendar({ dates, weekStart, weekEnd, submission }: CalendarProps): JSX
   const { hasAccess, loggedInUser } = auth;
   const { closeModal, handleDeleteConfirmationCancel, handleUnitAddFormOpen, modalConfig } = useUnitWorkspace();
 
-  // Built through the shared buildMainUnitsDto helper (not a hand-built literal) so this resolves
-  // to the same cache entry as WorkingTime.tsx's own mainUnitsDto.
   const dto = buildMainUnitsDto(weekStart, weekEnd, loggedInUser ? [loggedInUser.id] : []);
   const unitsQuery = useUnitsQuery(dto, { enabled: Boolean(loggedInUser) });
   const units = selectModeledUnits(unitsQuery.data, workspace.contextOrganizationUsers);
@@ -149,17 +147,12 @@ function Calendar({ dates, weekStart, weekEnd, submission }: CalendarProps): JSX
     const { active } = event;
     const dragData = active.data.current;
 
-    // dnd-kit's `Active.data` is untyped -- this guard is what actually protects against a
-    // mismatched/null-unit payload even though it should always pass for a real drag; don't remove
-    // it as "redundant".
     if (!isUnitDragData(dragData)) return;
 
     setActiveDraggedUnit(dragData.unit);
     setDragStartDate(dragData.unit.date);
   };
 
-  // The reorder/move mutations only restore the optimistic cache snapshot on error and otherwise
-  // say nothing -- surface it here instead.
   const showReorderErrorToast = (error: unknown): void => {
     showToastForError({
       errorMessageMap: {
@@ -227,18 +220,11 @@ function Calendar({ dates, weekStart, weekEnd, submission }: CalendarProps): JSX
 
   const restrictedAccess = !hasAccess(ROLE_PERMISSIONS.Internal);
 
-  // The Modal's X button/click-outside call `close` directly, bypassing UnitForm's own reset --
-  // without this, isRetryBlocked (a page-lifetime instance now) could stay stuck true.
   const handleModalClose = (): void => {
     closeModal();
     submission.resetSubmissionState();
   };
 
-  // Persists a genuinely new unit's position at the end of its day. Guarded on the unit not
-  // already being in `units` so an idempotent replay doesn't get repositioned.
-  // `units` only covers the visible week, so for a unit dated outside it the plan would list the
-  // new unit alone and the order request would drop that day's existing manual order. Such a
-  // unit keeps the position the backend assigned on creation.
   const handleUnitAdded = (newUnit: RawUnit): void => {
     if (units.some((unit) => unit.id === newUnit.id)) return;
     if (!dates.some((date) => dayjs(newUnit.date).isSame(date, 'day'))) return;

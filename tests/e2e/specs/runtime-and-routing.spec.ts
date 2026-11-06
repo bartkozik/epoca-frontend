@@ -1,12 +1,6 @@
 import { expect, test, WEBKIT_INTERRUPTED_MODULE_IMPORT_ERROR } from '../fixtures/epocaTest';
 import { openProjectDetails, openWorkUnitForm } from '../support/navigation';
 
-// These specs exist for CT-525 (the CRA-to-Vite migration): they are the E2E evidence that the
-// build-tool swap did not silently break the user-facing flows the app already supported. Four of
-// the six scenarios below are plain regression checks -- the same kind of thing the rest of the
-// `@mr` suite already covers -- run once more here specifically to anchor CT-525's own record of
-// what still works. The last two (root and non-root navigation) are different: see their own
-// comment below.
 
 test.describe('anonymous login', () => {
   test.use({ world: 'world-1', actor: 'anonymous' });
@@ -18,10 +12,6 @@ test.describe('anonymous login', () => {
     await expect(page.getByTestId('loginEmailInput')).toBeVisible();
     await expect(page.getByTestId('loginPasswordInput')).toBeVisible();
     await expect(page.getByTestId('loginButton')).toBeVisible();
-    // The shared `page` fixture (tests/e2e/fixtures/epocaTest.ts) already fails this test on any
-    // uncaught page error -- e.g. a stray CommonJS `require()` call (fine under webpack, fatal
-    // under Vite) or any other broken module graph -- so no local `pageerror` listener is needed
-    // here.
   });
 });
 
@@ -29,12 +19,9 @@ test.describe('calendar and worklog', () => {
   test.use({ world: 'world-4', actor: 'owner' });
 
   test('CT-525 @mr the working-time calendar keeps showing and accepting worklogs', async ({ page, runtime }) => {
-    // The taller form (project description + duration + notes fields all present at once) needs
-    // more vertical space than the default viewport to keep the submit button reachable.
     await page.setViewportSize({ width: 1048, height: 900 });
     await page.goto('/working-time');
 
-    // World-4 renders in Polish (its preseeded session persists `pl` as the user's language).
     await expect(page.getByRole('heading', { name: 'Czas pracy', exact: true })).toBeVisible();
 
     await openWorkUnitForm(page);
@@ -43,8 +30,6 @@ test.describe('calendar and worklog', () => {
       .getByRole('button', { name: 'Czas pracy', exact: true })
       .click();
     await page.getByLabel('Klienci i projekty', { exact: true }).click();
-    // World-4's owner actor only owns "Large Project" (its own preseeded project) -- "Alpha
-    // Project" belongs to a different owner and does not show up in this search.
     await page.getByLabel('Modal', { exact: true }).getByText('Large Project', { exact: true }).click();
     const selectedDate = page.getByLabel('Wybrana data', { exact: true });
     await selectedDate.fill('15.07.2026');
@@ -116,16 +101,6 @@ test.describe('report filters', () => {
 test.describe('root and non-root navigation', () => {
   test.use({ world: 'world-4', actor: 'owner' });
 
-  // Task 6's spec-compliance review found that `Router.tsx`'s `<BrowserRouter>` took no
-  // `basename` prop: nginx correctly serves `index.html` for any path under a non-root
-  // `PUBLIC_URL` prefix (e.g. `/teams/epoca`), but React Router then matched routes against the
-  // *full* pathname including that prefix, found nothing, and its wildcard `<Navigate>` redirected
-  // to a bare, unprefixed path -- silently dropping `/teams/epoca` from the address bar. A later
-  // hard reload or shared link at that dropped-prefix URL then fell outside nginx's
-  // `location /teams/epoca/` block: a real 404, just not on the redirect itself.
-  //
-  // Fixed by wiring `basename={env.publicUrl}` into `<BrowserRouter>`. The two scenarios below
-  // cover both directions:
   test('CT-525 @mr a non-root PUBLIC_URL is honored end-to-end by client-side routing', async ({ page, runtime }) => {
     runtime.setPublicUrl('/teams/epoca');
 
@@ -134,15 +109,11 @@ test.describe('root and non-root navigation', () => {
     await expect(page).toHaveURL(/\/teams\/epoca\/working-time$/);
     await expect(page.getByRole('heading', { name: 'Czas pracy', exact: true })).toBeVisible();
 
-    // In-app navigation (not a fresh page load) must keep the prefix too -- this is exactly the
-    // case that used to drop it, via the wildcard route's `<Navigate>`.
     await page.getByRole('link', { name: 'Projekty', exact: true }).click();
     await expect(page).toHaveURL(/\/teams\/epoca\/projects$/);
     await expect(page).toHaveTitle('Epoca — Projekty');
   });
 
-  // Regression guard for the other direction: an empty/root `PUBLIC_URL` (the default) must keep
-  // resolving plain, unprefixed routes -- `basename=""` should stay a no-op.
   test('CT-525 @mr an empty (root) PUBLIC_URL leaves routing unprefixed', async ({ page, runtime }) => {
     runtime.setPublicUrl('');
 
@@ -155,10 +126,6 @@ test.describe('root and non-root navigation', () => {
 
 test.describe('lazy chunk load failure', () => {
   test.use({ world: 'world-4', actor: 'owner' });
-  // A failed dynamic import also surfaces as a browser-level page error, separately from
-  // ChunkLoadErrorBoundary catching it for rendering. This test deliberately causes that failure,
-  // so it must allow through the one error it provokes (message differs by engine -- see
-  // WEBKIT_INTERRUPTED_MODULE_IMPORT_ERROR); any other page error still fails the test.
   test.use({
     ignoredPageErrors: {
       patterns: [
@@ -168,9 +135,6 @@ test.describe('lazy chunk load failure', () => {
     },
   });
 
-  // Simulates a deploy removing a page's hashed chunk out from under an already-open tab: 404s the
-  // Report chunk on a client-side navigation, then proves both halves -- the fallback appears, and
-  // Reload recovers once the chunk is reachable again.
   test('CT-547 @mr a failed lazy chunk import shows a recoverable fallback instead of a blank page', async ({
     page,
   }) => {

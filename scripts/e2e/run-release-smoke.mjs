@@ -121,7 +121,7 @@ export function runReleaseSmoke(args) {
   const stateRoot = assertPrivateStateRoot(process.env.EPOCA_RELEASE_STATE_ROOT);
   const directory = path.join(stateRoot, `${runId}-${phase}`);
   mkdirSync(path.dirname(directory), { recursive: true, mode: 0o700 });
-  mkdirSync(directory, { mode: 0o700 }); // Refuse any stale or concurrent same-run state.
+  mkdirSync(directory, { mode: 0o700 });
   const privateLog = openSync(path.join(directory, 'browser.log'), 'wx', 0o600);
   command[3] = path.join(root, 'playwright.release.config.ts');
   let result;

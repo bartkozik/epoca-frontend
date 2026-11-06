@@ -27,9 +27,6 @@ describe('showModuleErrorToast', () => {
     expect(addToastMock).toHaveBeenCalledWith(expect.objectContaining({ content: 'Not found' }));
   });
 
-  // This is the exact case showToastForError itself silently drops (see its own test: "silently
-  // no-ops for a non-axios error value without throwing") -- a ZodError from response validation
-  // is not an AxiosError, so without this fallback the user would see nothing at all.
   it('falls back to the default message for a non-axios error instead of staying silent', () => {
     showModuleErrorToast(new TypeError('unexpected shape'), { default: 'Something went wrong' });
 

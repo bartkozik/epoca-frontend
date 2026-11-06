@@ -31,9 +31,6 @@ interface RawProjectFixture {
   userIds: string[];
 }
 
-// PATCH returns the backend's flat Project domain object (ProjectRouter -> ProjectUpdateResult.
-// Updated), not the list/get DTO shape RawProjectFixture models: clientId instead of a nested
-// client, no projectUsers/userCount/userIds, plus archivedBy. Mirrors ProjectPatchResultSchema.
 interface RawProjectPatchFixture {
   archivedAt: string | null;
   archivedBy: string | null;

@@ -111,8 +111,6 @@ const InvitationRow = ({
   const [retryAction, setRetryAction] = useState<Action | null>(null);
   const { cooldown: remainingSeconds, setCooldown } = useCooldown(invitation.delivery.retryAfterSeconds);
   const coolingDown = remainingSeconds > 0;
-  // The reviewed detail may precede the list. Once the list catches up, it also owns
-  // delivery updates, which need not advance the invitation revision.
   const current = reviewed && BigInt(reviewed.revision) > BigInt(invitation.revision) ? reviewed : invitation;
 
   useEffect(() => {

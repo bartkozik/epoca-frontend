@@ -31,7 +31,6 @@ function ClientDetails(): JSX.Element | null {
     if (client) setClient(client);
   }, [client]);
 
-  // Same rationale as Clients.tsx's clientsQuery.isError effect.
   useEffect(() => {
     if (clientQuery.isError)
       showModuleErrorToast(clientQuery.error, { default: t('toast_message.clients.data_fetch_error') });
@@ -54,10 +53,6 @@ function ClientDetails(): JSX.Element | null {
 
   const onTabClick = (value: string): void | undefined => {
     if (!clientId) return;
-    // Preserve the current search string (e.g. AssignedProjectsTable's URL-persisted sort) across
-    // the tab switch -- a plain string `to` here would otherwise navigate with an empty query,
-    // wiping it out on every click. `state` is forwarded too, so the fromListSearch ClientRow set
-    // (used by the GoBack link below) survives the tab switch as well.
     navigate(
       { pathname: clientsPaths.details(clientId, value), search: location.search },
       { state: location.state as unknown },

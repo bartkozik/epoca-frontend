@@ -66,10 +66,6 @@ interface RowActionFocus {
   origin: HTMLElement | null;
 }
 
-// TanStack query/mutation hooks throw/reject with a typed IntegrationClientProblem (see
-// integrationClientGetQuery.model.ts etc.), but a catch binding is always `unknown` in TypeScript --
-// this just documents that narrowing, replacing the old runtime-shape-checking asProblem() helper
-// that existed only because plain promise rejections used to be untyped.
 const asMutationError = (error: unknown): IntegrationClientProblem => error as IntegrationClientProblem;
 
 const Integrations = (): JSX.Element => {
@@ -158,11 +154,6 @@ const Integrations = (): JSX.Element => {
 
   const detailQuery = useIntegrationClientQuery(organizationSlug, visibleDetailsSelection?.clientId ?? '');
   const audit = useIntegrationClientAuditEventsList(organizationSlug, visibleDetailsSelection?.clientId ?? null);
-  // isSuccess alone would be true for stale cached data served instantly on reopen, before the
-  // staleTime:0-forced background refetch (see integrationClientGetQuery.model.ts) has completed --
-  // gate on fetchStatus too so lifecycle actions stay disabled until a real network read for this
-  // selection has actually finished, matching the old store's "loadClient always hits the wire"
-  // guarantee.
   const isDetailFresh = visibleDetailsSelection !== null && detailQuery.isSuccess && detailQuery.fetchStatus === 'idle';
   const detailsClient = visibleDetailsSelection ? (detailQuery.data ?? null) : null;
   const detailState = detailQuery.isError
@@ -200,10 +191,6 @@ const Integrations = (): JSX.Element => {
     setFormSelection(null);
     replaceDetailsSelection(null);
     replaceLifecycleSelection(null);
-    // Not scoped per-selection, so a mutation left pending when the user switched organizations
-    // (submitLifecycleAction's own organizationSlug check blocks it from ever completing here) would
-    // otherwise latch this true forever and silently no-op every future lifecycle submission, in any
-    // organization -- matches the old store's reset-on-organization-switch guarantee.
     lifecycleSubmitGuardRef.current = false;
     setLifecycleProblem(null);
     setLifecycleNotice(null);
@@ -254,9 +241,6 @@ const Integrations = (): JSX.Element => {
     focusRowActionFallback(rowFocus);
   }, [focusRowActionFallback, isMutationBusy, visibleLifecycleSelection, visibleOneTimeCredentials]);
 
-  // Replaces the old store's imperative client-not-found handling in loadClient/loadAuditEvents:
-  // the detail/audit queries are already keyed by clientId, so a stale response for a *previous*
-  // selection can never surface here -- this only reacts to the current selection's own error.
   useEffect(() => {
     if (!visibleDetailsSelection || detailQuery.error?.kind !== 'client-not-found') return;
     replaceDetailsSelection(null);
@@ -321,7 +305,6 @@ const Integrations = (): JSX.Element => {
 
   const submitUpdate = (input: UpdateIntegrationClientInput): Promise<void> => {
     if (isDemo) return Promise.resolve();
-    // Same rationale as asMutationError above.
     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     if (!formSelection) return Promise.reject(unexpectedProblem);
     return updateMutation
@@ -344,7 +327,6 @@ const Integrations = (): JSX.Element => {
   };
 
   const refreshSelectedClient = async (): Promise<IntegrationClient> => {
-    // Same rationale as asMutationError above.
     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     if (!formSelection) return Promise.reject(unexpectedProblem);
     const clientId = formSelection.client.clientId;
@@ -357,18 +339,12 @@ const Integrations = (): JSX.Element => {
             // eslint-disable-next-line @typescript-eslint/only-throw-error
             throw normalizeIntegrationClientProblem(error);
           }),
-        // A conflict-resolution read must hit the network, never satisfy from a recently-cached
-        // response (the production default staleTime is 60s) -- otherwise this can "resolve" a
-        // stale-version conflict with the exact same stale data that caused it.
+        // Conflict resolution must fetch a new version rather than reuse the stale response that caused the conflict.
         staleTime: 0,
       });
     } catch (error: unknown) {
       const problem = asMutationError(error);
-      // Every other not-found path in this module evicts the client from cached list pages; this
-      // conflict-resolution read must too, or a deleted client's row stays visible and clickable
-      // until some unrelated interaction happens to trigger eviction elsewhere.
       if (problem.kind === 'client-not-found') evictIntegrationClientFromLists(queryClient, organizationSlug, clientId);
-      // Same rationale as asMutationError above.
       // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw problem;
     }
@@ -390,7 +366,6 @@ const Integrations = (): JSX.Element => {
 
   const retryProjects = async (): Promise<void> => {
     await projectsContext.fetchProjects();
-    // Same rationale as asMutationError above.
     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     if (!projectsContext.isOrganizationProjectsCatalogReady) return Promise.reject(unexpectedProblem);
   };
@@ -421,7 +396,6 @@ const Integrations = (): JSX.Element => {
             // eslint-disable-next-line @typescript-eslint/only-throw-error
             throw normalizeIntegrationClientProblem(error);
           }),
-        // Same rationale as refreshSelectedClient -- must hit the network, not the ~60s-fresh cache.
         staleTime: 0,
       });
       patchIntegrationClientInLists(queryClient, organizationSlug, client);
@@ -445,8 +419,6 @@ const Integrations = (): JSX.Element => {
       }
       const problem = asMutationError(error);
       if (problem.kind === 'client-not-found') {
-        // Every other not-found path in this module evicts the client from cached list pages; this
-        // conflict-resolution read must too, or a deleted client's row stays visible and clickable.
         evictIntegrationClientFromLists(queryClient, organizationSlug, selection.client.clientId);
         requestRowLifecycleFocusRestore(selection);
         replaceLifecycleSelection(null);
@@ -569,10 +541,7 @@ const Integrations = (): JSX.Element => {
     restoreCredentialsFocusRef.current = detailsReturnFocusAction === null;
     if (detailsReturnFocusAction !== null) credentialsOriginRef.current = null;
     setOneTimeCredentials(null);
-    // The credentials just shown carry a one-time clientSecret that must not linger in the
-    // MutationCache after this modal closes. Paired with gcTime: 0 on both mutations, reset()
-    // drops each mutation's observer reference so its cache entry is collected right away instead
-    // of surviving for the default 5-minute gcTime.
+    // reset() releases observers; paired gcTime: 0 removes one-time secrets from MutationCache on close.
     createMutation.reset();
     rotateMutation.reset();
   };

@@ -90,9 +90,6 @@ describe('MemberProjectsTableRow', () => {
 
     await user.click(toggle);
 
-    // The mocked rejection resolves within the same act() flush as the click, so the optimistic
-    // flip and its revert both happen before control returns here -- settling back to unassigned
-    // is what matters, not catching the transient intermediate state.
     await waitFor(() => expect(toggle).toHaveAttribute('aria-checked', 'false'));
     expect(addToastMock).not.toHaveBeenCalled();
   });

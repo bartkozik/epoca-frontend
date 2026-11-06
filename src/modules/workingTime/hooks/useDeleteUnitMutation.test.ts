@@ -16,10 +16,6 @@ const { getReportedUnitsMock } = vi.hoisted(() => ({ getReportedUnitsMock: vi.fn
 vi.mock('@/modules/reports/hooks/useReportedUnits', () => ({ getReportedUnits: getReportedUnitsMock }));
 
 let queryClient: QueryClient;
-// createElement instead of JSX: this file stays `.ts` (matching this repo's
-// check-file/filename-naming-convention, which only exempts `use*.test.tsx` from PascalCase),
-// so it can't use JSX syntax, which only parses in `.tsx`. queryClient is read from the outer
-// variable (rather than created fresh inside wrapper) so the test can spy on the same instance.
 const wrapper = ({ children }: { children: ReactNode }): ReactElement =>
   createElement(QueryClientProvider, { client: queryClient }, children);
 

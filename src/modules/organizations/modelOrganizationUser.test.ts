@@ -56,8 +56,6 @@ describe('sortOrganizationUsers', () => {
     { fullName: 'Alpha User', organizationRoles: [OrganizationUserRole.Owner] },
   ] as OrganizationUser[];
 
-  // direction flips the raw localeCompare result, so Desc yields alphabetical order and Asc
-  // yields reverse-alphabetical for this column -- preserved as-is, not "corrected" here.
   it('sorts by name, Desc direction yielding alphabetical order', () => {
     const result = sortOrganizationUsers(users, SortColumn.UserName, SortDirection.Desc);
     expect(result.map(({ fullName }) => fullName)).toEqual(['Alpha User', 'Beta User']);
@@ -79,10 +77,6 @@ describe('sortOrganizationUsers', () => {
     expect(result).toHaveLength(2);
   });
 
-  // Regression test for a CT-561 code-review finding: organizationRoles can legitimately be []
-  // (tolerantArray drops an unrecognized wire role rather than throwing), and the old comparator
-  // read organizationRoles[0] with no guard -- throwing "Cannot read properties of undefined
-  // (reading 'localeCompare')" whenever the roles-less user wasn't first in the input array.
   it('does not throw when a non-first user has no resolvable role', () => {
     const withRolelessUser = [
       { fullName: 'Alpha User', organizationRoles: [OrganizationUserRole.Owner] },

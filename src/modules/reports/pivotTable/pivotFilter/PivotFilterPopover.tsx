@@ -79,10 +79,6 @@ function PivotFilterPopover({
     onOpenChange?.(false);
   };
 
-  // The panel is rendered inline (not portalled, not aria-modal) so it stays a descendant of the
-  // dialog that opened it rather than a sibling top-level dialog: two independent aria-modal
-  // dialogs would each install their own focus trap and fight over every Tab keypress. Click-outside
-  // and Escape therefore have to be handled here instead of relying on the shared Modal component.
   useOnClickOutside({ condition: isOpen, handler: cancel, ref: rootRef });
   useKeyDown({ action: cancel, isListening: isOpen, keyboardEventType: KeyBoardEventType.ESC });
 

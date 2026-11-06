@@ -19,7 +19,7 @@ const callApi = async (page: Page, path: string, method = 'GET', body?: unknown)
         method: requestMethod,
       });
       const text = await response.text();
-      return { body: text ? JSON.parse(text) : null, status: response.status };
+      return { body: text ? (JSON.parse(text) as unknown) : null, status: response.status };
     },
     { requestBody: body, requestMethod: method, requestPath: path }
   );
@@ -277,18 +277,6 @@ test.describe('projects and people', () => {
     test('CT-539 @mr seeds the client edit form texture swatch with the resolved asset for an old-format hashed value', async ({
       page,
     }) => {
-      // Internal Client's `texture` fixture value (world-3.ts) is an old build's fully-resolved,
-      // differently-hashed asset path -- '/static/media/texture7.oldhash123.png' -- not the stable
-      // `textureN` identifier new selections are saved as. resolveClientTexture's CT-525
-      // backward-compatibility regex extracts the `7` and maps it to CLIENT_TEXTURES[6], i.e. this
-      // build's texture7.png asset (src/modules/clients/clientBackgroundOptions.ts, already unit-tested).
-      // Playwright's Node-based test runner can't import that module directly here -- it
-      // transitively imports .png/.scss files that only resolve through Vite's module graph, which
-      // this spec file (compiled by Playwright's own esbuild-based transform, not Vite) doesn't have
-      // access to -- so the expected, already-unit-tested filename is asserted directly instead.
-      //
-      // Same reason applies to clientsPaths.details (src/modules/clients/routes.ts, CT-547), so
-      // the path is built inline here too.
       await page.goto(`/clients/${IDS.clientInternal}/client-details`);
 
       const textureSwatch = page.getByTestId('clientTextureSwatch');
@@ -299,11 +287,7 @@ test.describe('projects and people', () => {
     test('CT-65 @mr renders the client logo in the client details page title for a client with a logo', async ({
       page,
     }) => {
-      // External Client's `logo` fixture value (world-3.ts) exercises ItemLogo's background-image
-      // branch; see clientsPaths.details comment on the sibling CT-539 test above for why the path
-      // is built inline instead of imported.
       const logoUrl = 'https://static.e2e.test/clients/external-logo.png';
-      // installMockApi blocks every non-frontend origin, so serve the logo locally (1x1 PNG).
       await page.route(logoUrl, (route) =>
         route.fulfill({
           body: Buffer.from(
@@ -321,7 +305,6 @@ test.describe('projects and people', () => {
       await expect(clientLogo).toBeVisible();
       await expect(clientLogo).toHaveCSS('background-image', `url("${logoUrl}")`);
       expect((await logoResponse).ok()).toBe(true);
-      // Decoding the same URL proves the browser accepted the response as an image, not an empty circle.
       await expect
         .poll(() =>
           page.evaluate(
@@ -341,8 +324,6 @@ test.describe('projects and people', () => {
     test('CT-65 @mr falls back to the client name initial in the client details page title for a client without a logo', async ({
       page,
     }) => {
-      // Internal Client (world-3.ts) has no `logo` fixture value, exercising ItemLogo's
-      // first-letter fallback branch instead.
       await page.goto(`/clients/${IDS.clientInternal}/client-details`);
 
       const clientLogo = page.getByTestId('clientLogo');
@@ -384,12 +365,6 @@ test.describe('projects and people', () => {
     test('CT-539 @mr requests the resolved texture asset on the calendar for a client with an old-format hashed value', async ({
       page,
     }) => {
-      // Alpha Project (world-3.ts) belongs to Internal Client, whose old-format hashed `texture`
-      // value is covered by the sibling CT-539 test above. Regular User's own "Precyzyjne godziny"
-      // worklog (world-4.ts) is on that project, so it renders on their /working-time calendar with
-      // that client's resolved texture as its background: Unit.tsx calls resolveClientTexture, then
-      // convertImageToGrayscale loads the resolved URL via a real `new Image()` request (before
-      // canvas-converting it to grayscale) -- this intercepts that real network request.
       const [textureRequest] = await Promise.all([
         page.waitForRequest(
           (request) =>
@@ -412,7 +387,7 @@ test.describe('projects and people', () => {
       const fetchDetails = async (): Promise<{ body: unknown; status: number }> =>
         page.evaluate(async (path) => {
           const result = await fetch(path);
-          return { body: await result.json(), status: result.status };
+          return { body: (await result.json()) as unknown, status: result.status };
         }, USER_DETAILS_PATH);
 
       const expectedProjects = [

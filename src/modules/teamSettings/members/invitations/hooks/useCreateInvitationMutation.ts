@@ -9,7 +9,6 @@ import { useInvitationInvalidation } from './useInvitationInvalidation';
 export interface CreateInvitationVariables {
   organizationSlug: string;
   input: InvitationCreate;
-  /** Change when explicitly starting a new logical attempt, e.g. reopening a form. */
   attemptId?: string;
 }
 

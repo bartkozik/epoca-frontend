@@ -57,7 +57,6 @@ const MembersProjectsTable = (): JSX.Element | null => {
   useEffect(() => {
     if (userId)
       getUserProjects(userId).catch((error) => {
-        // Preserve the list's sort (fromListSearch) on this error bail-out too, same as GoBack below.
         navigate(listPath);
         showToastForError({
           errorMessageMap: {

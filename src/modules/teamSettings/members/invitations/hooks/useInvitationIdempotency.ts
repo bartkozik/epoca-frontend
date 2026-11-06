@@ -29,8 +29,7 @@ export function useInvitationIdempotency(): InvitationIdempotentAction {
       return response;
     } catch (error: unknown) {
       const problem = normalizeInvitationProblem(error);
-      // The server may have committed when the transport or response was lost. Manual retries
-      // reuse this logical attempt; changing the parsed payload or attemptId starts another.
+      // A lost response may hide a committed write; retry the same logical attempt with its original idempotency key.
       if (!['timeout', 'transport', 'unexpected'].includes(problem.kind) && current.current === attempt)
         current.current = null;
       // eslint-disable-next-line @typescript-eslint/only-throw-error

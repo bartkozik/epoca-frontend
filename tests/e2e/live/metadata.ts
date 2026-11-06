@@ -41,11 +41,7 @@ export interface LiveWorkUnitIntent {
 export type LiveMutationIntent = LiveClientIntent | LiveProjectIntent | LiveWorkUnitIntent;
 export type LiveOwnershipEvidence = LiveMutationIntent & { id: string };
 export type LiveQuarantineReason =
-  | 'ambiguous'
-  | 'archived-fixture'
-  | 'cleanup-failed'
-  | 'ownership-mismatch'
-  | 'unknown';
+  'ambiguous' | 'archived-fixture' | 'cleanup-failed' | 'ownership-mismatch' | 'unknown';
 
 export interface LiveQuarantinedObject {
   candidateId: string | null;
@@ -139,7 +135,10 @@ const requiredStringArray = (record: Record<string, unknown>, key: string, label
   if (!Array.isArray(value) || value.some((entry) => typeof entry !== 'string' || entry.trim() === '')) {
     throw new Error(`${label} ${key} must be an array of non-empty strings`);
   }
-  return [...value] as string[];
+  return value.map((entry: unknown) => {
+    if (typeof entry !== 'string') throw new Error(`${label} ${key} must contain strings`);
+    return entry;
+  });
 };
 
 const assertSchemaVersion = (record: Record<string, unknown>, label: string): void => {
@@ -169,7 +168,7 @@ const parseIntent = (value: unknown, label: string): LiveMutationIntent => {
     assertExactKeys(
       record,
       ['kind', 'intentId', 'marker', 'organizationId', 'clientId', 'name', 'descriptionPrefix'],
-      label
+      label,
     );
     return {
       ...common,
@@ -182,7 +181,7 @@ const parseIntent = (value: unknown, label: string): LiveMutationIntent => {
   assertExactKeys(
     record,
     ['kind', 'intentId', 'marker', 'organizationId', 'projectId', 'actorUserId', 'descriptionPrefix', 'idempotencyKey'],
-    label
+    label,
   );
   return {
     ...common,
@@ -230,7 +229,7 @@ const parseQuarantined = (value: unknown, label: string): LiveQuarantinedObject 
 const assertExactEvidence = (
   owned: LiveRunManifest['owned'],
   ownership: LiveOwnershipEvidence[],
-  archivedWorkUnitId: string
+  archivedWorkUnitId: string,
 ): void => {
   const expected = {
     clientIds: ownership.filter(({ kind }) => kind === 'client').map(({ id }) => id),
@@ -278,7 +277,7 @@ export const parseLiveRunManifest = (value: unknown): LiveRunManifest => {
       'intents',
       'quarantined',
     ],
-    'Private manifest'
+    'Private manifest',
   );
   assertSchemaVersion(record, 'Private manifest');
   const owned = assertRecord(record.owned, 'Private manifest owned IDs');
@@ -355,7 +354,7 @@ export const parseLocalProxyMetadata = (value: unknown): LocalProxyMetadata => {
   assertExactKeys(
     record,
     ['schemaVersion', 'proxyOrigin', 'frontendSha', 'backendSha', 'status'],
-    'Local-proxy metadata'
+    'Local-proxy metadata',
   );
   assertSchemaVersion(record, 'Local-proxy metadata');
   const status = record.status;
@@ -392,12 +391,12 @@ export const writeLiveRunMetadata = async (metadata: LiveRunMetadata, filePath =
 
 export const writeLocalProxyMetadata = async (
   metadata: LocalProxyMetadata,
-  filePath = LOCAL_PROXY_METADATA_PATH
+  filePath = LOCAL_PROXY_METADATA_PATH,
 ): Promise<void> => writeJsonAtomically(filePath, parseLocalProxyMetadata(metadata), 0o644);
 
 export const writeLocalProxyMetadataSync = (
   metadata: LocalProxyMetadata,
-  filePath = LOCAL_PROXY_METADATA_PATH
+  filePath = LOCAL_PROXY_METADATA_PATH,
 ): void => {
   const parsed = parseLocalProxyMetadata(metadata);
   mkdirSync(path.dirname(filePath), { recursive: true });

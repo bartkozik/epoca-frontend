@@ -10,8 +10,7 @@ vi.mock('@/core/api', () => ({
   default: { get: vi.fn() },
 }));
 
-// The request boundary, schema and slug resolver are under test.
-// eslint-disable-next-line vitest/unbound-method -- api.get is a vi.fn() mock, see vi.mock above.
+// eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
 
 const validRawSamlConfig = {

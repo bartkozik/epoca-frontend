@@ -7,8 +7,6 @@ interface LoadingAreaProps {
   children?: React.ReactNode | React.ReactNode[];
   loading: boolean;
   className?: string;
-  // Overrides the default Spinner with a caller-supplied loader element — keeps LoadingArea free
-  // of any dependency on a specific module's loader visuals (see modules/workingTime's usage).
   loader?: React.ReactNode;
 }
 

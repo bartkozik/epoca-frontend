@@ -177,8 +177,6 @@ describe('usePivotMatrixDocks', () => {
     });
 
     disconnectResizeObserver = vi.fn();
-    // A regular `function` (not an arrow function) is required here: `window.ResizeObserver` is
-    // invoked with `new`, and arrow functions aren't constructible.
     window.ResizeObserver = vi.fn(function MockResizeObserver() {
       return {
         disconnect: disconnectResizeObserver,

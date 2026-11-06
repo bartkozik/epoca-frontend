@@ -28,11 +28,9 @@ const Login = ({ invitationReturn = false }: LoginProps): JSX.Element => {
   const auth = useAuth();
   const { isAuthenticated, login, loading, userChosenLanguage } = auth;
   const samlAuthCheckQuery = useSamlAuthCheckQuery();
-  // Hide the SSO alternative only while a password login request is in flight.
   const ssoSectionHidden = loading;
   const { samlRequest = '', ssoUrl = '' } = samlAuthCheckQuery.data ?? {};
   const isSamlAuthChecked = !ssoSectionHidden && !samlAuthCheckQuery.isError && Boolean(samlRequest && ssoUrl);
-  // A first check paused offline is neither loading nor errored, so it needs its own message.
   const isSamlAuthCheckPaused = samlAuthCheckQuery.isPending && samlAuthCheckQuery.isPaused;
   const samlAuthCheckErrorKey = ssoSectionHidden
     ? null
@@ -150,8 +148,7 @@ const Login = ({ invitationReturn = false }: LoginProps): JSX.Element => {
                   }
                 }}
                 onClick={(e) => {
-                  // WebKit doesn't focus a clicked button by default, so onBlur never fires there
-                  // unless we focus it explicitly here.
+                  // WebKit does not focus clicked buttons, so explicit focus is needed for onBlur.
                   e.currentTarget.focus();
                   setIsPasswordVisible((visible) => !visible);
                 }}
@@ -169,10 +166,6 @@ const Login = ({ invitationReturn = false }: LoginProps): JSX.Element => {
             }
             label={t('common.password')}
             name="password"
-            // link={{
-            //   text: 'Forgot?',
-            //   path: paths.passwordReset,
-            // }} //to uncomment when the feature is ready
             onChange={(e) => handleInputFieldChange(e, 'password')}
             size="large"
             inputFieldClassName={styles.passwordInput}
@@ -197,12 +190,12 @@ const Login = ({ invitationReturn = false }: LoginProps): JSX.Element => {
           variant="contained"
         />
 
-        {/* <div className={styles.links}>
-          <p>Don't you have an account?</p>
-          <Link className={styles.signupLink} to={paths.clients}>
-            Create account
-          </Link>
-        </div> */}
+        {
+
+
+
+
+}
       </form>
 
       <LoadingArea className={styles.ssoSection} loading={samlAuthCheckQuery.isLoading}>

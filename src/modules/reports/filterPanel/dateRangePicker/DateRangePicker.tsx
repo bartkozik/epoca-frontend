@@ -161,9 +161,6 @@ const DateRangePicker = ({
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    // The two inputs below always set name="from"/name="to" in JSX, matching ActiveInputType's
-    // values exactly -- casting here documents that contract instead of leaving the native DOM
-    // `string` compared against the enum unsafely.
     const { name: rawName, value } = event.target;
     const name = rawName as ActiveInputType;
     const parsedDate = dayjs(value.replace(INPUT_PREFIX, ''), DATE_FORMAT.DAY_WITH_DOT, true);
@@ -182,9 +179,6 @@ const DateRangePicker = ({
   };
 
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
-    // Native KeyboardEvent.key is a plain string; KeyBoardEventType's members are the real
-    // DOM key-name strings (e.g. 'Enter'), so a match only ever fires for a genuine key of that
-    // name -- casting here just makes the comparison provable to `tsc`.
     if ((event.key as KeyBoardEventType) !== KeyBoardEventType.ENTER) return;
 
     event.preventDefault();

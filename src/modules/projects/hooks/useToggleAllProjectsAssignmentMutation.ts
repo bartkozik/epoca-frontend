@@ -21,8 +21,6 @@ export interface ToggleAllProjectsAssignmentInput {
   isAssigned: boolean;
 }
 
-// Keep the selected user responsive, then invalidate its canonical projects list so reopening the
-// assignment view never restores the pre-mutation list from the minute-long query cache.
 export function useToggleAllProjectsAssignmentMutation(): UseMutationResult<
   ToggleAllProjectsAssignmentResult,
   unknown,
@@ -66,7 +64,6 @@ export function useToggleAllProjectsAssignmentMutation(): UseMutationResult<
       }
 
       void queryClient.invalidateQueries({ queryKey: ['projects'] });
-      // Per-project cache uses a separate 'project' (singular) prefix, not covered above.
       void queryClient.invalidateQueries({ queryKey: ['project'] });
     },
   });

@@ -17,10 +17,6 @@ import canonicalResponse from './__fixtures__/work-unit-pivot-query-canonical-re
 vi.mock('@/modules/organizations/WorkspaceProvider', () => ({
   useWorkspace: () => ({ contextOrganizationSlug: 'acme' }),
 }));
-// Not spread over `vi.importActual`: `requests.ts` imports `parsePivotResponse` from THIS file,
-// so importActual-ing it back here would re-enter this module mid-evaluation (a real circular
-// mock deadlock, not just a lint nit) -- a plain stub avoids it, matching how
-// `clients/models/clientList.model.test.ts` mocks its sibling `requests` module.
 vi.mock('../requests', () => ({ getPivotTable: vi.fn() }));
 
 const getPivotTableMock = requests.getPivotTable as MockedFunction<typeof requests.getPivotTable>;
@@ -45,10 +41,6 @@ const pivotQueryResponse = (cellCount = 1): WorkUnitPivotQueryResponse => ({
   result: { cellCount, displayValueCellCount: cellCount, maxDisplayValueCellCount: 9_600 },
 });
 
-// createElement instead of JSX: this file stays `.ts` (matching this repo's
-// check-file/filename-naming-convention), so it can't use JSX syntax, which only parses in `.tsx`.
-// `queryClient` is a module-level variable reassigned in `beforeEach` (not created inside the
-// wrapper body) so it stays the SAME instance across every rerender within one test.
 let queryClient: QueryClient;
 const wrapper = ({ children }: { children: ReactNode }): ReactElement =>
   createElement(QueryClientProvider, { client: queryClient }, children);

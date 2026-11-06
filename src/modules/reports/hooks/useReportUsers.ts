@@ -6,11 +6,6 @@ import { reportUsersQueryKey } from '@/modules/reports/queryKeys';
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-/**
- * People to name and filter in reports: the workspace members plus members whose membership was archived,
- * because their entries stay in reports. Until those load (or when the backend doesn't send them), this is
- * the workspace list.
- */
 export function useReportUsers(): OrganizationUser[] {
   const { contextOrganizationSlug, contextOrganizationUsers } = useWorkspace();
   const membersQuery = useQuery({

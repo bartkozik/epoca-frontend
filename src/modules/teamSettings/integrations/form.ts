@@ -66,10 +66,6 @@ export const createIntegrationClientDraft = (
 const sameSet = (left: readonly string[], right: readonly string[]): boolean =>
   left.length === right.length && left.every((value) => right.includes(value));
 
-// Each issue's message is `team_seatings.integrations.form.error.<field>.<code>` (see
-// integrationClientDraft.model.ts's fieldErrorKey) -- deriving the code from it, rather than a
-// parallel lookup, keeps the compact IntegrationClientFormErrors codes this form's callers already
-// key their `t()` lookups on in sync with the schema's own i18n keys by construction.
 const toFormErrors = (issues: ZodIssue[]): IntegrationClientFormErrors => {
   const errors: IntegrationClientFormErrors = {};
   issues.forEach((issue) => {

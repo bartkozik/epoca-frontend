@@ -1,15 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
-    // CT-540: `@/*` mirrors vite-tanstack-zod-template's alias exactly (same `baseUrl` + `paths`
-    // shape) — cross-directory imports use `@/core/...`/`@/modules/...`/`@/app/...`, so a broken
-    // path reads as an unambiguous `@/`-prefixed specifier instead of looking like a same-named
-    // npm package (the bare-import style this replaced made exactly that mistake hard to spot).
     "paths": { "@/*": ["./*"] },
     "target": "es6",
-    // `import.meta.env` (`src/core/config/env.ts`) requires `tsc`'s module setting to be one of
-    // `es2020`/`es2022`/`esnext`/`system`/`node16`/`nodenext`. `tsconfig.e2e.json` overrides back
-    // to `commonjs` for the Playwright/Node-run config and spec files, which don't use it.
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "jsx": "react-jsx",
@@ -23,13 +16,9 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "noEmit": true,
     "moduleResolution": "node",
-    // "node" is listed explicitly so process.env/NodeJS.* types stay available across app code
-    // now that react-scripts (which transitively pulled in @types/node) is gone.
-    // "vite/client" supplies the `ImportMetaEnv`/`ImportMeta.env` ambient types that
-    // `src/core/config/env.ts` and its test need.
     "types": ["vitest/globals", "node", "vite/client"]
   },
   "include": ["src", "svgo.config.js", "src/core/i18n/react-i18next.d.ts"]

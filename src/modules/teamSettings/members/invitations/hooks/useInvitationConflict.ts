@@ -16,7 +16,7 @@ type InvitationConflictState = {
   handleConflict: (problem: InvitationProblem) => Promise<void>;
 };
 
-// Callers own the reviewed revision. Reading fresh data must never adopt it or retry a write.
+// Reading fresh data must not adopt the reviewed revision or retry a write.
 export function useInvitationConflict({
   organizationSlug,
   invitationId,

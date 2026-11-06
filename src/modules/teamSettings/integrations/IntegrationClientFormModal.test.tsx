@@ -635,9 +635,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
     { kind: 'unexpected', status: 500 },
   ])('preserves the entire draft and offers safe retry copy for $kind without replay', async (problem) => {
     const user = userEvent.setup();
-    // This app's IntegrationClientProblem is a deliberate RFC7807-style discriminated union, not an
-    // Error -- every consumer already treats rejections as `unknown` and defensively re-normalizes
-    // them via asProblem(), so nothing here assumes Error's .message/.stack.
     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     const onSubmit = vi.fn<(arg: unknown) => Promise<void>>(() => Promise.reject(problem));
     const { onClose } = renderCreate({ onSubmit });
@@ -663,7 +660,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
   ] as const)('maps %s to safe field/status guidance without rendering raw bodies', async (kind, safeMessage) => {
     const user = userEvent.setup();
     const rawBody = 'raw backend internal detail';
-    // Same rationale as above.
     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     const onSubmit = vi.fn(() => Promise.reject({ kind, status: 400, detail: rawBody }));
     renderCreate({ onSubmit });
@@ -683,7 +679,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
     'keeps terminal %s guidance non-retryable while allowing deliberate dismissal',
     async (kind, status, message) => {
       const user = userEvent.setup();
-      // Same rationale as above.
       // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
       const onSubmit = vi.fn<(arg: unknown) => Promise<void>>(() => Promise.reject({ kind, status }));
       const { onClose } = renderEdit({ onSubmit });
@@ -712,7 +707,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
   it('associates invalid-policy guidance with both policy groups and focuses a deterministic policy control', async () => {
     const user = userEvent.setup();
     const rawBody = 'raw backend policy detail';
-    // Same rationale as above.
     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     const onSubmit = vi.fn(() => Promise.reject({ kind: 'invalid-policy', status: 400, detail: rawBody }));
     renderEdit({ onSubmit });
@@ -735,7 +729,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
     const user = userEvent.setup();
     const refreshed = createClient({ name: 'Server name', version: 8, scopes: ['users:read'] });
     const onSubmit = vi.fn(() =>
-      // Same rationale as above.
       // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
       Promise.reject({ kind: 'stale-version', status: 409, currentVersion: 8 } satisfies IntegrationClientProblem),
     );
@@ -762,7 +755,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
   it('uses natural stale guidance when the current version is unavailable', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn(() =>
-      // Same rationale as above.
       // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
       Promise.reject({ kind: 'stale-version', status: 409, currentVersion: null } satisfies IntegrationClientProblem),
     );
@@ -783,7 +775,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
   it('retains stale guidance and requires refresh across every draft edit and project confirmation', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn(() =>
-      // Same rationale as above.
       // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
       Promise.reject({ kind: 'stale-version', status: 409, currentVersion: 8 } satisfies IntegrationClientProblem),
     );
@@ -848,7 +839,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
   it('keeps the draft and shows safe guidance when explicit refresh fails', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn(() =>
-      // Same rationale as above.
       // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
       Promise.reject({ kind: 'stale-version', status: 409, currentVersion: 8 } satisfies IntegrationClientProblem),
     );
@@ -875,7 +865,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
   it('assimilates a synchronous refresh throw, preserves the draft, and remains retryable', async () => {
     const user = userEvent.setup();
     const refreshed = createClient({ name: 'Recovered server name', version: 8 });
-    // Same rationale as above.
     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     const onSubmit = vi.fn(() => Promise.reject({ kind: 'not-active', status: 409 }));
     const onRefresh = vi
@@ -908,7 +897,6 @@ describe('IntegrationClientFormModal submission and safe errors', () => {
     const user = userEvent.setup();
     const pending = deferred<IntegrationClient>();
     const onSubmit = vi.fn(() =>
-      // Same rationale as above.
       // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
       Promise.reject({ kind: 'stale-version', status: 409, currentVersion: 8 } satisfies IntegrationClientProblem),
     );

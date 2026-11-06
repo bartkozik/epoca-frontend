@@ -9,11 +9,6 @@ interface AvatarProps<T> {
   isHiddenOnMobile?: boolean;
 }
 
-// Structurally typed instead of `T extends SessionUser | User | OrganizationUser` — this only ever
-// reads `.email`/`.fullName`/`.avatar`/`.color`/`.id`, so it stays core-pure without needing any
-// module's full user shape. All fields are optional: a caller whose user shape genuinely lacks one
-// (e.g. a project member who only ever carries a name on the wire) can pass its user as-is instead
-// of faking one.
 const Avatar = <T extends { avatar?: string; color?: string; email?: string; fullName?: string; id?: string }>({
   className,
   isNavbar,

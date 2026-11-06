@@ -24,11 +24,6 @@ const matchesQuery = (item: SelectOption, query: string, locale: string): boolea
   );
 };
 
-/**
- * Multi-select combobox with a search box. The option order is captured when the list opens and stays
- * frozen until it closes: toggling an option updates it in place, so nothing moves under the pointer.
- * Selection is controlled by the parent and reported only on user interaction.
- */
 const MultiSearch = ({
   className,
   items,
@@ -80,7 +75,6 @@ const MultiSearch = ({
 
   useOnClickOutside({ ref: rootRef, handler: () => isOpen && close() });
 
-  // Options that appear while the list is open (e.g. a late catalogue load) go to the end of their group.
   const orderedItems = useMemo((): MultiSearchOrderedItem[] => {
     if (!frozenOrder) return [];
     const known = new Set(frozenOrder.map(({ value: itemValue }) => itemValue));
@@ -90,7 +84,6 @@ const MultiSearch = ({
       i18n.language,
       optionMeta,
     );
-    // `selectedValues` and `optionMeta` only classify late options; frozen rows keep their group on purpose.
     return [...frozenOrder.filter(({ value: itemValue }) => itemsByValue.has(itemValue)), ...late];
   }, [frozenOrder, i18n.language, items, itemsByValue, optionMeta, selectedValues]);
 

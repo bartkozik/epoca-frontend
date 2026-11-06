@@ -5,7 +5,7 @@ export function useInvitationInvalidation(): (organizationSlug: string, invitati
   const queryClient = useQueryClient();
 
   return async (organizationSlug: string, invitationId: string) => {
-    // Invalidate existing entries only. A late write must never recreate a cleared logout cache.
+    // Invalidate existing entries only: a late write must not recreate a cleared logout cache.
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: invitationsQueryKey(organizationSlug), exact: true }),
       queryClient.invalidateQueries({ queryKey: invitationQueryKey(organizationSlug, invitationId), exact: true }),

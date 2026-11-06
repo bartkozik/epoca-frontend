@@ -14,7 +14,6 @@ for (const actor of ['owner', 'user'] as const) {
       },
     ]) {
       test(`@mr searches and resets ${list.path} at mobile and desktop widths`, async ({ page }, testInfo) => {
-        // Each scenario covers five page loads and debounced URL updates on shared CI runners.
         test.setTimeout(60_000);
         for (const width of [390, 320, 767, 768, 1280]) {
           await test.step(`${width}px`, async () => {

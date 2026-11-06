@@ -41,12 +41,8 @@ function AssignedProjects(): JSX.Element | null {
   } = useClients();
   const { closeEditProjectModal, isEditProjectModalOpen, selectedProject } = projectsContext;
 
-  // Lives here, not in AssignedProjectsTable, so LoadingArea unmounting the table while loading
-  // can't unmount the effect that triggered the load -- that used to loop the fetch forever.
   useEffect(() => {
     if (client) void fetchClientProjects(client.id);
-    // Keyed on id only -- client.id doesn't change without a remount of this tab, and
-    // fetchClientProjects itself replaces `client` with a new object on every resolve.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client?.id]);
 

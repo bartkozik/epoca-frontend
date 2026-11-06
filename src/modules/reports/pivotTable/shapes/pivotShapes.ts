@@ -10,7 +10,6 @@ const byMonth = (...rows: PivotKey[]): PivotShape => ({
 
 const { CLIENT, MONTH_YEAR, PROJECT, USER } = PIVOT_KEY;
 
-/** Table shapes offered next to the tab: row levels only, then a few with months as columns. Each one is just a URL. */
 export const PIVOT_SHAPES: readonly PivotShape[] = [
   rowsOnly(MONTH_YEAR, USER),
   rowsOnly(MONTH_YEAR, CLIENT, PROJECT),

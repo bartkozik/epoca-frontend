@@ -290,7 +290,7 @@ export const runLiveOAuthClientLifecycle = async ({
         let removeAbortListener = (): void => undefined;
         const aborted = new Promise<never>((_resolve, reject) => {
           const onAbort = (): void => {
-            const reason = cleanupSignal.reason;
+            const reason: unknown = cleanupSignal.reason;
             reject(reason instanceof Error ? reason : new Error(String(reason)));
           };
           cleanupSignal.addEventListener('abort', onAbort, { once: true });

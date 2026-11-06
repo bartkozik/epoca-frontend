@@ -43,7 +43,6 @@ export function useReportedUnits(): {
   getReportedUnits: (snapshot?: ReportSnapshot) => Promise<void>;
   refreshReportedUnitsInBackground: (snapshot?: ReportSnapshot) => Promise<void>;
   refreshReportedUnits: (snapshot?: ReportSnapshot) => Promise<void>;
-  /** A filter or period change is loading while the previous rows stay on screen. */
   isRefreshingReportedUnits: boolean;
 } {
   const { contextOrganizationSlug, contextOrganizationUsers } = useWorkspace();
@@ -78,8 +77,7 @@ export function useReportedUnits(): {
       );
     },
     enabled: contextOrganizationSlug !== '',
-    // Keep the previous rows on screen while another filter combination loads, but never across
-    // organizations: a placeholder from another organization would briefly show its entries.
+    // Previous rows may remain while filters load, but never across organizations.
     placeholderData: (previousData, previousQuery) =>
       previousQuery?.queryKey[1] === contextOrganizationSlug ? previousData : undefined,
   });
@@ -92,8 +90,6 @@ export function useReportedUnits(): {
         const nextKey = reportedUnitsQueryKey(contextOrganizationSlug, nextSnapshot).join('|');
         pendingExplicitFetchKeyRef.current = nextKey;
         if (nextKey !== key.join('|')) {
-          // A cached filter variant may still be fresh under the app-wide one-minute staleTime.
-          // Mark it stale so selecting it starts the explicit request on the next render.
           void queryClient.invalidateQueries({
             queryKey: reportedUnitsQueryKey(contextOrganizationSlug, nextSnapshot),
             exact: true,
@@ -123,8 +119,6 @@ export const refreshReportedUnits = (_snapshot?: ReportSnapshot): Promise<void> 
     .refetchQueries({ queryKey: ['reportedUnits'], type: 'active' }, { throwOnError: true })
     .then(() => undefined);
 
-// Calendar mutations must also mark inactive report variants stale. TanStack Query refetches
-// active variants now and loads inactive variants when their views mount again.
 export const getReportedUnits = (_snapshot?: ReportSnapshot): Promise<void> =>
   queryClient.invalidateQueries({ queryKey: ['reportedUnits'], refetchType: 'active' }).then(() => undefined);
 export const refreshReportedUnitsInBackground = refreshReportedUnits;

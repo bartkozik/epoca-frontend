@@ -12,8 +12,6 @@ vi.mock('react-i18next', async () => ({
 }));
 
 const mockNavigate = vi.fn();
-// Mutable per-test -- lets the archive-redirect tests below assert fromListSearch (see from-list-search.ts)
-// is carried into the post-archive navigate, same router state GoBack reads.
 let mockLocationState: unknown = null;
 
 vi.mock('react-router-dom', async () => ({
@@ -22,10 +20,6 @@ vi.mock('react-router-dom', async () => ({
   useLocation: () => ({ search: '', state: mockLocationState }),
 }));
 
-// ClientDetailsForm's archive-toggle toast path (and its update-mutation error path) calls the
-// `i18next` singleton directly (not via useTranslation), matching ClientForm.test.tsx's
-// established mock for the same reason -- the real, uninitialized i18next instance would
-// otherwise resolve every key to ''.
 vi.mock('i18next', () => ({
   __esModule: true,
   default: { t: (key: string) => key },
@@ -58,16 +52,11 @@ vi.mock('@/modules/clients/backgroundPicker', () => ({
   BackgroundType: { Color: 'Color', Texture: 'Texture' },
 }));
 vi.mock('@/core/theme/select', () => ({ __esModule: true, default: () => null }));
-// Confirmation stays real (unlike a bare `() => null` stub) so the archive/unarchive toast tests
-// below can drive the actual confirm action -- Button and Icon are still mocked above/below to
-// keep the rendered tree simple.
 vi.mock('@/core/theme/button', () => ({
   __esModule: true,
   default: ({ label, onClick }: { label?: string; onClick?: () => void }) => <button onClick={onClick}>{label}</button>,
 }));
 
-// archiveClient is stubbed too (unused by these tests, which only exercise the archived ->
-// unarchive direction) since useToggleClientArchiveMutation's mutationFn imports both.
 vi.mock('@/modules/clients/requests', () => ({
   getClients: vi.fn(),
   archiveClient: vi.fn(),
@@ -164,16 +153,12 @@ describe('ClientDetailsForm', () => {
       await user.click(within(dialog).getByRole('button', { name: 'common.unarchive' }));
 
       await waitFor(() => expect(unarchiveClientMock).toHaveBeenCalledWith('acme', 'client-1'));
-      // isCurrentlyArchived was true, so a successful *unarchive* request shows unarchive_success --
-      // see clientArchive.model.ts's getToggleClientArchiveToastKey for the direction mapping.
       await waitFor(() =>
         expect(addToastMock).toHaveBeenCalledWith({ content: 'toast_message.clients.unarchive_success' }),
       );
       expect(mockNavigate).toHaveBeenCalledWith('/clients');
     });
 
-    // Regression guard, same bug class as GoBack's: this redirect used to always land on a bare
-    // /clients, dropping whatever list filters/sort the user came from.
     it('preserves the origin list search (fromListSearch) on the post-archive redirect', async () => {
       mockLocationState = { fromListSearch: '?status=Archived' };
       unarchiveClientMock.mockResolvedValueOnce({});

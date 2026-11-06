@@ -20,9 +20,6 @@ export const RawOrganizationSchema = z
 
 export const RawOrganizationResultsSchema = PaginatedResultSchema(RawOrganizationSchema);
 
-// id is used for row keys, loggedInUser.id matching, and as the deassign/role-change target --
-// throw rather than silently render/act on a broken user. identities reuses userDto's
-// UserIdentitySchema rather than redeclaring it.
 export const RawOrganizationUserSchema = z
   .object({
     avatar: z.string().catch(''),

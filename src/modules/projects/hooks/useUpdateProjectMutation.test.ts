@@ -18,8 +18,6 @@ vi.mock('@/modules/clients/ClientsProvider', () => ({
   useClients: () => ({ client: clientsState.client, fetchClientProjects: fetchClientProjectsMock }),
 }));
 
-// PATCH's response is the flat Project domain object -- clientId, not a nested client (see
-// projectDto.model.ts's ProjectPatchResultSchema).
 const rawProject = {
   archivedAt: '',
   archivedBy: '',

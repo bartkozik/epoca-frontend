@@ -8,11 +8,6 @@ export interface ToggleClientArchiveInput {
   isCurrentlyArchived: boolean;
 }
 
-// Shared by both call sites (ClientsBoard, ClientDetailsForm) so the archive/unarchive direction
-// is computed in one place. `isCurrentlyArchived` is the PRE-request state, so `archive_success`/
-// `archive_failed` describe an archive attempt (isCurrentlyArchived: false) and
-// `unarchive_success`/`unarchive_failed` describe an unarchive attempt (isCurrentlyArchived: true)
-// -- the same direction for both outcomes, since it names the attempted action, not its result.
 export function getToggleClientArchiveToastKey(isCurrentlyArchived: boolean, outcome: 'success' | 'failed'): string {
   const direction = isCurrentlyArchived ? 'unarchive' : 'archive';
   return `toast_message.clients.${direction}_${outcome}`;

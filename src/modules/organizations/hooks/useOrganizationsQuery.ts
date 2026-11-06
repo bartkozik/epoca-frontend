@@ -47,13 +47,6 @@ export function useOrganizationsQuery(): UseQueryResult<RawOrganizationsResults>
   return query;
 }
 
-// CT-561 review fix: this used to be a second hook (useOrganizationLoadFailure) that called
-// useOrganizationsQuery() again -- a component that already holds its own `query` and also called
-// that hook ended up with two independent useQuery subscriptions on the same key, so the error-
-// handling useEffect above ran twice per error (WorkspaceSelect did exactly this, double-firing
-// its toast/logout). Derive the failure from an already-obtained query result instead, so there is
-// only ever one subscription per component: `query.error ? classifyOrganizationLoadFailure(query.error) : null`.
-// Don't reintroduce a hook wrapping useOrganizationsQuery() for this.
 
 export function useHasMoreThanOneOrganization(): boolean {
   const { data } = useOrganizationsQuery();

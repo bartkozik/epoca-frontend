@@ -17,10 +17,6 @@ import { workUnitReadHandlers } from './handlers/workUnitReadHandlers';
 const API_PREFIX = '/__e2e_api';
 const PROXY_PREFIX = '/api';
 const FRONTEND_ORIGIN = 'http://127.0.0.1:5173';
-// Vite's HMR client (unlike CRA's webpack-dev-server, which used a fixed `/ws` path) connects to
-// the dev server's root path with a per-server-instance random `token` query param, e.g.
-// `ws://127.0.0.1:5173/?token=<random>`. Matching on origin + root pathname (ignoring the token)
-// identifies the Vite HMR socket without depending on that random value.
 const FRONTEND_WS_ORIGIN = FRONTEND_ORIGIN.replace(/^http/, 'ws');
 const isViteHmrWebSocket = (url: string): boolean => {
   try {
@@ -311,7 +307,7 @@ export const installMockApi = async (
         (resourceType === 'manifest' || resourceType === 'other') &&
         url.pathname === '/manifest.json';
       if (isFrontendAsset || isManifest) {
-        let response;
+        let response: Awaited<ReturnType<typeof route.fetch>>;
         try {
           response = await route.fetch({ headers: { accept: 'text/html' }, maxRedirects: 0 });
         } catch {

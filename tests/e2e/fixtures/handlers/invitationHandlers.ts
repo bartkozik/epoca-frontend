@@ -236,7 +236,6 @@ const management = (request: MockRequest, runtime: WorldRuntime): MockResponse =
   const body = object(request.body);
   const key = request.headers['idempotency-key'];
   const receiptKey = `${request.path}:${key}`;
-  // Replayed commands must succeed even when the original command advanced the revision.
   if (request.method === 'POST') {
     if (!key) return problem(400, 'invalid-request');
     const previous = fixture.receipts.get(receiptKey);

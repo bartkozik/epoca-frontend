@@ -60,8 +60,6 @@ export const AuthProvider = ({ children }: React.PropsWithChildren): JSX.Element
 
   const persistRefreshToken = useCallback((token: string): string => saveRefreshToken(token), []);
 
-  // Axios invokes this handler outside React while preparing requests. Its shared in-flight
-  // promise and session-generation guard must also work during logout, so it stays imperative.
   const refreshSession = useCallback(
     async (refreshToken: string): Promise<string> => {
       const generation = sessionGeneration.current;
@@ -131,8 +129,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren): JSX.Element
     queryClient.clear();
   }, []);
 
-  // Clear local credentials and Query cache synchronously. Remote token invalidation is best
-  // effort and must never postpone logout or restore a session if its request finishes later.
+  // Clear credentials and cached queries before best-effort remote invalidation can complete.
   const logout = useCallback((): Promise<void> => {
     if (logoutPromise.current) return logoutPromise.current;
     const accessToken = session?.token;

@@ -44,7 +44,6 @@ function ProjectUserSearch({
   const selectedInOtherRole = label === ProjectUserRole.Owner ? selectedProjectMembers : selectedProjectOwners;
   const availableUsers = availableToAddContextOrganizationUsers.filter((user) => {
     if (selectedUsers.some(({ id }) => id === user.id)) return false;
-    // Keep the previous behavior: the logged-in owner may also be chosen as a member.
     if (label === ProjectUserRole.Member && user.id === loggedInUser?.id) return true;
     return !selectedInOtherRole?.some(({ id }) => id === user.id);
   });

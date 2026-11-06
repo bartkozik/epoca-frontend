@@ -59,10 +59,6 @@ export const clientHandlers: MockHandler[] = [
       const includeArchivedConnections = request.query.includeArchivedConnections?.includes('true') ?? false;
       const results = runtime.state.clients
         .filter(({ archivedAt }) => includeArchived || archivedAt === null)
-        // useClientQuery (src/modules/clients/hooks/useClientQuery.ts) fetches a single client via
-        // this same list endpoint with an `id` filter -- without this, every `id`-filtered request
-        // silently returned the full unfiltered list and callers taking `results[0]` got whichever
-        // client happened to be first, not the one they asked for.
         .filter(({ id }) => matchesRepeatedFilter(request.query.id, id))
         .map((client) => toRawClient(runtime.state, client, includeArchivedConnections));
       return { status: 200, json: { count: results.length, results } };

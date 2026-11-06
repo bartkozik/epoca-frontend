@@ -62,10 +62,8 @@ describe('ClientDetails', () => {
     expect(setClientMock).toHaveBeenCalledWith(expect.objectContaining({ id: 'client-1', name: 'Acme' }));
   });
 
-  // Regression guard: the GoBack link used to be gated behind `if (!client) return null`, so the
-  // page was entirely blank (no link, no spinner) while the get-by-id query was still in flight.
   it('renders the GoBack link while the client query is still loading', () => {
-    getClientMock.mockReturnValue(new Promise(() => {})); // never resolves -- asserts the pre-resolution render
+    getClientMock.mockReturnValue(new Promise(() => {}));
 
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     render(
@@ -76,8 +74,6 @@ describe('ClientDetails', () => {
       </QueryClientProvider>,
     );
 
-    // A regex, not the exact key: GoBack's Button renders a mocked SVG icon whose filename text
-    // concatenates into the link's accessible name alongside the label span's text.
     expect(screen.getByRole('link', { name: /go_back_back_to_clients_list/ })).toBeVisible();
   });
 });

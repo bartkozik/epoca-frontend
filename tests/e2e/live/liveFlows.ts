@@ -390,7 +390,6 @@ export const assertLiveWorkUnitSourceUnchanged = (
   actual: WorkUnitOverrideResponse,
   original: WorkUnitOverrideResponse
 ): void => {
-  // modifiedAt may advance; userFullName is derived display metadata, not source content.
   for (const field of [
     'id',
     'userId',
@@ -411,7 +410,6 @@ export const restoreAcceptedLiveOverride = async (
   accepted: WorkUnitOverrideResponse,
   remove: (expectedRevision: number) => Promise<BrowserApiResult>
 ): Promise<WorkUnitOverrideResponse> => {
-  // A conflict belongs to a newer writer. Never refresh the revision and retry cleanup.
   const result = await remove(accepted.revision);
   if (result.status !== 200) throw new Error(`Owned worklog override cleanup failed with ${result.status}`);
   const restored = parseLiveWorkUnitOverride(result.body, accepted.id);
@@ -505,7 +503,6 @@ const applyWorkUnitOverride = async (
     expect(verified).toEqual(accepted);
     firstOverride = verified;
 
-    // A separate authenticated browser context proves a second actor performs the replacement.
     await secondManagerPage.setViewportSize({ width: 1440, height: 900 });
     await secondManagerPage.goto(`/report?startDate=${sourceBefore.date}&endDate=${sourceBefore.date}`);
     const secondRow = secondManagerPage.locator('tbody tr').filter({ hasText: sourceBefore.description });

@@ -12,8 +12,6 @@ export interface ToggleProjectArchiveInput {
   clientId: string;
 }
 
-// isCurrentlyArchived is the PRE-request state, so archive_success/failed describes an archive
-// attempt (isCurrentlyArchived: false) and unarchive_success/failed an unarchive attempt (true).
 export function getToggleProjectArchiveToastKey(isCurrentlyArchived: boolean, outcome: 'success' | 'failed'): string {
   const direction = isCurrentlyArchived ? 'unarchive' : 'archive';
   return `toast_message.projects.${direction}_${outcome}`;
@@ -34,14 +32,8 @@ export function useToggleProjectArchiveMutation(): UseMutationResult<void, unkno
       void queryClient.invalidateQueries({ queryKey: ['projects'], exact: false });
       void queryClient.invalidateQueries({ queryKey: projectQueryKey(organizationSlug, projectId), exact: false });
 
-      // Only fires on archive, not unarchive -- mirrors updateClientsWhenAddingProject's own
-      // asymmetry (pre-migration toggleArchiveFlag never handled the unarchive direction either).
       if (!isCurrentlyArchived) invalidateClientProjects(organizationSlug, clientId);
 
-      // fetchClientProjects is only ever called imperatively (no reactive subscription), so force
-      // it when it's the client currently being viewed. Invalidate unconditionally first --
-      // updateClientsWhenRemovingProject above only invalidates on the archive direction, so
-      // unarchive would otherwise hand back the pre-mutation cached list.
       if (client && client.id === clientId) {
         void queryClient.invalidateQueries({
           queryKey: clientProjectsQueryKey(organizationSlug, clientId),

@@ -50,20 +50,10 @@ export const createActorToken = (world: BuiltWorld, actorName: Exclude<ActorName
   return `${encode({ alg: 'none', typ: 'JWT' })}.${encode(payload)}.${encode('e2e-signature')}`;
 };
 
-// The JWT payload (createActorPayload/createActorToken above) is the real wire format the
-// backend actually sends -- `roles`. What a real browser's localStorage ends up holding is never
-// that: saveSession (src/core/api/utils.ts) always persists the ALREADY-TRANSFORMED Session shape
-// (`organizationGrants`, via sessionSchema's transform). installActorSession seeds localStorage
-// directly, bypassing saveSession entirely, so it must produce that same transformed shape itself
-// here -- otherwise a test reading the stored blob back would see a shape no real user's browser
-// would ever actually contain.
 interface ActorSessionUser extends Omit<ActorTokenPayload, 'roles'> {
   organizationGrants: Array<{ organizationId: string; roles: string[] }>;
 }
 
-// A real compile-time link to the actual domain type this fixture is meant to simulate: if
-// SessionUser (src/core/models/session.ts) ever gains or loses a field, this assignment starts
-// failing typecheck instead of ActorSessionUser silently drifting out of sync with it.
 const _assertActorSessionUserMatchesSessionUser = null as unknown as ActorSessionUser satisfies SessionUser;
 void _assertActorSessionUserMatchesSessionUser;
 

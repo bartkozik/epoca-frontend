@@ -81,16 +81,11 @@ describe('MembersTable', () => {
     await waitFor(() => expect(screen.queryAllByText('Jane Doe').length).toBeGreaterThan(0));
   });
 
-  // Regression guard: navigating to a member's project page used to drop the list's own
-  // search string, resetting MembersTable's URL-persisted sort on return (see MemberProjectsTable's
-  // GoBack link test).
   it('passes the list search string as fromListSearch router state on row navigation', async () => {
     getOrganizationUsersMock.mockResolvedValueOnce({ data: [rawOrganizationUser] });
     const user = userEvent.setup();
     renderTable(false, '/team-settings/members/list?membersSortColumn=UserRole');
 
-    // A regex, not the exact key: IconButton renders a mocked SVG icon whose filename text
-    // concatenates into the button's accessible name alongside the label span's text.
     await user.click(await screen.findByRole('button', { name: /common\.projects/ }));
 
     expect(mockNavigate).toHaveBeenCalledWith(teamSettingsPaths.userDetails('user-1'), {

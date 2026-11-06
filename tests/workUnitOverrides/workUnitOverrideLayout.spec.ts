@@ -2,7 +2,6 @@ import { expect, reportUrl, test } from './fixtures/workUnitOverridesApi';
 
 for (const width of [390, 702]) {
   test(`More contains and scrolls long worklog details at ${width}px`, async ({ page, overrideApi }) => {
-    // More no longer lists the entry type, so the description carries enough text to exceed the panel height.
     overrideApi.source.description = `${overrideApi.source.description} ${'and a deliberately long explanation '.repeat(4).trim()}`;
     await page.setViewportSize({ width, height: 900 });
     await page.goto(reportUrl);

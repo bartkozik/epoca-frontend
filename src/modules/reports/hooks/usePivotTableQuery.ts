@@ -33,9 +33,6 @@ export interface PivotTableQueryState {
   retry: () => void;
 }
 
-// Deep-cloned defensively at the moment the snapshot is used to build a request -- a caller
-// passing the SAME mutable ReportQuerySnapshot object and continuing to mutate its arrays
-// afterwards must not change what an in-flight request already sent.
 const cloneGlobalFilters = (snapshot: ReportQuerySnapshot): ReportQuerySnapshot => ({
   ...snapshot,
   clientIds: [...snapshot.clientIds],
@@ -112,17 +109,9 @@ export function usePivotTableQuery(layout: PivotLayout, filters: ReportQuerySnap
     },
     enabled: filters !== null,
     retry: false,
-    // Pinned to 0, overriding the shared client's 60s default: the query key already changes on
-    // every genuine layout/filter change (see pivotTableQueryKey above), but a user can toggle a
-    // field's position back and forth (e.g. reorder A/B then reorder them back) and land on a key
-    // identical to one visited under a minute ago. Without this, that revisit silently serves the
-    // stale cached response instead of refetching -- contradicting this file's own "always
-    // refetched in full on any layout or filter change" intent.
     staleTime: 0,
   });
 
-  // Sticky "last accepted" state: only ever advanced on a genuine success, so a later failed
-  // fetch (different query key) can never clear or replace what's already displayed.
   const [accepted, setAccepted] = useState<PivotTableQueryData | null>(null);
   useEffect(() => {
     if (query.data) setAccepted(query.data);

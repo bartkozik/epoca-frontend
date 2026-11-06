@@ -75,7 +75,6 @@ describe('Modal accessibility', () => {
     );
 
     const dialog = screen.getByRole('dialog');
-    // The overlay is intentionally non-semantic; direct ownership is the contract under test here.
     // eslint-disable-next-line testing-library/no-node-access
     const overlay = dialog.parentElement;
     expect(overlay).toHaveClass('pm-overlay');

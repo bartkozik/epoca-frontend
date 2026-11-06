@@ -12,7 +12,6 @@ vi.mock('react-i18next', async () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-// Tab content is irrelevant here -- only the tab switch and GoBack link matter.
 vi.mock('@/modules/projects/projectDetailsView', () => ({ __esModule: true, default: () => null }));
 vi.mock('@/modules/projects/assignedMembers', () => ({ __esModule: true, default: () => null }));
 vi.mock('@/modules/projects/projectForm', () => ({ __esModule: true, default: () => null }));
@@ -93,16 +92,12 @@ const renderProjectDetails = (initialTab: string, state?: unknown): void => {
   );
 };
 
-// A regex, not the exact key: GoBack's Button renders a mocked SVG icon whose filename text
-// concatenates into the link's accessible name alongside the label span's text.
 const GO_BACK_LABEL = /go_back\.back_to_projects_list/;
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
-// Regression guard: GoBack used a bare `projectsPaths.main` href, resetting the /projects list's
-// filters/sort on return. These exercise fromListSearch surviving ProjectDetails' onTabClick.
 describe('ProjectDetails GoBack link', () => {
   it('builds the href from fromListSearch in router state', async () => {
     renderProjectDetails('project-details', { fromListSearch: '?status=Archived' });
@@ -142,8 +137,6 @@ describe('ProjectDetails query wiring', () => {
     );
   });
 
-  // Regression guard: the return used to be gated behind `if (!project) return null`, so the page
-  // was entirely blank (no link, no spinner) while the get-by-id query was still in flight.
   it('renders the GoBack link while the project query is still loading', () => {
     setContexts({
       projectsContext: {
@@ -162,7 +155,7 @@ describe('ProjectDetails query wiring', () => {
       },
       workspaceContext: { contextOrganizationSlug: 'acme' },
     });
-    getProjectMock.mockReturnValue(new Promise(() => {})); // never resolves -- asserts the pre-resolution render
+    getProjectMock.mockReturnValue(new Promise(() => {}));
 
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     render(

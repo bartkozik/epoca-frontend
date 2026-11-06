@@ -37,9 +37,6 @@ const rawUser = {
   modifiedAt: '2024-01-01T00:00:00.000Z',
 };
 
-// createElement instead of JSX: this file stays `.ts` (matching this repo's
-// check-file/filename-naming-convention, which only exempts `use*.test.tsx` from PascalCase),
-// so it can't use JSX syntax, which only parses in `.tsx`.
 const wrapper = ({ children }: { children: ReactNode }): ReactElement => {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return createElement(QueryClientProvider, { client: queryClient }, children);

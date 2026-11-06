@@ -19,8 +19,6 @@ export function calculateUnitsWeeklyReportedHours(units: Unit[]): number {
     .reduce((sum, unit) => sum + convertIsoDurationToHours(unit.duration), 0);
 }
 
-// Renamed from the store's clientHoursInReportedUnits, which despite the name has nothing to do
-// with the reports module -- it's this week's non-draft worklog hours per client.
 export function calculateClientHoursForWeek(units: Unit[]): Record<string, ProjectClientReportedData> {
   const unitsSortedByClientName = [...units].sort((a, b) => {
     const clientA = a.projectClient ? a.projectClient.clientName.toLowerCase() : '';
@@ -75,9 +73,6 @@ export function isReportedMinimumHoursForDay(units: Unit[], date: Date): boolean
   return totalReportedHoursForDay >= MIN_DAILY_REPORTED_HOURS;
 }
 
-// Single source of truth for the current week's main units-list query dto, shared by
-// WorkingTime.tsx and Calendar.tsx: both need the exact same UnitsDto shape so useUnitsQuery's
-// JSON-stringified query key matches and the two components read the same cache entry.
 export function buildMainUnitsDto(weekStart: string, weekEnd: string, userId: string[]): UnitsDto {
   return { includeArchived: false, dateFrom: weekStart, dateTo: weekEnd, userId };
 }

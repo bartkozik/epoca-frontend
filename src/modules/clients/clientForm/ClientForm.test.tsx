@@ -10,10 +10,6 @@ vi.mock('react-i18next', async () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-// handle-validation-errors.ts and ClientForm's own error-toast path call the `i18next` singleton
-// directly (not via `useTranslation`), so it needs its own mock too -- matching the established
-// pattern in AssignUserForm.test.tsx -- otherwise the real, uninitialized i18next instance resolves
-// validation messages to '' and the assertions below see the FormErrorMessage fallback text instead.
 vi.mock('i18next', () => ({
   __esModule: true,
   default: { t: (key: string) => key },

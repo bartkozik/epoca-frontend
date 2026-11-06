@@ -59,10 +59,6 @@ const runWarsawProbe = (body: string): unknown => {
     "process.env.NODE_PATH = path.join(process.cwd(), 'src')",
     "const Module = require('module')",
     'Module._initPaths()',
-    // CT-540: source files import cross-folder as `@/...` (the tsconfig `paths` alias). NODE_PATH
-    // above already makes `src/` a resolution root -- just strip the `@/` prefix before Node's own
-    // resolver runs, mirroring what vite-tsconfig-paths (dev/test) and eslint-import-resolver-typescript
-    // (lint) already do for this same alias in their respective contexts.
     'const resolveFilename = Module._resolveFilename',
     'Module._resolveFilename = function (request, ...rest) {',
     "  return resolveFilename.call(this, request.startsWith('@/') ? request.slice(2) : request, ...rest)",

@@ -57,8 +57,7 @@ export function useWorkUnitSubmission(onBlocked?: () => void): UseWorkUnitSubmis
   const addUnitMutation = useAddUnitMutation();
   const editUnitMutation = useEditUnitMutation();
 
-  // A ref, not state: both submit paths check it synchronously, so two calls made back-to-back
-  // without an await in between still dedup (React would batch a state update past the second one).
+  // A ref prevents duplicate submissions before React can commit a state update.
   const isSubmittingRef = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRetryBlocked, setIsRetryBlocked] = useState(false);
@@ -167,7 +166,6 @@ export function useWorkUnitSubmission(onBlocked?: () => void): UseWorkUnitSubmis
     [editUnitMutation, handleSubmitError, identity, isRetryBlocked, organizationSlug],
   );
 
-  // Deliberately leaves the in-flight guard alone -- a pending request still has to clear it.
   const resetSubmissionState = useCallback((): void => {
     formSessionRef.current += 1;
     identity.clear();
