@@ -166,7 +166,9 @@ export const loadCoverageMapSource = (source, fileName = 'coverage-map.ts') => {
   const context = vm.createContext(sandbox, { codeGeneration: { strings: false, wasm: false } });
   const script = new vm.Script(transpiled.outputText, { filename: fileName });
   script.runInContext(context, { timeout: 100 });
-  return clonePlainData(moduleObject.exports);
+  const cloned = clonePlainData(moduleObject.exports);
+  if (cloned === null || typeof cloned !== 'object' || Array.isArray(cloned)) fail('exports must be an object');
+  return Object.fromEntries(Object.entries(cloned));
 };
 
 /** @returns {typeof import("./fixtures/coverage-map.fixture.ts")} */
