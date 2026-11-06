@@ -30,7 +30,7 @@ export interface BaseInputProps {
   name: string;
   onBlur?: (value: FocusEvent<HTMLInputElement, Element>) => void;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onClick?: (value) => void;
+  onClick?: React.MouseEventHandler<HTMLInputElement>;
   onKeyDown?: (value: React.KeyboardEvent<HTMLInputElement>) => void;
   placeholder?: string;
   readOnly?: boolean;

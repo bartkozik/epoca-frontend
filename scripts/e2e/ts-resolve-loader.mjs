@@ -1,5 +1,6 @@
 import { stripTypeScriptTypes } from 'node:module';
 
+/** @type {import("node:module").ResolveHook} */
 export const resolve = async (specifier, context, nextResolve) => {
   const alias = specifier.startsWith('@/');
   const target = alias ? new URL(`../../src/${specifier.slice(2)}`, import.meta.url).href : specifier;
@@ -11,6 +12,7 @@ export const resolve = async (specifier, context, nextResolve) => {
   }
 };
 
+/** @type {import("node:module").LoadHook} */
 export const load = async (url, context, nextLoad) => {
   const typescript = url.startsWith('file:') && new URL(url).pathname.endsWith('.ts');
   const loaded = await nextLoad(url, typescript ? { ...context, format: 'module' } : context);

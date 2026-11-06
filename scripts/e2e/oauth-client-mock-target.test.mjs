@@ -1,23 +1,42 @@
-import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { z } from 'zod';
 import { getAggregateCommands } from '../run-e2e-aggregate.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+/** @param {string} relative */
 const read = (relative) => readFileSync(path.join(root, relative), 'utf8');
+
+const configSchema = z.object({
+  grepInvert: z.string().optional(),
+  use: z.record(z.unknown()),
+  projects: z.array(z.object({ name: z.string() })),
+  outputDir: z.string(),
+  reporter: z.array(z.tuple([z.string(), z.object({ outputFile: z.string().optional() }).optional()])),
+});
 
 const evaluateConfig = (argv = [], environment = {}) => {
   const env = { ...process.env };
   for (const key of Object.keys(env)) if (key.startsWith('PLAYWRIGHT_')) delete env[key];
-  const result = spawnSync(process.execPath, ['--experimental-strip-types', '--input-type=module', '--eval', `
+  const result = spawnSync(
+    process.execPath,
+    [
+      '--experimental-strip-types',
+      '--input-type=module',
+      '--eval',
+      `
     process.argv = ${JSON.stringify(argv)};
     const { default: config } = await import('./playwright.config.ts');
     console.log(JSON.stringify(config, (_, value) => value instanceof RegExp ? value.source : value));
-  `], { cwd: root, env: { ...env, ...environment, CI: 'true' }, encoding: 'utf8', timeout: 5000 });
-  return { ...result, config: result.status === 0 ? JSON.parse(result.stdout) : undefined };
+  `,
+    ],
+    { cwd: root, env: { ...env, ...environment, CI: 'true' }, encoding: 'utf8', timeout: 5000 },
+  );
+  return { ...result, config: result.status === 0 ? configSchema.parse(JSON.parse(result.stdout)) : undefined };
 };
 
 void test('normal mocks keep diagnostics; sensitive OAuth mocks disable capture and isolate reports', () => {
@@ -27,20 +46,30 @@ void test('normal mocks keep diagnostics; sensitive OAuth mocks disable capture 
   assert.equal(normal.config.use.screenshot, 'only-on-failure');
   assert.equal(normal.config.use.trace, 'on-first-retry');
   assert.equal(normal.config.projects.length, 3);
-  for (const argv of [['--grep', '@mr.*@oauth-client|@oauth-client.*@mr'], ['--grep=@mr.*@oauth-client|@oauth-client.*@mr']]) {
+  for (const argv of [
+    ['--grep', '@mr.*@oauth-client|@oauth-client.*@mr'],
+    ['--grep=@mr.*@oauth-client|@oauth-client.*@mr'],
+  ]) {
     const targeted = evaluateConfig(argv, { PLAYWRIGHT_OAUTH_CLIENT_TARGETED: 'true' });
     assert.equal(targeted.status, 0, targeted.stderr);
     const config = targeted.config;
     assert.equal(config.grepInvert, undefined);
     for (const option of ['screenshot', 'trace', 'video']) assert.equal(config.use[option], 'off');
-    assert.deepEqual(config.projects.map(({ name }) => name), ['mock-chromium']);
+    assert.deepEqual(
+      config.projects.map(({ name }) => name),
+      ['mock-chromium'],
+    );
     assert.notEqual(config.outputDir, normal.config.outputDir);
     assert.notEqual(config.reporter[1][1].outputFile, normal.config.reporter[1][1].outputFile);
   }
 });
 
 void test('mock selector fails closed on invalid markers and broad grep, and retains worker inheritance', () => {
-  for (const [argv, marker] of [[[], 'invalid'], [[], 'true'], [['--grep', '@mr'], 'true']]) {
+  for (const [argv, marker] of [
+    [[], 'invalid'],
+    [[], 'true'],
+    [['--grep', '@mr'], 'true'],
+  ]) {
     assert.notEqual(evaluateConfig(argv, { PLAYWRIGHT_OAUTH_CLIENT_TARGETED: marker }).status, 0);
   }
   const worker = evaluateConfig([], { PLAYWRIGHT_OAUTH_CLIENT_TARGETED_RESOLVED: 'true' });

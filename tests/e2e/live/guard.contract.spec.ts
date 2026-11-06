@@ -227,8 +227,8 @@ test('live evidence requires the exact deployed frontend SHA before credentials 
   let request: { init?: RequestInit; url: string } | undefined;
 
   await expect(
-    fetchAndValidateFrontendVersion(safeTarget(), expectedSha, (input, init) => {
-      request = { init, url: String(input) };
+    fetchAndValidateFrontendVersion(safeTarget(), expectedSha, (input: RequestInfo | URL, init?: RequestInit) => {
+      request = { init, url: input instanceof Request ? input.url : String(input) };
       return Promise.resolve(
         new Response(`${expectedSha}\n`, { headers: { 'Content-Type': 'text/plain' }, status: 200 })
       );

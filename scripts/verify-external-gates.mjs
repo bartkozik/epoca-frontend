@@ -17,6 +17,7 @@ import { loadCoverageMap } from './e2e/load-coverage-map.mjs';
 const testResultsRoot = fileURLToPath(new URL('../test-results', import.meta.url));
 const defaultOutputPath = fileURLToPath(new URL('../test-results/external-gates.json', import.meta.url));
 
+/** @param {NodeJS.ProcessEnv} env @param {string} name */
 const requireEnv = (env, name) => {
   const value = env[name];
   if (typeof value !== 'string' || value.trim() === '') throw new Error(`${name} is required`);
@@ -25,6 +26,7 @@ const requireEnv = (env, name) => {
 
 export const loadConfiguredExternalGates = () => selectExternalGates(loadCoverageMap().coverageMap);
 
+/** @param {{gate: {evidence: import("./e2e/coverage-validator.mjs").GitlabGateEvidence}, env: NodeJS.ProcessEnv, fetchImpl: typeof fetch}} options */
 const verifyGitLabGate = async ({ gate, env, fetchImpl }) => {
   const apiBaseUrl = requireEnv(env, 'CI_API_V4_URL');
   const token = requireEnv(env, 'CI_JOB_TOKEN');
@@ -78,6 +80,7 @@ const verifyGitLabGate = async ({ gate, env, fetchImpl }) => {
   };
 };
 
+/** @param {ReturnType<typeof loadConfiguredExternalGates>} gates @param {NodeJS.ProcessEnv} env */
 const preflightExternalGateEnvironment = (gates, env) => {
   for (const gate of gates) {
     assertExactSha(requireEnv(env, gate.evidence.shaEnv), gate.evidence.shaEnv);

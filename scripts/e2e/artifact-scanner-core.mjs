@@ -1,6 +1,6 @@
+import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { access, cp, mkdir, mkdtemp, realpath, rename, rm, writeFile } from 'node:fs/promises';
-import { createHash } from 'node:crypto';
 import path from 'node:path';
 
 /**
@@ -66,10 +66,7 @@ const inspectBase64KnownCredential = (text) => {
     const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), '=');
     const padding = padded.endsWith('==') ? 2 : padded.endsWith('=') ? 1 : 0;
     const decodedLength = Math.floor((padded.length * 3) / 4) - padding;
-    if (
-      decodedLength > MAX_DECODED_CANDIDATE_BYTES ||
-      decodedLength > MAX_TOTAL_DECODED_BYTES - decodedBytes
-    ) {
+    if (decodedLength > MAX_DECODED_CANDIDATE_BYTES || decodedLength > MAX_TOTAL_DECODED_BYTES - decodedBytes) {
       return 'scan-bound';
     }
     decodedBytes += decodedLength;
@@ -292,13 +289,20 @@ const adapterCategory = (error, fallback = 'snapshot-failure') =>
  * @property {(info: TraversalHookInfo) => Promise<void> | void} [onBeforeDirectoryRead]
  * @property {(info: TraversalHookInfo) => Promise<void> | void} [onFileOpened]
  *
+ */
+
+/**
+ * @template {TraversalNode} [Node=TraversalNode]
  * @typedef {object} TraversalAdapter
- * @property {(source: string) => Promise<TraversalNode>} openRoot
- * @property {(parent: TraversalNode, name: string) => Promise<TraversalNode> | TraversalNode} openChild
- * @property {(node: TraversalNode) => AsyncIterable<string>} entries
- * @property {(node: TraversalNode, expected: import('node:fs').Stats) => Promise<import('node:fs').Stats>} assertBound
- * @property {(node: TraversalNode) => Promise<void>} close
+ * @property {(source: string) => Promise<Node>} openRoot
+ * @property {(parent: Node, name: string) => Promise<Node> | Node} openChild
+ * @property {(node: Node) => AsyncIterable<string>} entries
+ * @property {(node: Node, expected: import('node:fs').Stats) => Promise<import('node:fs').Stats>} assertBound
+ * @property {(node: Node) => Promise<void>} close
  *
+ */
+
+/**
  * @typedef {object} SnapshotEntry
  * @property {string} sourceBasename
  * @property {string} snapshotDirectory
@@ -321,15 +325,7 @@ const adapterCategory = (error, fallback = 'snapshot-failure') =>
  * }} options
  * @returns {Promise<SnapshotResult>}
  */
-const snapshotSources = async ({
-  sources,
-  snapshotRoot,
-  limits,
-  needles,
-  findings,
-  traversalHooks,
-  adapter,
-}) => {
+const snapshotSources = async ({ sources, snapshotRoot, limits, needles, findings, traversalHooks, adapter }) => {
   /** @type {SnapshotEntry[]} */
   const snapshots = [];
   /** @type {Map<string, string>} */
@@ -442,10 +438,7 @@ const snapshotSources = async ({
         }
         await traversalHooks?.onFileOpened?.({ sourceIndex, relativePath: relative });
         const preReadStatus = await node.handle.stat();
-        if (
-          preReadStatus.size > limits.maxFileBytes ||
-          preReadStatus.size > limits.maxTotalBytes - counters.bytes
-        ) {
+        if (preReadStatus.size > limits.maxFileBytes || preReadStatus.size > limits.maxTotalBytes - counters.bytes) {
           findings.push({ category: 'scan-bound', location });
           return;
         }
@@ -516,7 +509,7 @@ export const runArtifactScan = async (
     onSnapshotReady,
     traversalHooks,
   },
-  createAdapter
+  createAdapter,
 ) => {
   if (!Array.isArray(sources) || sources.length === 0) throw new Error('At least one artifact source is required');
   if (!safeDirectory || !quarantineDirectory) throw new Error('Safe and quarantine directories are required');

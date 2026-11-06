@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { z } from 'zod';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+/** @param {string} relativePath */
 const read = (relativePath) => readFileSync(path.join(repositoryRoot, relativePath), 'utf8');
 
 void test('OAuth client targeted live selection fails closed before config target resolution and global provisioning', () => {
@@ -40,7 +42,9 @@ void test('OAuth client targeted live selection fails closed before config targe
 
 void test('OAuth client wrapper owns the exact live config project grep and explicit targeted marker', () => {
   const wrapper = read('scripts/e2e/run-oauth-client-live.mjs');
-  const packageJson = JSON.parse(read('package.json'));
+  const packageJson = z
+    .object({ packageManager: z.string(), scripts: z.record(z.string()), devDependencies: z.record(z.string()) })
+    .parse(JSON.parse(read('package.json')));
   assert.match(wrapper, /PLAYWRIGHT_LIVE_OAUTH_CLIENT_TARGETED/);
   assert.match(wrapper, /playwright\.live\.config\.ts/);
   assert.match(wrapper, /live-chromium/);

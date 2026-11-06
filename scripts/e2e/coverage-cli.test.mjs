@@ -12,6 +12,7 @@ const require = createRequire(import.meta.url);
 const playwrightCli = require.resolve('@playwright/test/cli');
 const suiteRegistry = loadCoverageMap().E2E_SUITE_REGISTRY;
 
+/** @param {{projectName: string, file: string, title: string}} options */
 const makeReport = ({ projectName, file, title }) => ({
   config: { rootDir: '/repo' },
   suites: [
@@ -72,6 +73,7 @@ void test('coverage list runner is bounded, list-only, and starts no application
 });
 
 void test('coverage collector invokes exact list-only argv for six configs plus targeted OAuth client mock discovery', () => {
+  /** @type {{executable?: string, args: string[], options: import("node:child_process").SpawnSyncOptionsWithStringEncoding}[]} */
   const calls = [];
   const projects = new Map([
     ['playwright.config.ts', 'mock-chromium'],
@@ -81,6 +83,7 @@ void test('coverage collector invokes exact list-only argv for six configs plus 
     ['playwright.invitation-live.config.ts', 'invitation-live-chromium'],
     ['playwright.pivot-table.config.ts', 'desktop-chromium'],
   ]);
+  /** @type {(executable: string, args: string[], options: import("node:child_process").SpawnSyncOptionsWithStringEncoding) => import("node:child_process").SpawnSyncReturns<string>} */
   const spawn = (executable, args, options) => {
     calls.push({ executable, args, options });
     const file = args.at(-1);
@@ -169,7 +172,9 @@ void test('coverage collector invokes exact list-only argv for six configs plus 
 });
 
 void test('coverage collector unions normal and capture-safe targeted OAuth client mock inventories', () => {
+  /** @type {{executable?: string, args: string[], options: import("node:child_process").SpawnSyncOptionsWithStringEncoding}[]} */
   const calls = [];
+  /** @type {(executable: string, args: string[], options: import("node:child_process").SpawnSyncOptionsWithStringEncoding) => import("node:child_process").SpawnSyncReturns<string>} */
   const spawn = (_executable, args, options) => {
     calls.push({ args, options });
     const targeted = options.env.PLAYWRIGHT_OAUTH_CLIENT_TARGETED === 'true';

@@ -307,7 +307,7 @@ export const installMockApi = async (
         (resourceType === 'manifest' || resourceType === 'other') &&
         url.pathname === '/manifest.json';
       if (isFrontendAsset || isManifest) {
-        let response;
+        let response: Awaited<ReturnType<typeof route.fetch>>;
         try {
           response = await route.fetch({ headers: { accept: 'text/html' }, maxRedirects: 0 });
         } catch {

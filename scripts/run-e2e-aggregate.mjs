@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const yarnPath = path.join(repositoryRoot, '.yarn/releases/yarn-4.18.0.cjs');
 
+/** @type {Readonly<Record<string, readonly (readonly string[])[]>>} */
 const aggregateCommands = Object.freeze({
   ci: Object.freeze([
     Object.freeze(['playwright', 'test', '--project=mock-chromium', '--grep', '@mr']),
@@ -20,12 +21,14 @@ const aggregateCommands = Object.freeze({
   ]),
 });
 
+/** @param {string} tier */
 export const getAggregateCommands = (tier) => {
   const commands = aggregateCommands[tier];
   if (!commands) throw new Error(`Unknown aggregate E2E tier: ${String(tier)}`);
   return commands.map((command) => [...command]);
 };
 
+/** @param {{tier: string, listOnly?: boolean, spawnImpl?: typeof spawnSync, environment?: NodeJS.ProcessEnv}} options */
 export const runAggregateE2E = ({ tier, listOnly = false, spawnImpl = spawnSync, environment = process.env } = {}) => {
   for (const command of getAggregateCommands(tier)) {
     const result = spawnImpl(process.execPath, [yarnPath, ...command, ...(listOnly ? ['--list'] : [])], {

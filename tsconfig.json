@@ -16,7 +16,7 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "noEmit": true,
     "moduleResolution": "node",
     "types": ["vitest/globals", "node", "vite/client"]

@@ -19,7 +19,7 @@ const callApi = async (page: Page, path: string, method = 'GET', body?: unknown)
         method: requestMethod,
       });
       const text = await response.text();
-      return { body: text ? JSON.parse(text) : null, status: response.status };
+      return { body: text ? (JSON.parse(text) as unknown) : null, status: response.status };
     },
     { requestBody: body, requestMethod: method, requestPath: path }
   );
@@ -387,7 +387,7 @@ test.describe('projects and people', () => {
       const fetchDetails = async (): Promise<{ body: unknown; status: number }> =>
         page.evaluate(async (path) => {
           const result = await fetch(path);
-          return { body: await result.json(), status: result.status };
+          return { body: (await result.json()) as unknown, status: result.status };
         }, USER_DETAILS_PATH);
 
       const expectedProjects = [

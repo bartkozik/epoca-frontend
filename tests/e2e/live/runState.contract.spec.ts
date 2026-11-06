@@ -1,5 +1,6 @@
-import { expect, test } from '@playwright/test';
 import { readFile, stat, writeFile } from 'node:fs/promises';
+import { expect, test } from '@playwright/test';
+import { z } from 'zod';
 import type { LiveTarget } from './guard';
 import { type LiveRunManifest } from './metadata';
 import {
@@ -80,7 +81,9 @@ test('exclusive manifest creation and bound reads reject a mid-run manifest swap
   await writeFile(manifestPath, `${JSON.stringify(swapped, null, 2)}\n`, 'utf8');
   await expect(readBoundLiveRunManifest(identity, target, { lockPath, manifestPath })).rejects.toThrow(/identity/i);
   await expect(writeBoundLiveRunManifest(identity, target, original, { lockPath, manifestPath })).rejects.toThrow(
-    /identity/i
+    /identity/i,
   );
-  expect(JSON.parse(await readFile(manifestPath, 'utf8')).runId).toBe('ct530-swapped-run');
+  expect(z.object({ runId: z.string() }).parse(JSON.parse(await readFile(manifestPath, 'utf8'))).runId).toBe(
+    'ct530-swapped-run',
+  );
 });

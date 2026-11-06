@@ -11,7 +11,8 @@ const guardedEnvironment = {
   PLAYWRIGHT_LIVE_OAUTH_CLIENT_DISPOSABLE_REVIEW: 'true',
   PLAYWRIGHT_LIVE_OAUTH_CLIENT_REVIEW_ID: 'oauth-client-review-contract',
   PLAYWRIGHT_LIVE_OAUTH_CLIENT_REVIEW_ORG_ID: 'review-org-id',
-  PLAYWRIGHT_LIVE_OAUTH_CLIENT_REVIEW_HOSTS: 'oauth-client-review-contract.example.invalid,api.oauth-client-review-contract.example.invalid',
+  PLAYWRIGHT_LIVE_OAUTH_CLIENT_REVIEW_HOSTS:
+    'oauth-client-review-contract.example.invalid,api.oauth-client-review-contract.example.invalid',
   PLAYWRIGHT_LIVE_ALLOWED_ORG_ID: 'review-org-id',
   PLAYWRIGHT_LIVE_ALLOWED_HOSTS: 'oauth-client-review-contract.example.invalid',
   PLAYWRIGHT_LIVE_ALLOWED_API_HOSTS: 'api.oauth-client-review-contract.example.invalid',
@@ -30,6 +31,7 @@ const guardedEnvironment = {
   PLAYWRIGHT_LIVE_EMPLOYEE_PASSWORD: 'contract-password',
 };
 
+/** @param {number} status @param {unknown} body */
 const jsonResponse = (status, body) =>
   Promise.resolve(new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }));
 
@@ -52,18 +54,18 @@ void test('boundedFetch rejects an excessive valid Content-Length before reading
         cancellations += 1;
       },
     }),
-    { headers: { 'content-length': '9' } }
+    { headers: { 'content-length': '9' } },
   );
   let readerCalls = 0;
   const getReader = source.body.getReader.bind(source.body);
-  source.body.getReader = (...args) => {
+  source.body.getReader = () => {
     readerCalls += 1;
-    return getReader(...args);
+    return getReader();
   };
 
   await assert.rejects(
     boundedFetch('https://example.invalid', {}, () => Promise.resolve(source), 100, 8),
-    /response body exceeds/i
+    /response body exceeds/i,
   );
   assert.equal(readerCalls, 0);
   assert.equal(cancellations, 1);
@@ -81,12 +83,12 @@ void test('boundedFetch stream-counts and cancels a chunked response that crosse
       cancel() {
         cancellations += 1;
       },
-    })
+    }),
   );
 
   await assert.rejects(
     boundedFetch('https://example.invalid', {}, () => Promise.resolve(source), 100, 8),
-    /response body exceeds/i
+    /response body exceeds/i,
   );
   assert.ok(emitted >= 2);
   assert.equal(cancellations, 1);
@@ -98,7 +100,7 @@ void test('boundedFetch preserves a normal response below its byte ceiling', asy
     {},
     () => Promise.resolve(new Response('normal', { status: 201, headers: { 'content-type': 'text/plain' } })),
     100,
-    8
+    8,
   );
 
   assert.equal(response.status, 201);
@@ -109,6 +111,7 @@ void test('boundedFetch preserves a normal response below its byte ceiling', asy
 void test('boundedFetch owns tiny chunks without retaining their oversized backing buffers', async () => {
   const ownedBufferSizes = [];
   class TrackingView extends Uint8Array {
+    /** @param {number} [start] @param {number} [end] */
     slice(start, end) {
       const owned = super.slice(start, end);
       ownedBufferSizes.push(owned.buffer.byteLength);
@@ -129,11 +132,11 @@ void test('boundedFetch owns tiny chunks without retaining their oversized backi
               controller.enqueue(tinyView);
               controller.close();
             },
-          })
-        )
+          }),
+        ),
       ),
     100,
-    8
+    8,
   );
 
   assert.deepEqual(ownedBufferSizes, [3]);
@@ -148,8 +151,9 @@ void test('ambiguous create timeout reconciles its recorded intent and revokes t
     status: 'Active',
     version: 1,
   };
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     calls.push(`${init?.method ?? 'GET'} ${url.pathname}${url.search}`);
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
@@ -170,7 +174,7 @@ void test('ambiguous create timeout reconciles its recorded intent and revokes t
 
   await assert.rejects(
     runLiveOAuthClientLifecycle({ env: guardedEnvironment, fetcher }),
-    /connection closed after commit/
+    /connection closed after commit/,
   );
   assert.ok(calls.includes('GET /api/v1/organizations/review-org/oauth-clients?pageNumber=1&pageSize=100'));
   assert.ok(calls.includes(`POST /api/v1/organizations/review-org/oauth-clients/${created.clientId}/revoke`));
@@ -185,8 +189,9 @@ void test('ambiguous create reconciliation polls after an initial zero until the
     status: 'Active',
     version: 1,
   };
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
       return jsonResponse(200, { id: 'review-org-id' });
@@ -213,7 +218,7 @@ void test('ambiguous create reconciliation polls after an initial zero until the
       cleanupTimeoutMs: 100,
       sleep: () => Promise.resolve(),
     }),
-    /connection closed after commit/
+    /connection closed after commit/,
   );
   assert.equal(lists, 2);
   assert.equal(revocations, 1);
@@ -221,8 +226,9 @@ void test('ambiguous create reconciliation polls after an initial zero until the
 
 void test('ambiguous create reconciliation treats permanent zero visibility as an independent cleanup failure', async () => {
   let lists = 0;
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
       return jsonResponse(200, { id: 'review-org-id' });
@@ -245,7 +251,7 @@ void test('ambiguous create reconciliation treats permanent zero visibility as a
       assert.match(String(error.errors[0]), /connection closed after commit/);
       assert.match(String(error.errors[1]), /independent deadline/);
       return true;
-    }
+    },
   );
   assert.ok(lists >= 1);
 });
@@ -265,8 +271,9 @@ void test('ambiguous create reconciliation follows bounded pagination to an exac
     status: 'Active',
     version: 1,
   });
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
       return jsonResponse(200, { id: 'review-org-id' });
@@ -292,15 +299,16 @@ void test('ambiguous create reconciliation follows bounded pagination to an exac
 
   await assert.rejects(
     runLiveOAuthClientLifecycle({ env: guardedEnvironment, fetcher }),
-    /connection closed after commit/
+    /connection closed after commit/,
   );
   assert.deepEqual(pageNumbers, [1, 2]);
   assert.equal(revocations, 1);
 });
 
 void test('ambiguous create reconciliation fails closed above its total pagination bound', async () => {
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
       return jsonResponse(200, { id: 'review-org-id' });
@@ -323,8 +331,9 @@ void test('ambiguous create reconciliation fails closed above its total paginati
 
 void test('ambiguous create reconciliation caps total requests across visibility polls', async () => {
   let lists = 0;
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
       return jsonResponse(200, { id: 'review-org-id' });
@@ -350,7 +359,7 @@ void test('ambiguous create reconciliation caps total requests across visibility
       assert.ok(error instanceof AggregateError);
       assert.match(String(error.errors[1]), /bounded request budget/);
       return true;
-    }
+    },
   );
   assert.equal(lists, 128);
 });
@@ -363,8 +372,9 @@ void test('malformed create response reconciles its recorded intent and revokes 
     status: 'Active',
     version: 1,
   };
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     calls.push(`${init?.method ?? 'GET'} ${url.pathname}${url.search}`);
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
@@ -403,8 +413,8 @@ void test('rotate and renewal bindings accept exact identity and one-step versio
       before,
       { ...before, version: 4 },
       'review-org-id',
-      'review-org'
-    )
+      'review-org',
+    ),
   );
   assert.throws(
     () =>
@@ -413,9 +423,9 @@ void test('rotate and renewal bindings accept exact identity and one-step versio
         before,
         { ...before, version: 5 },
         'review-org-id',
-        'review-org'
+        'review-org',
       ),
-    /version transition is invalid/
+    /version transition is invalid/,
   );
 });
 
@@ -427,8 +437,9 @@ void test('rotate rejects a response bound to the wrong client identity before u
     version: 1,
   };
   const oneTimeCredential = ['OAUTH_CLIENT', 'SECRET', 'SENTINEL', 'rotation'].join('_');
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     const authorization = new Headers(init?.headers).get('authorization');
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && authorization === 'Bearer owner-access-placeholder') {
@@ -446,8 +457,8 @@ void test('rotate rejects a response bound to the wrong client identity before u
             expires_in: 300,
             scope: 'organization:read',
           }),
-          { status: 200, headers: { 'cache-control': 'no-store', pragma: 'no-cache' } }
-        )
+          { status: 200, headers: { 'cache-control': 'no-store', pragma: 'no-cache' } },
+        ),
       );
     }
     if (url.pathname.endsWith('/organizations/review-org')) return jsonResponse(200, { id: 'review-org-id' });
@@ -469,14 +480,16 @@ void test('rotate rejects a response bound to the wrong client identity before u
 
 void test('ambiguous create reconciliation fails closed when an exact intent has multiple matches', async () => {
   const revocations = [];
+  /** @param {string} clientId */
   const matching = (clientId) => ({
     clientId,
     name: 'oauth-client-review-contract-rotation',
     status: 'Active',
     version: 1,
   });
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
       return jsonResponse(200, { id: 'review-org-id' });
@@ -507,8 +520,9 @@ void test('cleanup uses a fresh bounded signal after the main lifecycle signal e
   let mainSignal;
   let cleanupSignal;
   let cleanupSignalWasActive = false;
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = async (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
       return jsonResponse(200, { id: 'review-org-id' });
@@ -519,10 +533,11 @@ void test('cleanup uses a fresh bounded signal after the main lifecycle signal e
         init.signal.addEventListener(
           'abort',
           () => {
+            /** @type {unknown} */
             const reason = init.signal.reason;
             reject(reason instanceof Error ? reason : new Error(String(reason)));
           },
-          { once: true }
+          { once: true },
         );
         setTimeout(() => reject(new Error('fallback before lifecycle deadline')), 50);
       });
@@ -536,7 +551,7 @@ void test('cleanup uses a fresh bounded signal after the main lifecycle signal e
   };
 
   await assert.rejects(
-    runLiveOAuthClientLifecycle({ env: guardedEnvironment, fetcher, lifecycleTimeoutMs: 10, cleanupTimeoutMs: 100 })
+    runLiveOAuthClientLifecycle({ env: guardedEnvironment, fetcher, lifecycleTimeoutMs: 10, cleanupTimeoutMs: 100 }),
   );
   assert.equal(mainSignal.aborted, true);
   assert.notEqual(cleanupSignal, mainSignal);
@@ -545,8 +560,9 @@ void test('cleanup uses a fresh bounded signal after the main lifecycle signal e
 });
 
 void test('reports both an expired lifecycle and its independent cleanup failure', async () => {
+  /** @param {RequestInfo | URL} input @param {RequestInit} [init] @returns {Promise<Response>} */
   const fetcher = async (input, init) => {
-    const url = new URL(String(input));
+    const url = new URL(input instanceof Request ? input.url : String(input));
     if (url.pathname.endsWith('/auth/login')) return jsonResponse(200, { accessToken: 'owner-access-placeholder' });
     if (url.pathname.endsWith('/organizations/review-org') && init?.method === 'GET') {
       return jsonResponse(200, { id: 'review-org-id' });
@@ -556,10 +572,11 @@ void test('reports both an expired lifecycle and its independent cleanup failure
         init.signal.addEventListener(
           'abort',
           () => {
+            /** @type {unknown} */
             const reason = init.signal.reason;
             reject(reason instanceof Error ? reason : new Error(String(reason)));
           },
-          { once: true }
+          { once: true },
         );
       });
     }
@@ -577,6 +594,6 @@ void test('reports both an expired lifecycle and its independent cleanup failure
       assert.match(String(error.errors[0]), /hard deadline/);
       assert.match(String(error.errors[1]), /not bounded/);
       return true;
-    }
+    },
   );
 });

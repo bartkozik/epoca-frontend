@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { AVATAR_SYNC_POLL_INTERVAL_MS } from '../../../src/modules/users/hooks/avatarSyncPolling';
 import { expect, test } from '../fixtures/epocaTest';
 
@@ -97,7 +98,7 @@ test.describe('preseeded session', () => {
       const prefix = 'IteratorsEpoca__';
       const access = localStorage.getItem(`${prefix}auth__access_tok_${suffix}`);
       return {
-        access: access ? JSON.parse(access) : null,
+        access: access ? (JSON.parse(access) as unknown) : null,
         device: localStorage.getItem(`${prefix}auth__device_id_${suffix}`),
         refresh: localStorage.getItem(`${prefix}auth__ref_tok_${suffix}`),
         organization: localStorage.getItem(`${prefix}org__slug_${suffix}`),
@@ -105,15 +106,23 @@ test.describe('preseeded session', () => {
       };
     });
 
+    const access = z
+      .object({
+        token: z.string(),
+        user: z.object({
+          organizationGrants: z.array(z.object({ organizationId: z.string(), roles: z.array(z.string()) })),
+        }),
+      })
+      .parse(sessionStorage.access);
     expect(sessionStorage.device).toBe('e2e-device-0001');
     expect(sessionStorage.refresh).toBeNull();
     expect(sessionStorage.organization).toBe('epoca-e2e');
     expect(sessionStorage.language).toBe('pl');
-    expect(sessionStorage.access?.user.organizationGrants).toEqual([
+    expect(access.user.organizationGrants).toEqual([
       { organizationId: '10000000-0000-4000-8000-000000000001', roles: ['Owner'] },
     ]);
 
-    const payload = JSON.parse(Buffer.from(sessionStorage.access.token.split('.')[1], 'base64url').toString('utf8'));
+    const payload: unknown = JSON.parse(Buffer.from(access.token.split('.')[1], 'base64url').toString('utf8'));
     expect(payload).toMatchObject({
       id: '20000000-0000-4000-8000-000000000001',
       roles: [
@@ -124,10 +133,17 @@ test.describe('preseeded session', () => {
       ],
     });
 
-    const projects = await page.evaluate(async () => {
+    const projectResponse = await page.evaluate(async (): Promise<unknown> => {
       const response = await fetch('/__e2e_api/organizations/epoca-e2e/projects?includeArchived=true');
       return response.json();
     });
+    const projects = z
+      .object({
+        results: z.array(
+          z.object({ projectUsers: z.array(z.object({ id: z.string(), isLoggedInUser: z.boolean() })) }),
+        ),
+      })
+      .parse(projectResponse);
     const projectUsers = projects.results.flatMap((project) => project.projectUsers);
     expect(projectUsers.filter(({ id }) => id === '20000000-0000-4000-8000-000000000001')).toEqual(
       expect.arrayContaining([expect.objectContaining({ isLoggedInUser: true })]),

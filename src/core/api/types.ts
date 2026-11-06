@@ -9,8 +9,7 @@ declare module 'axios' {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ApiResponse<T = any> = Promise<AxiosResponse<T>>;
+export type ApiResponse<T = unknown> = Promise<AxiosResponse<T>>;
 
 export interface ErrorLog {
   id: string;

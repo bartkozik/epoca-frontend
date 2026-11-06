@@ -63,8 +63,8 @@ test('OAuth client ambiguous create timeout reconciles its recorded intent and r
     status: 'Active',
     version: 1,
   };
-  const fetcher: typeof fetch = (input, init) => {
-    const url = new URL(String(input));
+  const fetcher: typeof fetch = (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = new URL(input instanceof Request ? input.url : String(input));
     const call = `${init?.method ?? 'GET'} ${url.pathname}${url.search}`;
     calls.push(call);
     if (url.pathname.endsWith('/auth/login')) {

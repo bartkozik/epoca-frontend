@@ -2,12 +2,39 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 import yaml from 'yaml';
+import { z } from 'zod';
 
 const ROOT_CI_URL = new URL('../.gitlab-ci.yml', import.meta.url);
 const PACKAGE_URL = new URL('../package.json', import.meta.url);
 const README_URL = new URL('../README.md', import.meta.url);
 const rootCiSource = readFileSync(ROOT_CI_URL, 'utf8');
-const rootCi = yaml.parse(rootCiSource);
+const jobSchema = z.object({
+  stage: z.string().optional(),
+  image: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  script: z.array(z.string()).optional(),
+  rules: z.array(z.object({ if: z.string().optional() })).optional(),
+  needs: z.unknown().optional(),
+  variables: z.record(z.string()).optional(),
+  trigger: z
+    .object({
+      project: z.string(),
+      branch: z.string(),
+      strategy: z.string(),
+      forward: z.object({ yaml_variables: z.boolean(), pipeline_variables: z.boolean() }),
+    })
+    .optional(),
+});
+const rootCi = z
+  .object({
+    stages: z.array(z.string()),
+    test: jobSchema,
+    build_staging_frontend_image: jobSchema,
+    deploy_staging_frontend: jobSchema,
+    e2e_mr: jobSchema,
+    staging_pm_classification_lifecycle: z.unknown().optional(),
+  })
+  .parse(yaml.parse(rootCiSource));
 
 const legacyStagingPaths = [
   '../.gitlab/ci/staging-pm-classification-acceptance.yml',
@@ -21,18 +48,22 @@ const legacyStagingPaths = [
   '../tests/pmClassification/stagingSupport.spec.ts',
 ];
 
+/** @param {import("zod").infer<typeof jobSchema>} job */
 function commands(job) {
   assert.ok(Array.isArray(job?.script), 'job requires a script command list');
   return job.script.map(String);
 }
 
+/** @param {import("zod").infer<typeof jobSchema>} job */
 function assertDefaultBranchOnly(job) {
   assert.ok(job?.rules?.some((rule) => rule.if === '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'));
   assert.ok(!job?.rules?.some((rule) => rule.if === '$CI_COMMIT_BRANCH == "staging"'));
 }
 
 void test('root test gate executes the generic staging deploy contract', () => {
-  const packageJson = JSON.parse(readFileSync(PACKAGE_URL, 'utf8'));
+  const packageJson = z
+    .object({ devDependencies: z.record(z.string()) })
+    .parse(JSON.parse(readFileSync(PACKAGE_URL, 'utf8')));
   assert.match(packageJson.devDependencies?.yaml ?? '', /^\^2\./, 'CI parser must remain a direct dev dependency');
 
   const testCommands = commands(rootCi.test).join('\n');
@@ -50,23 +81,23 @@ void test('default-branch build publishes the full-SHA frontend image and moves 
 
   const script = commands(build);
   const loginIndex = script.findIndex(
-    (command) => /CI_JOB_TOKEN/.test(command) && /docker login/.test(command) && /--password-stdin/.test(command)
+    (command) => /CI_JOB_TOKEN/.test(command) && /docker login/.test(command) && /--password-stdin/.test(command),
   );
   const buildIndex = script.findIndex(
     (command) =>
       /docker build/.test(command) &&
       /BUILD_VERSION=.*CI_COMMIT_SHA/.test(command) &&
-      /CI_REGISTRY_IMAGE.*CI_COMMIT_SHA/.test(command)
+      /CI_REGISTRY_IMAGE.*CI_COMMIT_SHA/.test(command),
   );
   const pushIndex = script.findIndex(
-    (command) => /docker push/.test(command) && /CI_REGISTRY_IMAGE.*CI_COMMIT_SHA/.test(command)
+    (command) => /docker push/.test(command) && /CI_REGISTRY_IMAGE.*CI_COMMIT_SHA/.test(command),
   );
   assert.ok(loginIndex >= 0 && loginIndex < buildIndex && buildIndex < pushIndex);
   const latestIndex = script.findIndex(
     (command) =>
       /CI_COMMIT_BRANCH.*CI_DEFAULT_BRANCH/.test(command) &&
       /EPOCA_CLEAN_RELEASE_BUILD/.test(command) &&
-      /docker push "\$CI_REGISTRY_IMAGE:latest"/.test(command)
+      /docker push "\$CI_REGISTRY_IMAGE:latest"/.test(command),
   );
   assert.ok(latestIndex > pushIndex, 'latest is pushed only after the full-SHA image, on the default branch');
 });
@@ -92,7 +123,7 @@ void test('staging deploy triggers only the generic DevOps frontend release', ()
   const serializedVariables = JSON.stringify(deploy.variables);
   assert.doesNotMatch(
     serializedVariables,
-    /BACKEND|MIGRATION|SCHEMA|CT[-_]?\d+|OAUTH|INTEGRATION.?CLIENT|FIXTURE|ACCEPTANCE/i
+    /BACKEND|MIGRATION|SCHEMA|CT[-_]?\d+|OAUTH|INTEGRATION.?CLIENT|FIXTURE|ACCEPTANCE/i,
   );
 });
 
@@ -101,7 +132,7 @@ void test('task-specific staging fixture lifecycle is removed while controlled P
   assert.equal(mrE2e?.stage, 'test');
   assert.ok(
     mrE2e?.rules?.some((rule) => rule.if === '$CI_PIPELINE_SOURCE == "merge_request_event"'),
-    'controlled aggregate E2E must remain in merge request pipelines'
+    'controlled aggregate E2E must remain in merge request pipelines',
   );
   assert.match(commands(mrE2e).join('\n'), /test:e2e:ci/);
   assert.equal(rootCi.staging_pm_classification_lifecycle, undefined);

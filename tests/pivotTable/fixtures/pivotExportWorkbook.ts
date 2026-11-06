@@ -42,7 +42,7 @@ const unzip = (buffer: Buffer): Promise<Map<string, Buffer>> =>
   new Promise((resolve, reject) => {
     yauzl.fromBuffer(buffer, { lazyEntries: true }, (openError, zipFile) => {
       if (openError || !zipFile) {
-        reject((openError as Error | null) ?? new Error('Downloaded XLSX cannot be opened'));
+        reject(openError ?? new Error('Downloaded XLSX cannot be opened'));
         return;
       }
       const entries = new Map<string, Buffer>();
@@ -70,7 +70,7 @@ const unzip = (buffer: Buffer): Promise<Map<string, Buffer>> =>
             return;
           }
           const chunks: Buffer[] = [];
-          stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+          stream.on('data', (chunk: Buffer) => chunks.push(Buffer.from(chunk)));
           stream.on('error', fail);
           stream.on('end', () => {
             entries.set(entry.fileName, Buffer.concat(chunks));
@@ -97,7 +97,7 @@ const resolveSheet = (files: ReadonlyMap<string, Buffer>): { name: string; path:
   const relationshipId = attribute(sheet[1], 'r:id');
   if (!name || !relationshipId) throw new Error('Downloaded XLSX first worksheet is incomplete');
   const relationship = Array.from(relationshipXml.matchAll(/<Relationship\s([^>]*?)\/?>(?:<\/Relationship>)?/g)).find(
-    ([, attributes]) => attribute(attributes, 'Id') === relationshipId
+    ([, attributes]) => attribute(attributes, 'Id') === relationshipId,
   );
   const target = relationship ? attribute(relationship[1], 'Target') : undefined;
   if (!target) throw new Error(`Downloaded XLSX has no relationship ${relationshipId}`);
@@ -116,7 +116,7 @@ const styleFormats = (files: ReadonlyMap<string, Buffer>): string[] => {
     Array.from(xml.matchAll(/<numFmt\s([^>]*?)\/?>(?:<\/numFmt>)?/g), ([, attributes]) => [
       Number(attribute(attributes, 'numFmtId')),
       xmlDecode(attribute(attributes, 'formatCode') ?? ''),
-    ])
+    ]),
   );
   const builtInFormats = new Map<number, string>([
     [0, 'General'],
@@ -168,7 +168,7 @@ export async function parsePivotExportWorkbook(contents: Buffer): Promise<PivotW
   }
 
   const merges = Array.from(worksheet.matchAll(/<mergeCell\s([^>]*?)\/?>(?:<\/mergeCell>)?/g), ([, attributes]) =>
-    attribute(attributes, 'ref')
+    attribute(attributes, 'ref'),
   ).filter((value): value is string => Boolean(value));
   const paneAttributes = worksheet.match(/<pane\s([^>]*?)\/?>(?:<\/pane>)?/)?.[1];
   const pane = paneAttributes

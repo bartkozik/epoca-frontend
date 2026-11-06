@@ -4,6 +4,6 @@ export const getCorrelationIdFromError = (err: unknown): string => {
   if (!isAxiosError(err)) return 'unknown';
 
   const headers = err.response?.config.headers ?? {};
-  const correlationId = headers['Correlation-Id'] as string | undefined;
-  return correlationId || 'unknown';
+  const correlationId = 'Correlation-Id' in headers ? headers['Correlation-Id'] : undefined;
+  return typeof correlationId === 'string' && correlationId ? correlationId : 'unknown';
 };

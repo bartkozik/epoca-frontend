@@ -48,7 +48,7 @@ function ClientForm({ onCancel, onCreated }: ClientFormProps): JSX.Element {
     parentRef: formRef,
   });
 
-  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string): void => {
+  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: keyof ClientFormErrors): void => {
     const newValue = e.target.value;
 
     switch (fieldName) {

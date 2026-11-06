@@ -1,5 +1,5 @@
-import { isDemo } from '@/core/config/demo';
 import { ROLE_PERMISSIONS } from '@/app/routing/rolePermissions';
+import { isDemo } from '@/core/config/demo';
 import { useToast } from '@/core/providers/toastProvider';
 import Button from '@/core/theme/button';
 import Confirmation, { ConfirmationAction } from '@/core/theme/confirmation';
@@ -68,7 +68,7 @@ const ClientDetailsForm = ({ client }: ClientDetailsFormProps): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string): void => {
+  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: keyof ClientFormErrors): void => {
     const newValue = e.target.value;
 
     switch (fieldName) {
