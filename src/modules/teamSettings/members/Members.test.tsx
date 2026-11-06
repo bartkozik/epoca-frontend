@@ -1,3 +1,12 @@
+const demoMode = vi.hoisted(() => ({ enabled: false }));
+vi.mock('@/core/config/demo', () => ({
+  get isDemo() {
+    return demoMode.enabled;
+  },
+}));
+beforeEach(() => {
+  demoMode.enabled = false;
+});
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -225,4 +234,13 @@ it('opens the invitations tab directly and explains unavailable capability', () 
   expect(screen.queryByText('active members table')).not.toBeInTheDocument();
   expect(screen.getByText('invitations.unavailable')).toBeVisible();
   expect(screen.queryByRole('button', { name: 'invitations.form.title' })).not.toBeInTheDocument();
+});
+
+it('opens invitation previews in demo but does not offer an active send action', async () => {
+  demoMode.enabled = true;
+  mount();
+  expect(screen.getByRole('button', { name: 'invitations.form.title' })).toBeDisabled();
+  await userEvent.click(screen.getByRole('button', { name: 'invitations.tab' }));
+  expect(screen.getByText('invitations.empty')).toBeVisible();
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 });

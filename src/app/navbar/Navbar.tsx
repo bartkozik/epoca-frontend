@@ -1,4 +1,3 @@
-import { isDemo } from '@/core/config/demo';
 import { paths } from '@/app/routing/paths';
 import { ROLE_PERMISSIONS } from '@/app/routing/rolePermissions';
 import Icon, { icons } from '@/core/theme/icon';
@@ -110,7 +109,6 @@ function Navbar(): JSX.Element {
   });
 
   const userHasRequiredPermissions = (item: NavItem): boolean => {
-    if (isDemo && item.value === 'team-settings') return false;
     if (!item.requiredPermissions) return true;
 
     const requiredRoles = ROLE_PERMISSIONS[item.requiredPermissions];

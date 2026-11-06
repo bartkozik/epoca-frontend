@@ -1,3 +1,5 @@
+import { useAuth } from '@/modules/auth/AuthProvider';
+import { isDemo } from '@/core/config/demo';
 import Avatar from '@/core/theme/avatar';
 import Confirmation, { ConfirmationAction } from '@/core/theme/confirmation';
 import Icon, { icons } from '@/core/theme/icon';
@@ -28,6 +30,8 @@ const MembersTable = (): JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
   const workspace = useWorkspace();
+  const { loggedInUser } = useAuth();
+  const isProtectedOwner = (id: string): boolean => isDemo && id.toLowerCase() === loggedInUser?.id.toLowerCase();
 
   const organizationUsersQuery = useOrganizationUsersQuery();
   const roleMutation = useChangeOrganizationUserRoleMutation();
@@ -38,12 +42,14 @@ const MembersTable = (): JSX.Element => {
 
   const renderSelect = (user: OrganizationUser, isOneOfLastTwo = false, compact = false): JSX.Element => (
     <Select
+      readOnly={isProtectedOwner(user.id)}
       className={styles.statusInput}
       dropdownPosition={isOneOfLastTwo ? 'top' : 'bottom'}
       items={getOrganizationUserRoleOptions()}
       name={`member-role-${user.id}-${compact ? 'compact' : 'table'}`}
       label={t('team_seatings.members.members_table.column_name.role')}
       onValueChange={({ value }: OrganizationUserRoleOption) => {
+        if (isProtectedOwner(user.id)) return;
         const currentRoleOption = getOrganizationUserRoleOption(user);
         if (!currentRoleOption || currentRoleOption.value === value) return;
         roleMutation.mutate({ userId: user.id, roles: [value] });
@@ -85,7 +91,10 @@ const MembersTable = (): JSX.Element => {
                 aria-label={t('team_seatings.members.members_table.icon_button.remove_user.aria_label')}
                 icon={<Icon icon={icons.remove} />}
                 label={t('common.remove')}
-                onClick={() => openConfirmation(id)}
+                disabled={isProtectedOwner(id)}
+                onClick={() => {
+                  if (!isProtectedOwner(id)) openConfirmation(id);
+                }}
                 variant="contained"
               />
             </div>

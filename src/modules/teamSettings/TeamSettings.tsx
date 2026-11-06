@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import MainContent from '@/core/theme/mainContent';
 import PageLayout from '@/core/theme/pageLayout';
 import ScrolledContainer from '@/core/theme/scrolledContainer';
@@ -73,6 +74,15 @@ function TeamSettings(): JSX.Element {
       <ScrolledContainer>
         <MainContent>
           <PageLayout className={styles.layout} sectionName={selectedTab.label} title={t('common.team_seatings')}>
+            {isDemo && (
+              <p>
+                {t(
+                  tab === 'members' && memberTab !== 'invitations'
+                    ? 'team_seatings.demo.members'
+                    : 'team_seatings.demo.preview',
+                )}
+              </p>
+            )}
             <Tabs className={styles.tabs} onTabClick={onTabClick} tabs={TABS} />
           </PageLayout>
         </MainContent>

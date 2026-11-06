@@ -43,7 +43,7 @@ const contextOrganizationRoutes: RouteObject[] = [
       ...projectsRoutes,
       ...reportRoutes,
       ...pivotTableRoutes,
-      ...(isDemo ? [] : teamSettingsRoutes),
+      ...teamSettingsRoutes,
       { path: '*', element: <Navigate to={paths.index} replace /> },
     ],
   },

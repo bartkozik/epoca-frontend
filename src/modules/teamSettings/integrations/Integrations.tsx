@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import Button from '@/core/theme/button';
 import LoadingArea from '@/core/theme/loadingArea';
 import { useCreateIntegrationClientMutation } from '@/modules/integrationClients/hooks/useCreateIntegrationClientMutation';
@@ -273,7 +274,7 @@ const Integrations = (): JSX.Element => {
   const loadMore = (): void => list.loadMore();
 
   const openEditForm = (client: IntegrationClient): void => {
-    if (isMutationBusy) return;
+    if (isDemo || isMutationBusy) return;
     const detailsOrigin = detailsSelectionRef.current;
     if (detailsOrigin?.clientId === client.clientId && detailsOrigin.organizationSlug === organizationSlug) {
       rowFormFocusRef.current = null;
@@ -299,7 +300,7 @@ const Integrations = (): JSX.Element => {
   };
 
   const openLifecycleConfirmation = (action: LifecycleAction, client: IntegrationClient): void => {
-    if (isMutationBusy) return;
+    if (isDemo || isMutationBusy) return;
     if (action === 'rotate' && client.status !== 'Active') return;
     if (action === 'revoke' && client.status === 'Revoked') return;
     credentialsOriginRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -319,6 +320,7 @@ const Integrations = (): JSX.Element => {
   };
 
   const submitUpdate = (input: UpdateIntegrationClientInput): Promise<void> => {
+    if (isDemo) return Promise.resolve();
     // Same rationale as asMutationError above.
     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     if (!formSelection) return Promise.reject(unexpectedProblem);
@@ -328,6 +330,7 @@ const Integrations = (): JSX.Element => {
   };
 
   const submitCreate = async (input: CreateIntegrationClientInput): Promise<void> => {
+    if (isDemo) return;
     const submittedOrganizationSlug = organizationSlug;
     const {
       client: { clientId },
@@ -458,6 +461,7 @@ const Integrations = (): JSX.Element => {
   };
 
   const submitLifecycleAction = async (): Promise<void> => {
+    if (isDemo) return;
     const selection = lifecycleSelection;
     if (!selection || lifecycleSubmitGuardRef.current || selection.organizationSlug !== organizationSlug) return;
     lifecycleSubmitGuardRef.current = true;
@@ -582,10 +586,12 @@ const Integrations = (): JSX.Element => {
             <p>{t('team_seatings.integrations.description')}</p>
           </div>
           <Button
-            disabled={isCreateFormOpen || visibleOneTimeCredentials !== null || isMutationBusy}
+            disabled={isDemo || isCreateFormOpen || visibleOneTimeCredentials !== null || isMutationBusy}
             forwardedRef={addClientRef}
             label={t('team_seatings.integrations.action.add')}
-            onClick={() => setIsCreateFormOpen(true)}
+            onClick={() => {
+              if (!isDemo) setIsCreateFormOpen(true);
+            }}
           />
         </header>
 
@@ -598,6 +604,7 @@ const Integrations = (): JSX.Element => {
 
         {!isInitialLoading && hasClients && (
           <IntegrationClientsTable
+            readOnly={isDemo}
             actionsDisabled={isMutationBusy}
             clients={list.clients}
             count={list.count}
@@ -645,7 +652,7 @@ const Integrations = (): JSX.Element => {
         )}
       </section>
 
-      {isCreateFormOpen && (
+      {!isDemo && isCreateFormOpen && (
         <IntegrationClientFormModal
           isOpen
           mode="create"
@@ -657,7 +664,7 @@ const Integrations = (): JSX.Element => {
         />
       )}
 
-      {formSelection && (
+      {!isDemo && formSelection && (
         <IntegrationClientFormModal
           client={formSelection.client}
           isOpen
@@ -677,6 +684,7 @@ const Integrations = (): JSX.Element => {
         !visibleOneTimeCredentials &&
         !isLifecyclePending && (
           <IntegrationClientDetailsModal
+            readOnly={isDemo}
             auditEvents={audit.auditEvents}
             auditHasNextPage={audit.hasNextPage}
             auditState={auditState}
@@ -698,7 +706,7 @@ const Integrations = (): JSX.Element => {
           />
         )}
 
-      {visibleLifecycleSelection && (
+      {!isDemo && visibleLifecycleSelection && (
         <>
           <IntegrationClientConfirmationModal
             actions={[

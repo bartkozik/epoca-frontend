@@ -11,6 +11,7 @@ import { invitationDisplayName, isListedInvitation } from './utils/invitation-ma
 
 type InvitationsProps = {
   organizationSlug: string;
+  readOnly?: boolean;
   data?: InvitationPage;
   isLoading: boolean;
   error: InvitationProblem | null;
@@ -20,6 +21,7 @@ type InvitationsProps = {
 
 const Invitations = ({
   organizationSlug,
+  readOnly = false,
   data,
   isLoading,
   error,
@@ -50,6 +52,7 @@ const Invitations = ({
             >
               {(sortedInvitations) => (
                 <InvitationRows
+                  readOnly={readOnly}
                   organizationSlug={organizationSlug}
                   invitations={sortedInvitations}
                   featureEnabled={data.featureEnabled}

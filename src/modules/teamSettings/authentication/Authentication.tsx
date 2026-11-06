@@ -1,3 +1,4 @@
+import { isDemo } from '@/core/config/demo';
 import Button from '@/core/theme/button';
 import Checkbox from '@/core/theme/checkbox';
 import { Input, TextArea } from '@/core/theme/inputs';
@@ -42,23 +43,27 @@ const Authentication = (): JSX.Element | null => {
   );
 
   const handleLanguageSelect = (option: LanguageOption): void => {
+    if (isDemo) return;
     setSamlConfigDraft((current) => (current ? { ...current, langCode: option.value } : current));
   };
 
   const handleSamlConfigFlagChange = (field: 'isEnabled' | 'allowAccountInit') => (): void => {
+    if (isDemo) return;
     setSamlConfigDraft((current) => (current ? { ...current, [field]: !current[field] } : current));
   };
 
   const handleSamlConfigPropertyChange =
     (field: 'idpCert' | 'idpEntityId' | 'idpSsoUrl' | 'formattedValidFor') =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+      if (isDemo) return;
       const { value } = event.target;
+      if (isDemo) return;
       setSamlConfigDraft((current) => (current ? { ...current, [field]: value } : current));
     };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    if (!samlConfigDraft) return;
+    if (isDemo || !samlConfigDraft) return;
 
     const { allowAccountInit, idpCert, idpEntityId, idpSsoUrl, isEnabled, langCode, formattedValidFor } =
       samlConfigDraft;
@@ -91,6 +96,7 @@ const Authentication = (): JSX.Element | null => {
       <LoadingArea loading={samlConfigQuery.isLoading || updateSamlConfigMutation.isPending}>
         <form className={clsx(styles.ssoForm, styles.maxMarginBottom)} onSubmit={handleSubmit}>
           <Checkbox
+            disabled={isDemo}
             className={styles.maxBottomMargin}
             selected={isEnabled}
             label={t('team_seatings.authentication.checkbox.enable_saml_authentication.label')}
@@ -99,6 +105,7 @@ const Authentication = (): JSX.Element | null => {
             onClick={handleSamlConfigFlagChange('isEnabled')}
           />
           <Checkbox
+            disabled={isDemo}
             className={styles.maxBottomMargin}
             selected={allowAccountInit}
             label={t('team_seatings.authentication.checkbox.allow_automatic_user_creation.label')}
@@ -109,6 +116,7 @@ const Authentication = (): JSX.Element | null => {
           />
           <div className={styles.inputsContainer}>
             <TextArea
+              disabled={isDemo}
               label={t('team_seatings.authentication.text_area.idp_certificate.label')}
               name="certificate"
               infoText={t('team_seatings.authentication.text_area.idp_certificate.info_text')}
@@ -118,6 +126,7 @@ const Authentication = (): JSX.Element | null => {
               onChange={handleSamlConfigPropertyChange('idpCert')}
             />
             <Input
+              disabled={isDemo}
               label={t('team_seatings.authentication.input.idp_entity_id.label')}
               name="entityId"
               infoText={t('team_seatings.authentication.input.idp_entity_id.info_text')}
@@ -126,6 +135,7 @@ const Authentication = (): JSX.Element | null => {
               onChange={handleSamlConfigPropertyChange('idpEntityId')}
             />
             <Input
+              disabled={isDemo}
               label={t('team_seatings.authentication.input.sso_url.label')}
               name="ssoUrl"
               infoText={t('team_seatings.authentication.input.sso_url.info_text')}
@@ -136,6 +146,7 @@ const Authentication = (): JSX.Element | null => {
 
             {/* TODO */}
             <Select
+              readOnly={isDemo}
               className={styles.maxWidth}
               items={getLanguageOptions()}
               selectedItem={selectedLanguageOption}
@@ -147,6 +158,7 @@ const Authentication = (): JSX.Element | null => {
               size="normal"
             />
             <Input
+              disabled={isDemo}
               label={t('team_seatings.authentication.input.session_valid_time.label')}
               name="sessionValidTime"
               value={formattedValidFor}
@@ -162,7 +174,7 @@ const Authentication = (): JSX.Element | null => {
             size="large"
             type="submit"
             loading={updateSamlConfigMutation.isPending}
-            disabled={updateSamlConfigMutation.isPending}
+            disabled={isDemo || updateSamlConfigMutation.isPending}
           />
         </form>
       </LoadingArea>
