@@ -7,6 +7,7 @@ import { useAuth } from '@/modules/auth/AuthProvider';
 import { useCallback, useEffect, useRef, useState, type PropsWithChildren } from 'react';
 import { isAxiosError } from 'axios';
 import { DemoGuide } from './DemoGuide';
+import { DemoToolbar } from './DemoToolbar';
 import styles from './DemoShell.module.scss';
 import { requestDemoSession, type DemoSession } from './requests';
 
@@ -143,23 +144,13 @@ export function DemoShell({ children }: PropsWithChildren): JSX.Element {
 
   return (
     <>
-      <aside className={styles.banner} aria-label="Demo workspace">
-        <div>
-          <strong>EPOCA demo</strong>
-          <span> Your private sample workspace · expires after 24h</span>
-        </div>
-        <div className={styles.actions}>
-          <Button label="Quick guide" size="small" variant="outlined" onClick={() => setShowGuide(true)} />
-          <Button
-            label="Reset demo"
-            size="small"
-            variant="outlined"
-            disabled={busy}
-            onClick={() => setConfirmReset(true)}
-          />
-          <a href="https://kozikowski.it/projects/epoca">Portfolio</a>
-        </div>
-      </aside>
+      <DemoToolbar
+        projectName="EPOCA"
+        portfolioUrl="https://kozikowski.it/projects/epoca"
+        busy={busy}
+        onOpenGuide={() => setShowGuide(true)}
+        onReset={() => setConfirmReset(true)}
+      />
       {error && (
         <p className={styles.notice} role="alert">
           {error}

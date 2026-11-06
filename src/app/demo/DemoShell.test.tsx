@@ -112,3 +112,19 @@ it('unmounts the old workspace when another tab rotates its credentials', async 
   await waitFor(() => expect(persistSession).toHaveBeenCalledWith('other-tab-token', 'other-tab-space'));
   expect(screen.getByText('Real EPOCA application')).toBeInTheDocument();
 });
+
+it('opens and closes the guide without resetting a returning workspace', async () => {
+  vi.mocked(requestDemoSession).mockResolvedValueOnce(session());
+  const user = userEvent.setup();
+  render(
+    <DemoShell>
+      <p>Real EPOCA application</p>
+    </DemoShell>,
+  );
+  await user.click(await screen.findByRole('button', { name: 'Quick guide' }));
+  expect(await screen.findByRole('dialog', { name: 'Try EPOCA in a few minutes' })).toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: 'Got it' }));
+  await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  expect(screen.getByText('Real EPOCA application')).toBeInTheDocument();
+  expect(requestDemoSession).toHaveBeenCalledTimes(1);
+});
