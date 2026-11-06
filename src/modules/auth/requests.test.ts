@@ -18,9 +18,6 @@ vi.mock('@/core/config/env', () => ({
   default: { backendUrl: '/api/v1' },
 }));
 
-// A top-level `await import(...)` isn't supported by this project's `tsconfig.json`
-// (`module: commonjs`, frozen for this migration), so these are scoped inside a file-level
-// `beforeAll` instead, which still runs once before any test below.
 let mockPost: Mock;
 let mockDelete: Mock;
 let mockApiPost: Mock;

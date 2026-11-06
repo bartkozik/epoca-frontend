@@ -53,8 +53,6 @@ const unassignAllMock = requests.unassignUserFromAllProjects as unknown as Retur
 
 const selectedProjectUser = { id: 'user-1', fullName: 'Jan Kowalski', projects: [] as { projectId: string }[] };
 
-// filteredOrganizationProjects is empty on purpose -- MemberProjectsTableRow's own mutation/toggle
-// behavior is covered by its own test file, this one only exercises the bulk assign-all flow.
 const renderTable = (
   isAssigned: boolean,
   {
@@ -89,8 +87,6 @@ const renderTable = (
   );
 };
 
-// A regex, not the exact key: GoBack's Button renders a mocked SVG icon whose filename text
-// concatenates into the link's accessible name alongside the label span's text.
 const GO_BACK_LABEL = /go_back\.back_to_members_list/;
 
 beforeEach(() => vi.clearAllMocks());
@@ -133,11 +129,6 @@ describe('MemberProjectsTable', () => {
   });
 });
 
-// Regression guard for the reported bug: GoBack used a bare teamSettingsPaths.teamSettings(
-// 'members', 'list') href, so returning from a member's projects page reset MembersTable's
-// URL-persisted sort. MembersTable now threads the list's search string in through router state as
-// fromListSearch (see from-list-search.ts's readFromListSearch) -- these exercise that it survives
-// both places this page's own navigation could otherwise drop it.
 describe('MemberProjectsTable GoBack link', () => {
   it('builds the href from fromListSearch in router state', async () => {
     renderTable(false, { state: { fromListSearch: '?membersSortColumn=UserRole' } });

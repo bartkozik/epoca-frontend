@@ -4,8 +4,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import ChunkLoadErrorBoundary from './ChunkLoadErrorBoundary';
 
-// Real MemoryRouter/i18n (not mocks) so this also proves the message resolves through the app's
-// real i18n instance, not just that some string renders.
 
 const ThrowChunkError = (): null => {
   throw new Error('Failed to fetch dynamically imported module: https://example.com/chunk.js');

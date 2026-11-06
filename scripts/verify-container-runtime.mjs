@@ -36,7 +36,6 @@ if (expectedPrefix !== '') {
   assert.ok(html.includes('src="/assets/env.js"'), 'expected root-relative asset href');
 }
 
-// Entry points with stable URLs must be revalidated so a deployment is picked up on the next load.
 const assertNoCache = (response, label) =>
   assert.equal(response.headers.get('cache-control'), 'no-cache', `${label} must be served with Cache-Control: no-cache`);
 assertNoCache(spaResponse, 'SPA fallback index.html');
@@ -46,7 +45,6 @@ const envResponse = await fetchWithRetry(`${baseUrl}/assets/env.js`);
 assertNoCache(envResponse, 'env.js');
 assert.match(envResponse.headers.get('content-type') ?? '', /javascript/);
 
-// Content-hashed bundles keep nginx's default caching behaviour.
 const bundlePath = html.match(/src="([^"]*\/static\/js\/[^"]+\.js)"/)?.[1];
 assert.ok(bundlePath, 'expected a content-hashed entry bundle in index.html');
 const bundleResponse = await fetchWithRetry(new URL(bundlePath, `${baseUrl}/`).href);

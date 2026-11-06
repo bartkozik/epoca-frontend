@@ -73,8 +73,6 @@ describe('PivotMatrix', () => {
     vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1000);
     disconnectResizeObserver = vi.fn();
     observeResizeTarget = vi.fn();
-    // A regular `function` (not an arrow function) is required here: `window.ResizeObserver` is
-    // invoked with `new`, and arrow functions aren't constructible.
     window.ResizeObserver = vi.fn(function MockResizeObserver(callback: ResizeObserverCallback) {
       const observer = { active: true, callback };
       resizeObservers.push(observer);
@@ -119,7 +117,7 @@ describe('PivotMatrix', () => {
     );
 
     expect(screen.getByRole('table', { name: 'pivot_table.table.label' })).toBeInTheDocument();
-    expect(screen.getAllByRole('row')).toHaveLength(6); // two column-header rows plus four data rows
+    expect(screen.getAllByRole('row')).toHaveLength(6);
     expect(screen.getByTestId('pivot-cell-2-1-0')).toBeEmptyDOMElement();
     expect(screen.getByTestId('pivot-cell-1-0-0')).toHaveTextContent('02:00');
     expect(screen.getByTestId('pivot-cell-1-0-2')).toHaveTextContent('1');

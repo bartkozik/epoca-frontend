@@ -87,7 +87,6 @@ test('report filter facets keep notes as zero hours and skip inactive entries an
   runtime.state.workUnits.push({ ...precise, id: '50000000-0000-4000-8000-000000000099', state: 'Draft' });
 
   const july = await queryFacets(runtime);
-  // Task ID worklog (1 h) and the precise worklog (7:59:36); both legacy notes add no duration.
   expect(facetCells(july.json)).toEqual([
     { clientId: IDS.clientInternal, projectId: IDS.projectAlpha, userId: IDS.user, durationSum: '32376s' },
   ]);

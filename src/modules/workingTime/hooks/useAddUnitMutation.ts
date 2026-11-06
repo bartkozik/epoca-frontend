@@ -3,8 +3,6 @@ import * as requests from '@/modules/workingTime/requests';
 import { RawUnit, UnitDto } from '@/modules/workingTime/types';
 import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
 
-// idempotencyKey is supplied by the caller (Calendar/UnitForm/useWorkUnitSubmission.ts, which wires
-// it from the existing WorkUnitSubmissionIdentity subsystem) -- this hook does not generate one.
 export interface AddUnitInput {
   dto: UnitDto;
   isDraft: boolean;

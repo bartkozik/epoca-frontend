@@ -13,7 +13,6 @@ vi.mock('@/core/api', () => ({
   },
 }));
 
-// api mock, see src/modules/integrationClients/requests.test.ts for the full rationale.
 // eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
 // eslint-disable-next-line vitest/unbound-method
@@ -69,9 +68,6 @@ describe('users requests', () => {
     expect(data).toEqual([rawUser]);
   });
 
-  // GET /users/:id returns a single user, not an array -- getUser previously mistyped this as
-  // UsersReturn (an array), a pre-existing bug never exercised because nothing calls getUser
-  // anywhere in the app.
   it('gets and parses a single user by id, not an array', async () => {
     getMock.mockResolvedValueOnce({ data: rawUser });
 
@@ -96,8 +92,6 @@ describe('users requests', () => {
     expect(data).toEqual(rawUser);
   });
 
-  // updateUser returns Promise<void> (see requests.ts) -- no caller reads the response body, only
-  // the PATCH request itself and the boundary validation it triggers matter here.
   it('updates a user, validating the response as a boundary check', async () => {
     patchMock.mockResolvedValueOnce({ data: rawUser });
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -109,9 +103,6 @@ describe('users requests', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  // Regression guard: useUpdateUserMutation discards this value (see userUpdate.model.ts) -- it
-  // only drives cache invalidation, so an empty/partial PATCH echo must not throw and fail an
-  // edit the backend actually applied. It's still surfaced to the console.
   it('logs instead of throwing when the update response body is empty', async () => {
     patchMock.mockResolvedValueOnce({ data: {} });
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);

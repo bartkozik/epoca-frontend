@@ -6,7 +6,6 @@ import { InvitationRevisionSchema } from './invitationRevision.model';
 export const InvitationDtoSchema = z
   .object({
     id: CanonicalUuidSchema,
-    // V1 history may contain a phone identity. Validate email only on new requests.
     email: z.string(),
     firstName: z.string().nullable(),
     lastName: z.string().nullable(),

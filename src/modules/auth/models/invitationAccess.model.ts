@@ -33,7 +33,6 @@ export const InvitationPasswordSchema = z
       .min(8)
       .max(64)
       .refine((value) => {
-        // Match the backend's UTF-16 Character checks, including Unicode letter properties.
         const characters = value.split('');
 
         return (
@@ -50,8 +49,6 @@ export const InvitationPasswordSchema = z
     message: 'auth.invitation.password_confirmation_error',
   });
 
-// The redirect form needs both fields. Unlike the ordinary SSO health check, an
-// unusable target response is an error, not an instruction to hide the SSO section.
 export const InvitationSamlStartSchema = z
   .object({
     samlRequest: z.string().min(1),

@@ -55,9 +55,6 @@ export const sortOrganizationUsers = <T extends SortableOrganizationUser>(
         compare = a.fullName.localeCompare(b.fullName);
         break;
       case SortColumn.UserRole:
-        // organizationRoles can legitimately be [] (tolerantArray drops an unrecognized wire role
-        // rather than throwing, see organizationDto.model.ts) -- guard both sides so a roles-less
-        // user sorts to one end deterministically instead of throwing mid-render.
         compare = (a.organizationRoles[0] ?? '').localeCompare(b.organizationRoles[0] ?? '');
         break;
       default:

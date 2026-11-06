@@ -1,8 +1,6 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
 
-// lazy() targets each page's concrete file, not its sub-barrel -- see permissionRoute/index.ts's
-// rule 1. A barrel import also loses the page its own named build chunk.
 const Login = lazy(() => import('./login/Login'));
 const PasswordReset = lazy(() => import('./passwordReset/PasswordReset'));
 const PasswordNew = lazy(() => import('./passwordNew/PasswordNew'));

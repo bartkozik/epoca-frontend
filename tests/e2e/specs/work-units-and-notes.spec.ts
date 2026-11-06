@@ -83,7 +83,6 @@ test('CT-508 CT-509 @mr saves past and future notes and excludes them from total
   await expect(page.getByText('Legacy past note', { exact: true })).toBeVisible();
   await expect(page.getByText('Suma: 08:00', { exact: true })).toBeVisible();
 
-  // The report lists worklogs only; notes stay in the calendar.
   await page.goto('/report?startDate=2026-07-01&endDate=2026-07-31');
   await expect(page.getByRole('row', { name: /Task ID worklog/ })).toBeVisible();
   await expect(page.getByRole('row', { name: /Precyzyjne godziny/ })).toBeVisible();
@@ -180,9 +179,6 @@ test('CT-513 @mr shows a keyboard accessible Task ID badge and complete tooltip'
 test.describe('working time to report navigation', () => {
   test('CT-515 @mr never displays 07:60 in calendar or report', async ({ page }) => {
     await page.goto('/working-time');
-    // Wait for the (lazy-loaded) page to actually render before asserting absence, otherwise this
-    // passes trivially on a still-blank page -- and navigating away before the chunk import
-    // settles is exactly what used to race WebKit into a spurious pageerror.
     await expect(page.getByRole('heading', { name: 'Czas pracy', exact: true })).toBeVisible();
     await expect(page.getByText('07:60', { exact: true })).toHaveCount(0);
     await page.goto('/report?startDate=2026-07-01&endDate=2026-07-31');

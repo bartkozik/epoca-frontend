@@ -47,7 +47,6 @@ test('CT-579 @mr defaults and resets to whole months when navigating report peri
     .poll(() => runtime.journal.last('GET', WORK_UNITS_PATH)?.query)
     .toMatchObject({ dateFrom: ['2026-06-01'], dateTo: ['2026-06-30'] });
 
-  // Explicit open ranges must survive URL normalization and a page reload.
   await page.goto('/report?startDate=2026-07-01&navigationMode=fixed-length');
   await expectDateFields(page, 'Od: 01.07.2026', 'Do: 15.07.2026');
   await expect(page).toHaveURL(/navigationMode=fixed-length/);

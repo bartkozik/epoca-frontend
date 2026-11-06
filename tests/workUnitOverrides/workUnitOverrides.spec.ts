@@ -414,13 +414,6 @@ test('reconciles an accepted undo after a lost response without replaying the PO
   expect(
     overrideApi.requests.filter(({ method, pathname }) => method === 'POST' && pathname.endsWith('/override/undo')),
   ).toHaveLength(1);
-  // 3, not 2: React StrictMode's dev-only double-invoke of the mount effect fires two overlapping
-  // loadFresh() calls for the exact same query key, plus one more for the reconciliation reload.
-  // loadFresh cancels any query already in flight under that key before issuing its own fetchQuery
-  // (see useWorkUnitOverride.ts's loadFresh) so a genuinely abandoned session (e.g. a fast
-  // close+reopen of the same work unit) can never adopt another session's stale in-flight
-  // response -- this also disables fetchQuery's dedup of StrictMode's benign double mount, which
-  // is a dev-only cost, not a production regression.
   expect(
     overrideApi.requests.filter(({ method, pathname }) => method === 'GET' && pathname.endsWith('/override')),
   ).toHaveLength(3);
@@ -657,8 +650,6 @@ test('organization departure invalidates a delayed correction response without l
   const release = overrideApi.holdNextCurrentRead();
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await expect(page.getByText('Loading current entry…')).toBeVisible();
-  // Trigger the real workspace-checkout handler directly because the open modal intentionally traps
-  // user focus. This case exercises session invalidation during the pending GET, not click-through UX.
   await page.getByTestId('user-avatar-menu-button').evaluate((button: HTMLButtonElement) => button.click());
   await page
     .getByRole('button', { name: 'Change workspace', exact: true })

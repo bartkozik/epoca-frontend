@@ -21,11 +21,6 @@ const CALENDAR_DATE_PATTERN = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 export const ROUTE_MAX_BYTES = 64 * 1024 * 1024;
 export const FIXED_ALLOWANCE_BYTES = 8_000_000;
 
-// Thrown when the export's byte budget -- derived solely from the backend-reported
-// maxDisplayValueCellCount, not from the user's actual selection -- cannot fit inside
-// ROUTE_MAX_BYTES. Every export fails this way if the backend and this constant's
-// SUPPORTED_DIMENSION_COUNT disagree, so callers can show a diagnosable message instead of a
-// generic failure toast.
 export class PivotExportBudgetMismatchError extends Error {
   constructor(message: string) {
     super(message);
@@ -137,10 +132,6 @@ const canonicalMeasureLabels = (labels: Record<PivotValue, string>): Record<Pivo
   [PIVOT_VALUE.ENTRIES_COUNT]: normalizeAndValidateLabel(labels[PIVOT_VALUE.ENTRIES_COUNT]),
 });
 
-// TaskKey's raw value is unconstrained free text (no maxLength in the backend contract), so unlike
-// every other dimension its value alone -- not just the label -- can push a single entry over
-// MAX_MEMBER_ENTRY_BYTES. Dropping that one entry (instead of throwing) keeps the export alive for
-// every other row/column; the backend falls back to showing the raw value where no label matches.
 const canonicalMemberLabel = ({ key, value, label }: PivotExportMemberLabel): PivotExportMemberLabel | undefined => {
   const canonical = { key, value, label: normalizeAndValidateLabel(label) };
   return utf8ByteLength(JSON.stringify(canonical), MAX_MEMBER_ENTRY_BYTES) > MAX_MEMBER_ENTRY_BYTES

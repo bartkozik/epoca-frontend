@@ -85,14 +85,10 @@ describe('rotate/revoke mutations', () => {
     expect(result.current.error).toEqual({ kind: 'unexpected', status: null });
   });
 
-  // Same rationale as integrationClientUpdateMutation.model.test.ts: organizationSlug now travels
-  // in the mutation's own variables, so a rotate submitted for one organization can't have its
-  // result land in another organization's cache no matter what resolves first.
   it('rotate: writes each result under the organization it was submitted for, even when a rotate for a different organization resolves first', async () => {
     const acmeClient = { clientId, name: 'Reporting warehouse', version: 5 };
     const otherClient = { clientId, name: 'Reporting warehouse', version: 5 };
     const acmeRotate = deferred<{ client: typeof acmeClient; clientSecret: string }>();
-    // Same rationale as integrationClientGetQuery.model.test.ts's overlapping-fetch test.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     rotateIntegrationClientSecretMock.mockImplementation((organizationSlug: string) =>
       organizationSlug === 'acme' ? acmeRotate.promise : Promise.resolve({ client: otherClient, clientSecret: 'x' }),

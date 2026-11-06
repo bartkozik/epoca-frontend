@@ -26,8 +26,6 @@ export function useAssignUserMutation(): UseMutationResult<void, unknown, Assign
   return useMutation({
     mutationFn: ({ userId, projectId, role }: AssignUserInput) =>
       requests.addUser(organizationSlug, userId, projectId, role).then(() => undefined),
-    // ProjectDetails.tsx subscribes via useProjectQuery, so invalidation alone triggers a real
-    // refetch (and re-mirrors onto selectedProject.owners/members) when it's the mounted page.
     onSuccess: (_data, { projectId, userId }) => {
       void queryClient.invalidateQueries({ queryKey: projectQueryKey(organizationSlug, projectId), exact: false });
       void queryClient.invalidateQueries({ queryKey: organizationUserProjectsQueryKey(organizationSlug, userId) });
@@ -59,11 +57,6 @@ export function useUpdateUserRoleMutation(): UseMutationResult<void, unknown, As
   return useMutation({
     mutationFn: ({ userId, projectId, role }: AssignUserInput) =>
       requests.addUser(organizationSlug, userId, projectId, role).then(() => undefined),
-    // Patches selectedProject's role in place for instant feedback -- a refetch round-trip would
-    // visibly revert the Select before resolving. Also invalidates projectQueryKey: since
-    // ProjectDetails.tsx subscribes via useProjectQuery, this triggers a real background refetch
-    // that reconciles the cache shortly after, with no visible flicker (the patch already shows
-    // the same value).
     onSuccess: (_data, { userId, role, projectId }) => {
       const selected = projectsContext.selectedProject;
       if (selected?.id === projectId) {

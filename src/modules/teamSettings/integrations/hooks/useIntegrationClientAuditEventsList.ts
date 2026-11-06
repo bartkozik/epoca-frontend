@@ -22,9 +22,6 @@ export interface IntegrationClientAuditEventsListResult {
   retry: () => void;
 }
 
-// Same "accumulate independently-cached pages via useQueries" shape as useIntegrationClientsList,
-// scoped per client so switching the details selection starts a fresh accumulation -- matches the
-// old store's invalidateAudit-on-ownership-change behavior.
 export function useIntegrationClientAuditEventsList(
   organizationSlug: string,
   clientId: string | null,
@@ -52,7 +49,6 @@ export function useIntegrationClientAuditEventsList(
                 queryClient.removeQueries({ queryKey: integrationClientQueryKey(organizationSlug, clientId) });
                 evictIntegrationClientFromLists(queryClient, organizationSlug, clientId);
               }
-              // Same rationale as useIntegrationClientsList.
               // eslint-disable-next-line @typescript-eslint/only-throw-error
               throw problem;
             }),
@@ -70,14 +66,9 @@ export function useIntegrationClientAuditEventsList(
   }, [queries]);
 
   const firstQuery = queries[0];
-  // The newest page's own data is undefined for the whole duration its fetch is in flight -- reading
-  // count from it alone would flicker to 0 mid-pagination and spuriously hide the "load more" action.
-  // Walk forward and keep the most recent page that actually has data.
   const count = queries.reduce((result, query) => query.data?.count ?? result, 0);
   const failedQuery = queries.find((query) => query.isError);
   const hasError = failedQuery !== undefined;
-  // queryFn only ever throws a normalized IntegrationClientProblem (see normalizeIntegrationClientProblem
-  // above) -- useQueries' default TError generic is Error, not the actual thrown type.
   const error = (failedQuery?.error ?? null) as IntegrationClientProblem | null;
   const isLoading = queries.some((query) => query.isFetching);
   const state: AuditRequestState = hasError

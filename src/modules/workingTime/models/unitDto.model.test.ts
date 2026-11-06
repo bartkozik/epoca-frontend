@@ -95,9 +95,6 @@ describe('RawUnitSchema', () => {
     expect(() => RawUnitSchema.parse({ ...validRawUnit, id: '' })).toThrow();
   });
 
-  // Equivalence with WorkingTimeStore's current filterNonNullItems(data.workUnits.results,
-  // 'projectClient') behavior: a unit whose projectClient is missing must fail to parse (and get
-  // dropped by the enclosing tolerantArray), just as filterNonNullItems would exclude it.
   it('throws when projectClient is missing, matching filterNonNullItems exclusion', () => {
     const { projectClient, ...unitWithoutProjectClient } = validRawUnit;
 

@@ -13,8 +13,6 @@ const DEFAULT_STATUS = ProjectStatus.Active;
 const DEFAULT_SORT_COLUMN = SortColumn.DateAdded;
 const DEFAULT_SORT_DIRECTION = SortDirection.Desc;
 
-// The columns ProjectsBoard actually renders as sortable -- keeps a stray/stale URL value from
-// selecting a column the board has no comparator for.
 const VALID_SORT_COLUMNS: SortColumn[] = [
   SortColumn.Project,
   SortColumn.Client,
@@ -22,8 +20,7 @@ const VALID_SORT_COLUMNS: SortColumn[] = [
   SortColumn.DateAdded,
 ];
 
-// Safari throttles history.replaceState to ~100 calls/30s and throws past that; writing the URL
-// on every keystroke in the search box can hit it. Debounce the URL write, not the input itself.
+// Debounce URL writes to avoid Safari history.replaceState rate limits.
 const QUERY_URL_WRITE_DELAY_MS = 300;
 
 const isProjectStatus = (value: string): value is ProjectStatus =>
@@ -45,8 +42,6 @@ export interface UseProjectsURLParamsReturn {
   resetFilters: () => void;
 }
 
-// Persists the projects list's search/status filters and sort through the URL, mirroring
-// useClientsURLParams.
 export const useProjectsURLParams = (): UseProjectsURLParamsReturn => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -61,22 +56,15 @@ export const useProjectsURLParams = (): UseProjectsURLParamsReturn => {
   const urlQuery = searchParams.get(QUERY_PARAM) ?? '';
   const selectedStatus = parseStatus(searchParams);
 
-  // query is local state so the controlled search input stays instant; the URL write for it is
-  // debounced below instead of happening on every keystroke.
   const [query, setQueryState] = useState(urlQuery);
   const debouncedQuery = useDebounce(query, QUERY_URL_WRITE_DELAY_MS);
 
-  // Snapshots `searchParams` fresh off this render and replaces the URL wholesale -- calling two
-  // setters back-to-back in the same handler would drop the first's change, since the second's
-  // snapshot wouldn't see it yet.
   const updateURL = (mutate: (params: URLSearchParams) => void): void => {
     const nextParams = new URLSearchParams(searchParams.toString());
     mutate(nextParams);
     navigate({ search: nextParams.toString() }, { replace: true });
   };
 
-  // Re-sync local query state when the URL's own param changes from outside typing -- browser
-  // back/forward restoring a previous /projects visit, or resetFilters below.
   useEffect(() => {
     setQueryState(urlQuery);
   }, [urlQuery]);

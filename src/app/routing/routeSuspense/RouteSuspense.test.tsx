@@ -40,7 +40,6 @@ describe('RouteSuspense', () => {
 
     expect(screen.getByText('navbar')).toBeInTheDocument();
     expect(await screen.findByText('lazy page content')).toBeInTheDocument();
-    // Same instance across the fallback -> resolved swap, not a remount (see RouteSuspense.tsx).
     expect(screen.getByText('navbar')).toBeInTheDocument();
     expect(navbarMountCount).toBe(1);
   });
@@ -79,12 +78,8 @@ describe('RouteSuspense', () => {
       </I18nextProvider>,
     );
 
-    // A chunk-load failure must not take the navbar's working links down with it -- Reload
-    // (the fallback's only other option) just reloads the same broken URL.
     expect(screen.getByText('navbar')).toBeInTheDocument();
 
-    // Clicking a Navbar link to an unaffected route must actually recover, not stay stuck on the
-    // chunk-load fallback (RouteSuspense keys ChunkLoadErrorBoundary by pathname for this reason).
     await user.click(screen.getByText('Go to other'));
     expect(await screen.findByText('other page content')).toBeInTheDocument();
   });

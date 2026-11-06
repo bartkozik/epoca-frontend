@@ -9,8 +9,7 @@ vi.mock('@/core/api', () => ({
   default: { post: vi.fn() },
 }));
 
-// The request boundary and input schema are under test here.
-// eslint-disable-next-line vitest/unbound-method -- api.post is a vi.fn() mock, see vi.mock above.
+// eslint-disable-next-line vitest/unbound-method
 const postMock = api.post as MockedFunction<typeof api.post>;
 
 const validRequest = {

@@ -5,7 +5,6 @@ import styles from './ReportExportActions.module.scss';
 
 export interface ReportExportActionsProps {
   className?: string;
-  /** Text before the buttons; defaults to the plain download prompt. */
   label?: string;
   csvLoading: boolean;
   disabled: boolean;

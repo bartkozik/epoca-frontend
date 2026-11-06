@@ -26,11 +26,6 @@ const Authentication = (): JSX.Element | null => {
   const updateSamlConfigMutation = useUpdateSamlConfigMutation();
   const [samlConfigDraft, setSamlConfigDraft] = useState<SamlConfigDraft | null>(null);
 
-  // Seeds the draft only on first load (samlConfigDraft === null), never on a later
-  // background refetch -- otherwise a refetch while the admin is mid-edit (e.g. tab
-  // focus after staleTime) would silently discard their unsaved changes. A successful
-  // save reseeds the draft explicitly (see handleSubmit's onSuccess) with the fresh
-  // server response.
   useEffect(() => {
     const data = samlConfigQuery.data;
     if (!data) return;
@@ -147,7 +142,7 @@ const Authentication = (): JSX.Element | null => {
               onChange={handleSamlConfigPropertyChange('idpSsoUrl')}
             />
 
-            {/* TODO */}
+            { }
             <Select
               readOnly={isDemo}
               className={styles.maxWidth}

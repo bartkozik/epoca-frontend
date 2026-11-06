@@ -5,8 +5,6 @@ import path from 'node:path';
 import test from 'node:test';
 import { ensureLiveArchiveFixture } from './live-fixture.mjs';
 
-// Returns a resolved Promise (not a bare Response) so every fetchImpl call site below can stay
-// a plain `return jsonResponse(...)` -- fetchImpl's declared return type is Promise<Response>.
 const jsonResponse = (body, status = 200) =>
   Promise.resolve(new Response(status === 204 ? null : body === null ? '' : JSON.stringify(body), { status }));
 

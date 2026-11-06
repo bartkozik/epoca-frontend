@@ -127,9 +127,6 @@ const createFixture = (): FilterPanelFixture => {
   return { onApplyFilters };
 };
 
-// Test-only harness standing in for what a migrated parent (Report.tsx / useReportFilters)
-// does in production: re-render FilterPanel with fresh date-range fields after
-// setSelectedDateRange fires, so a second rapid click reads the already-advanced range.
 function StatefulFilterPanel({
   initialFilters,
   onApplyFilters,

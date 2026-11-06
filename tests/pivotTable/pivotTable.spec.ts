@@ -5,8 +5,6 @@ import { parseCsvTable } from './fixtures/parseCsvTable';
 import { parsePivotExportWorkbook } from './fixtures/pivotExportWorkbook';
 
 const defaultPivotUrl = '/pivot-table?startDate=2026-08-01&endDate=2026-08-31';
-// The default layout lists months and people as rows; most scenarios need the users × months matrix, which
-// the shape params in the URL select.
 const usersByMonthShape = 'rows=UserKey&columns=MonthYearKey&values=DurationSum';
 const pivotUrl = `${defaultPivotUrl}&${usersByMonthShape}`;
 const completeMonthAxisUrl = `/pivot-table?startDate=2026-02-01&endDate=2026-08-20&${usersByMonthShape}`;
@@ -264,7 +262,6 @@ test('configuration modal opens over the same-size matrix, returns focus on clos
   await expect(
     dialog.getByRole('region', { name: 'Filters' }).getByText('Drag a field here', { exact: true })
   ).toBeVisible();
-  // The areas are stacked rows at every width; these widths were the former 4-across, 2×2 and stacked boundaries.
   const widths = [1200, 1199, 768, 767];
   const rowByArea = [0, 1, 2, 3];
   for (const width of widths) {
@@ -321,7 +318,6 @@ test('starts with the useful collapsed default and restores the accepted local p
   await expectLatestRows(overrideApi.requests, ['MonthYearKey', 'UserKey', 'ProjectKey']);
   await expect(pivotConfigurationDialog(page)).toHaveCount(0);
 
-  // Without shape params in the address, the stored layout is restored and written into the URL.
   await openPivot(page, defaultPivotUrl);
   await expectLatestRows(overrideApi.requests, ['MonthYearKey', 'UserKey', 'ProjectKey']);
   await expect
@@ -429,8 +425,6 @@ test('bounded menu reorder and real whole-chip pointer drag produce the requeste
   expect(pivotRequests(overrideApi.requests)).toHaveLength(beforePointerReorder + 1);
 
   const beforeCrossAreaMove = pivotRequests(overrideApi.requests).length;
-  // Each area is one row: its name and hint on the left, its fields on the right. Dropping on the name and
-  // hint appends the field to the area.
   await mouseDrag(page.getByRole('button', { name: 'Drag Client' }), columns, columns, { xRatio: 0.3, yRatio: 0.5 });
   await expect.poll(() => pivotRequests(overrideApi.requests).at(-1)?.columns).toEqual(['MonthYearKey', 'ClientKey']);
   expect(pivotRequests(overrideApi.requests)).toHaveLength(beforeCrossAreaMove + 1);
@@ -449,7 +443,6 @@ test('keyboard reorder completes and Escape cancels without changing the accepte
   await project.focus();
   await project.press('Space');
   await expect(page.getByText('Picked up Project.')).toBeVisible();
-  // Fields of an area sit side by side, so the earlier position is to the left.
   await project.press('ArrowLeft');
   await expect(page.getByText('Project over Rows, position 1.')).toBeVisible();
   await project.press('Space');
@@ -941,8 +934,6 @@ test('complete month axis export opens the report-style bottom bar and downloads
     expect(await actions.evaluate((element) => element.parentElement?.id)).toBe('pivot-export-options');
     await expect(options.locator('..')).toHaveCSS('position', 'fixed');
     for (const button of [xlsx, csv]) {
-      // Vite's CSS Modules class names are `_<local>_<hash>_<n>` with no source-file prefix
-      // (CRA's css-loader produced `<File>_<local>__<hash>`) -- match the local class name only.
       await expect(button).toHaveClass(/_root_/);
       await expect(button).toHaveClass(/_size-medium_/);
       await expect(button).toHaveClass(/_contained_/);

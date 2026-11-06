@@ -208,7 +208,6 @@ it('keeps committed invitation recovery across the real anonymous-to-user provid
     accessToken,
     refreshToken: 'refresh',
   });
-  // The saved native method is invoked with its original Storage receiver below.
   // eslint-disable-next-line vitest/unbound-method
   const setItem = Storage.prototype.setItem;
   vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key, value) {
@@ -240,7 +239,6 @@ it.each([
     saveContextOrganizationSlugInLS('old');
   }
   if (invitationReturn) sessionStorage.setItem('epoca:sso-invitation-return', '1');
-  // Preserve the native receiver while failing only the second credential write.
   // eslint-disable-next-line vitest/unbound-method
   const setItem = Storage.prototype.setItem;
   vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key, value) {

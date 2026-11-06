@@ -89,7 +89,6 @@ export const verifyReleaseVersions = async (
 
 export const writeReleaseReceipt = async (): Promise<void> => {
   const environment = releaseEnvironment();
-  // Recheck after all browser flows AND cleanup; a concurrent deployment must fail the gate.
   const versions = await verifyReleaseVersions();
   await mkdir('test-results', { recursive: true, mode: 0o700 });
   await writeFile(

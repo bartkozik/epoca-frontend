@@ -7,9 +7,6 @@ export interface UseSortURLParamsOptions {
   validColumns: SortColumn[];
   defaultColumn: SortColumn;
   defaultDirection: SortDirection;
-  // Some tables' `replace` navigate must forward the current router state (e.g. a details page's
-  // GoBack link reading fromListSearch) instead of dropping it -- callers that don't need this
-  // (the two full list-filter hooks) omit it.
   forwardLocationState?: boolean;
 }
 
@@ -19,9 +16,6 @@ export interface UseSortURLParamsReturn {
   updateSort: (column: SortColumn) => void;
 }
 
-// Shared sort-URL-param logic behind useClientsURLParams/useProjectsURLParams (full list filters)
-// and useAssignedProjectsSortURLParams/useAssignedMembersSortURLParams (single-table sort only,
-// which pass a one-element validColumns and ignore updateSort's column argument).
 export const useSortURLParams = (options: UseSortURLParamsOptions): UseSortURLParamsReturn => {
   const { sortColumnParam, sortDirectionParam, validColumns, defaultColumn, defaultDirection, forwardLocationState } =
     options;

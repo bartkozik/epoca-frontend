@@ -11,10 +11,6 @@ import { UnitWorkspaceProvider } from '@/modules/workingTime/UnitWorkspaceProvid
 import { lazy, Suspense, useEffect } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 
-// Dynamically imported (and only ever rendered in dev, see the `import.meta.env.DEV` check
-// below) so this never ends up in the production bundle -- Rollup can only tree-shake the
-// dynamic import() itself if it's provably unreachable, which `import.meta.env.DEV` (statically
-// replaced with `false` in a production build) guarantees.
 const ReactQueryDevtools = lazy(() =>
   import('@tanstack/react-query-devtools').then((module) => ({ default: module.ReactQueryDevtools })),
 );
@@ -29,7 +25,7 @@ export function SessionProviders(): JSX.Element {
           <UnitWorkspaceProvider>
             <Router />
             <Toasts />
-            {/* E2E runs the dev server; navigator.webdriver keeps devtools from covering app controls. */}
+            {/* E2E uses the dev server; hide devtools so they do not cover controls. */}
             {import.meta.env.DEV && !navigator.webdriver && (
               <Suspense fallback={null}>
                 <ReactQueryDevtools initialIsOpen={false} />

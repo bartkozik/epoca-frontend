@@ -7,8 +7,6 @@ interface ItemLogoImageProps<T> {
   item: T;
 }
 
-// Structurally typed instead of `T extends Client | Organization` — this only ever reads
-// `.logo`/`.name`, so it stays core-pure without needing either module's full entity shape.
 const ItemLogo = <T extends { logo?: string; name: string }>({
   item,
   className,

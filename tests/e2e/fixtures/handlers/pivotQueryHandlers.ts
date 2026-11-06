@@ -1,9 +1,6 @@
 import type { WorldRuntime } from '../../worlds/runtime';
 import type { MockHandler, MockResponse } from './types';
 
-// The report filters load hours per client × project × user with one unfiltered pivot query
-// (FILTER_FACETS_REQUEST in src/modules/reports/filterPanel/filterFacets.ts). Only that exact body is
-// mocked: the strict dispatcher rejects any other pivot layout as a body mismatch.
 export const REPORT_FILTER_FACETS_REQUEST = {
   rows: ['ClientKey', 'ProjectKey', 'UserKey'],
   columns: [],
@@ -12,7 +9,6 @@ export const REPORT_FILTER_FACETS_REQUEST = {
   options: { rowSubtotals: false, columnSubtotals: false, grandTotals: false },
 } as const;
 
-// Backend default for stats.pivot.maxDisplayValueCellCount.
 const MAX_DISPLAY_VALUE_CELL_COUNT = 9_600;
 const MANAGEMENT_ROLES = new Set(['Owner', 'Manager']);
 const PERIOD_QUERY_KEYS = ['dateFrom', 'dateTo'];
@@ -36,7 +32,6 @@ const durationNanos = (duration: string): number => {
   return wholeSeconds * NANOS_PER_SECOND + Number(fraction.padEnd(9, '0') || 0);
 };
 
-// Same text as java.time.Duration#toString, which the backend uses for durationSum.
 const formatDuration = (nanos: number): string => {
   if (nanos === 0) return 'PT0S';
   const totalSeconds = Math.floor(nanos / NANOS_PER_SECOND);
@@ -91,8 +86,6 @@ export const pivotQueryHandlers: MockHandler[] = [
       const period = parsePeriod(request.query);
       if (!period) return { status: 400, json: { message: 'Report filter facets need exactly one valid period' } };
 
-      // Like the backend query: active entries in the period, grouped by effective client, project and
-      // user. Notes keep their group but add no duration, because only worklog durations are summed.
       const groups = new Map<string, FacetGroup>();
       for (const workUnit of runtime.state.workUnits) {
         if (workUnit.state !== 'Active' || workUnit.date < period.dateFrom || workUnit.date > period.dateTo) continue;

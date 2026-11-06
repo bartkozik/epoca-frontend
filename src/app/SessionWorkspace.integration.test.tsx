@@ -72,8 +72,6 @@ const AuthWrapper = ({ children }: PropsWithChildren): JSX.Element => {
   );
 };
 
-// Match App's session boundary: changing user remounts workspace state, refreshing the same
-// user's session preserves it. Both paths must receive the organization selected by SSO.
 const SessionWorkspace = ({ children }: PropsWithChildren): JSX.Element => {
   const { loggedInUser } = useAuth();
   return <WorkspaceProvider key={loggedInUser?.id ?? 'anonymous'}>{children}</WorkspaceProvider>;
@@ -149,8 +147,6 @@ it('keeps an authorized protected route while resolving an organization from its
   expect(screen.queryByText('Redirected home')).not.toBeInTheDocument();
 });
 
-// SSO session/workspace regressions now exercise the actual callback and keyed
-// SessionProviders in SamlInvitation.integration.test.tsx.
 
 it('preserves unsaved project fields and assignments after a successful token refresh', async () => {
   saveSession(accessToken);

@@ -119,8 +119,6 @@ describe('useOrganizationsQuery single-organization auto-select', () => {
 
 describe('useOrganizationsQuery failure stability', () => {
   it('does not retry a failed load, even though the client default would', async () => {
-    // Uses a client with the production retry:1 default (unlike the shared `wrapper` above, which
-    // forces retry:false at the client level) to prove the hook's own `retry: false` wins.
     const productionDefaultsWrapper = ({ children }: { children: ReactNode }): ReactElement => {
       const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1 } } });
       return createElement(QueryClientProvider, { client: queryClient }, children);

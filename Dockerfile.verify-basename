@@ -1,12 +1,4 @@
-# Throwaway image for scripts/verify-container-basename.mjs (real-browser check against a
-# running epoca-frontend container -- see verify_docker_image in .gitlab-ci.yml).
-#
-# Built via `docker build`, not `docker run -v`: this CI job's docker:dind service has its own
-# filesystem, separate from the job container's, so a `-v "$(pwd):/work"` bind mount silently
-# mounts an empty directory there (a known docker-in-docker limitation) -- `docker build` instead
-# streams the build context over the API, which works regardless. Installing just the one
-# `playwright` package here (not a full `yarn install`) is also lighter than mounting the whole
-# workspace only to reach one dependency.
+# Build the verifier image: Docker-in-Docker cannot bind-mount the job container filesystem.
 FROM mcr.microsoft.com/playwright:v1.49.1-noble
 WORKDIR /verify
 COPY scripts/verify-container-basename.mjs .

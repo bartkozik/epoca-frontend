@@ -17,16 +17,11 @@ vi.mock('@/core/providers/toastProvider', () => ({ addToast: vi.fn() }));
 
 const addToastMock = vi.mocked(addToast);
 
-// eslint-disable-next-line vitest/unbound-method -- api.get is a vi.fn() mock, see vi.mock above.
+// eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
 
-// The hook calls i18n.t() directly (not through react-i18next's useTranslation), and nothing in
-// this test imports @/core/i18n/i18n to initialize the real singleton -- stub it to return the
-// key, matching how Login.test.tsx stubs useTranslation's t for the same reason.
 vi.mock('i18next', () => ({ default: { t: (key: string) => key } }));
 
-// A dedicated QueryClient per test (rather than one shared instance) so remount/retry cases can
-// control cache lifetime and retryDelay independently.
 const createWrapper = (queryClient: QueryClient): (({ children }: { children: ReactNode }) => ReactElement) => {
   function Wrapper({ children }: { children: ReactNode }): ReactElement {
     return createElement(QueryClientProvider, { client: queryClient }, children);
@@ -36,10 +31,6 @@ const createWrapper = (queryClient: QueryClient): (({ children }: { children: Re
 
 const wrapper = createWrapper(new QueryClient({ defaultOptions: { queries: { retry: false } } }));
 
-// The hook's own `retry` option always overrides a client's defaultOptions.queries.retry, so
-// retries below are driven purely by the hook -- this client only needs retryDelay:0 to avoid the
-// real exponential backoff slowing the test down. A fresh QueryClient per call so an earlier
-// test's cached error can't leak into a later test.
 const newFastRetryWrapper = (): ReturnType<typeof createWrapper> =>
   createWrapper(new QueryClient({ defaultOptions: { queries: { retryDelay: 0 } } }));
 
@@ -108,7 +99,7 @@ describe('useSamlAuthCheckQuery', () => {
     const { result } = renderHook(() => useSamlAuthCheckQuery(), { wrapper: newFastRetryWrapper() });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(getMock).toHaveBeenCalledTimes(2); // initial attempt + one retry
+    expect(getMock).toHaveBeenCalledTimes(2);
     expect(addToastMock).toHaveBeenCalledTimes(1);
     expect(addToastMock).toHaveBeenCalledWith(
       expect.objectContaining({ content: 'toast_message.saml.auth_check_temporarily_unavailable', type: 'error' }),
@@ -121,7 +112,7 @@ describe('useSamlAuthCheckQuery', () => {
     const { result } = renderHook(() => useSamlAuthCheckQuery(), { wrapper });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(getMock).toHaveBeenCalledTimes(1); // no retry for a definitive 4xx
+    expect(getMock).toHaveBeenCalledTimes(1);
     expect(addToastMock).toHaveBeenCalledTimes(1);
     expect(addToastMock).toHaveBeenCalledWith(
       expect.objectContaining({ content: 'toast_message.saml.auth_check_unavailable', type: 'error' }),
@@ -142,8 +133,6 @@ describe('useSamlAuthCheckQuery', () => {
   });
 
   it('still shows a toast for a ZodError from a malformed 200 body', async () => {
-    // Top-level shape failure (not one of the tolerant/.catch() fields), so SamlAuthCheckSchema
-    // throws a ZodError -- a non-AxiosError, which showModuleErrorToast must still surface.
     getMock.mockResolvedValue({ data: null });
 
     const { result } = renderHook(() => useSamlAuthCheckQuery(), { wrapper: newFastRetryWrapper() });

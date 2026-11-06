@@ -15,12 +15,8 @@ vi.mock('@/core/api', () => ({
 
 vi.mock('@/core/providers/toastProvider', () => ({ addToast: vi.fn() }));
 
-// requests.ts calls i18n.t() directly (not through react-i18next's useTranslation), and nothing in
-// this test initializes the real i18n singleton -- stub it to return the key, matching
-// useSamlAuthCheckQuery.test.ts's precedent for the same reason.
 vi.mock('i18next', () => ({ default: { t: (key: string) => key } }));
 
-// api mock, see src/modules/integrationClients/requests.test.ts for the full rationale.
 // eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
 // eslint-disable-next-line vitest/unbound-method
@@ -84,7 +80,6 @@ describe('clients requests', () => {
   });
 
   it('drops a client with a malformed load-bearing field instead of rejecting the whole list', async () => {
-    // mockResolvedValue (not Once): the page stays incomplete after the drop, so getClients retries.
     getMock.mockResolvedValue({
       data: { count: 2, results: [rawClient, { ...rawClient, id: undefined }] },
     });
@@ -148,8 +143,6 @@ describe('clients requests', () => {
     expect(data).toEqual(rawClient);
   });
 
-  // editClient returns Promise<void> (see requests.ts) -- only the PATCH request itself and the
-  // boundary validation it triggers matter here.
   describe('editClient response validation', () => {
     let consoleErrorSpy: MockInstance;
 
@@ -176,9 +169,6 @@ describe('clients requests', () => {
       expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
-    // Regression guard: an empty/partial PATCH echo (e.g. 204) must not throw and fail an edit the
-    // backend actually applied -- see clientUpdate.model.ts. It's still logged, so a persistently
-    // malformed echo stays observable.
     it('logs instead of throwing when the response body is empty', async () => {
       patchMock.mockResolvedValueOnce({ data: {} });
 

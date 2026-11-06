@@ -5,13 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import WorkspaceSelect from './WorkspaceSelect';
 
-// Regression test for a CT-561 code-review finding: WorkspaceSelect used to call both
-// useOrganizationsQuery() and a second hook that called useOrganizationsQuery() again internally,
-// creating two independent useQuery subscriptions on the same key -- each with its own copy of the
-// error-handling useEffect inside useOrganizationsQuery, so a single failed load fired the toast/
-// logout side effect twice. This renders the REAL hook (not a mocked model, unlike WorkspaceSelect.test.tsx)
-// to prove the fix: WorkspaceSelect now derives organizationLoadFailure from its own single `query`
-// instead of a second hook call.
 
 vi.mock('react-router-dom', async () => ({
   ...(await vi.importActual('react-router-dom')),
@@ -77,7 +70,6 @@ describe('WorkspaceSelect error side effect dedupe', () => {
     renderWorkspaceSelect();
 
     await waitFor(() => expect(showToastForErrorMock).toHaveBeenCalled());
-    // Give any second, duplicate effect run a chance to fire before asserting the final count.
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(showToastForErrorMock).toHaveBeenCalledTimes(1);

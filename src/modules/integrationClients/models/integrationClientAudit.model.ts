@@ -79,8 +79,6 @@ export const IntegrationClientAuditEventSchema = z
 
 export type IntegrationClientAuditEvent = z.infer<typeof IntegrationClientAuditEventSchema>;
 
-// Audit pages use the same strict contract as client pages: do not drop malformed events or
-// accept known sensitive fields on the response envelope.
 export const IntegrationClientAuditPageSchema = z
   .object({
     count: z.number().int().nonnegative(),

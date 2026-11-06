@@ -8,8 +8,6 @@ import AssignUserForm from './AssignUserForm';
 vi.mock('@/modules/projects/requests', () => ({ addUser: vi.fn() }));
 const addUserMock = requests.addUser as unknown as ReturnType<typeof vi.fn>;
 
-// showModuleErrorToast (used on mutation error) reads the real rootStore singleton -- stub it so
-// an onError path in these tests doesn't crash on an unmocked export.
 let testContexts: Record<string, unknown> = {};
 vi.mock('@/modules/auth/AuthProvider', () => ({ useAuth: () => testContexts.authContext }));
 vi.mock('@/modules/organizations/WorkspaceProvider', () => ({

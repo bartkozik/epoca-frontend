@@ -111,9 +111,6 @@ function ClientsBoard({
             },
           },
         );
-        // Matches the pre-migration store method's .finally(), which always closed the
-        // confirmation modal regardless of outcome -- this is a confirmation dialog, not the
-        // toast, so it closes once the action fires rather than waiting on the async result.
         setIsArchiveClientModalOpen(false);
         setSelectedClientId(null);
       },

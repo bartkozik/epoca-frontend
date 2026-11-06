@@ -4,12 +4,10 @@ import { useTranslation } from 'react-i18next';
 import type { InvitationDto } from '../models/invitationDto.model';
 import { invitationDeliveryToast } from '../utils/invitation-delivery-toast';
 
-// PostgreSQL rounds nanoseconds to microseconds; the response and persisted read
-// can straddle a millisecond boundary while still describing the same attempt.
+// Database microsecond rounding can shift the same delivery attempt across a millisecond boundary.
 const sameAttempt = (left: string | null | undefined, right: string | null | undefined): boolean =>
   left === right || (!!left && !!right && Math.abs(Date.parse(left) - Date.parse(right)) <= 1);
 
-// This session observes only sends initiated here, never historical failures on page load.
 export function useInvitationDeliveryNotifications(
   invitations: InvitationDto[] | undefined,
 ): (result: InvitationDto) => void {
@@ -45,7 +43,6 @@ export function useInvitationDeliveryNotifications(
   return useCallback(
     (result: InvitationDto) => {
       if (!active.current) return;
-      // Mutation invalidation can finish after the mail provider has already answered.
       const refreshed = latest.current?.find(
         (item) => item.id === result.id && sameAttempt(item.delivery.lastAttemptAt, result.delivery.lastAttemptAt),
       );

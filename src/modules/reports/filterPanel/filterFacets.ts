@@ -1,7 +1,6 @@
 import { PIVOT_KEY } from '@/modules/reports/pivotTable/constants';
 import type { PivotCell, WorkUnitPivotQueryRequest } from '@/modules/reports/pivotTable/types';
 
-/** Hours per client × project × user for the report period; the base for every filter's option hours. */
 export const FILTER_FACETS_REQUEST: WorkUnitPivotQueryRequest = {
   rows: [PIVOT_KEY.CLIENT, PIVOT_KEY.PROJECT, PIVOT_KEY.USER],
   columns: [],
@@ -51,10 +50,6 @@ const add = (totals: Map<string, number>, id: string | null, seconds: number): v
   if (id !== null) totals.set(id, (totals.get(id) ?? 0) + seconds);
 };
 
-/**
- * Hours each option would contribute given the OTHER two filters, ignoring the option's own filter.
- * So picking a user never hides other users, and the result does not depend on the order of picks.
- */
 export const computeFilterFacets = (cells: readonly FacetCell[], selection: FacetSelection): FilterFacets => {
   const facets: FilterFacets = { clients: new Map(), projects: new Map(), users: new Map() };
   cells.forEach(({ clientId, projectId, userId, seconds }) => {
@@ -68,7 +63,6 @@ export const computeFilterFacets = (cells: readonly FacetCell[], selection: Face
   return facets;
 };
 
-/** Report-style hours, e.g. 05:00 or 193:15. */
 export const formatFacetHours = (seconds: number): string => {
   const totalMinutes = Math.round(seconds / 60);
   const hours = Math.floor(totalMinutes / 60);

@@ -30,7 +30,6 @@ interface OverrideHistoryResult {
   retry: () => Promise<void>;
 }
 
-/** Shared by the expandable history and the badge's lazy hover/focus/touch content. */
 export function useWorkUnitOverrideHistory(options: OverrideHistoryOptions): OverrideHistoryResult {
   const workspace = useWorkspace();
   const queryClient = useQueryClient();
@@ -73,16 +72,6 @@ export function useWorkUnitOverrideHistory(options: OverrideHistoryOptions): Ove
       generation.current === session.generation &&
       workspace.contextOrganizationSlug === organizationSlug;
     try {
-      // staleTime is pinned to 0: each lazy-load session (badge hover, then a later focus) is
-      // expected to hit the network again even for an identical (version, page) key -- the
-      // history is backend-immutable, but the underlying worklog can be corrected between two
-      // sessions without upToVersion changing in a way this snapshot would see, and the shared
-      // client's 60s default would otherwise silently serve a stale page on that second session.
-      // retry is pinned to false: the shared client's default (retry: 1) would silently retry
-      // even a definitively-terminal error (e.g. a 403) once before isTerminalOverrideProblem
-      // below ever runs, adding a guaranteed-useless request and ~1s of delay before session-end
-      // fires -- matching the sibling useWorkUnitOverride.ts's loadFresh, which pins retry: false
-      // for the same reason.
       const data = await queryClient.fetchQuery({
         queryKey: workUnitOverrideHistoryQueryKey(organizationSlug, workUnitId, session.upToVersion, session.nextPage),
         queryFn: () =>
@@ -141,13 +130,11 @@ export function useWorkUnitOverrideHistory(options: OverrideHistoryOptions): Ove
       generation.current += 1;
       snapshot.current = null;
     };
-    // currentVersion is deliberately pinned until this open session is invalidated.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionKey]);
   useEffect(() => {
     if (autoLoadRetainedEntries && isOpen && canViewHistory && hasMore && !loading && !error && entries.length === 0)
       void load(actionGeneration);
-    // load is intentionally recreated on each render; this effect reacts to the page state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoLoadRetainedEntries, isOpen, canViewHistory, hasMore, loading, error, entries.length, actionGeneration]);
   return {

@@ -33,7 +33,6 @@ const WorkUnitOverrideForm = ({
 
   const workspace = useWorkspace();
   const submission = useWorkUnitSubmission();
-  // Source edits stay mounted across override refreshes and conflict reconciliation.
   const [initial] = useState(c.base!);
   const [unit] = useState(() =>
     modelUnit(
@@ -125,7 +124,6 @@ const WorkUnitOverrideForm = ({
           (auth.loggedInUser?.id !== current.userId && !auth.hasAccess(ROLE_PERMISSIONS.Owner))
         )
           return;
-        // Effective project/task never reach the source PATCH; they use the audited API above.
         const sourceDto = {
           projectId: current.projectClient.projectId,
           taskId: current.taskId ?? '',

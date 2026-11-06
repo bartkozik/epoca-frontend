@@ -1,7 +1,3 @@
-// This file imports .ts sources directly, so plain `node --test` fails with
-// ERR_MODULE_NOT_FOUND. Run it via the CI-equivalent loader command instead (see
-// .gitlab-ci.yml): `node --no-warnings --experimental-strip-types
-// --experimental-loader ./scripts/e2e/ts-resolve-loader.mjs --test <this file>`.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
@@ -34,8 +30,6 @@ const guardedEnvironment = {
   PLAYWRIGHT_LIVE_EMPLOYEE_PASSWORD: 'contract-password',
 };
 
-// Returns a resolved Promise (not a bare Response) so every fetcher call site below can stay
-// a plain `return jsonResponse(...)` -- fetcher's declared return type is Promise<Response>.
 const jsonResponse = (status, body) =>
   Promise.resolve(new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }));
 

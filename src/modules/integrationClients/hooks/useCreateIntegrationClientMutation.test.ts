@@ -76,13 +76,9 @@ describe('useCreateIntegrationClientMutation', () => {
     expect(result.current.error).toEqual({ kind: 'name-conflict', status: 409 });
   });
 
-  // Same rationale as integrationClientUpdateMutation.model.test.ts: organizationSlug now travels
-  // in the mutation's own variables, so a create submitted for one organization can't have its
-  // result land in another organization's cache no matter what resolves first.
   it('writes each result under the organization it was submitted for, even when a create for a different organization resolves first', async () => {
     const otherCreated = { clientId: 'epoca_oauth_client_v1_other', name: validInput.name, version: 1 };
     const acmeSave = deferred<{ client: typeof createdClient; clientSecret: string }>();
-    // Same rationale as integrationClientGetQuery.model.test.ts's overlapping-fetch test.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     createIntegrationClientMock.mockImplementation((organizationSlug: string) =>
       organizationSlug === 'acme' ? acmeSave.promise : Promise.resolve({ client: otherCreated, clientSecret: 'x' }),
@@ -104,9 +100,6 @@ describe('useCreateIntegrationClientMutation', () => {
   });
 });
 
-// Sanity check that integrationClientsQueryKey's prefix matches the string this test hard-codes
-// above -- if the key shape ever changes, this fails loudly instead of the invalidate assertion
-// silently drifting from reality.
 describe('query key prefix', () => {
   it('starts with "integrationClients"', () => {
     expect(integrationClientsQueryKey('acme', { pageNumber: 1, pageSize: 20 })[0]).toBe('integrationClients');

@@ -17,8 +17,6 @@ const scenarios = [
 
 const LONG_LABEL = `Option${'WithAVeryLongUnbrokenName'.repeat(4)}`;
 
-// Mirrors the rows MultiSearch renders: group headings, options with a check box, label, secondary
-// text and hours, the divider, and the archived toggle.
 const option = (label: string, withHours: boolean, extraClass = ''): string => `
   <li class="option ${extraClass}" role="option" aria-selected="false">
     <span class="box" aria-hidden="true"></span>

@@ -3,7 +3,6 @@ export enum SortDirection {
   Desc = 'Desc',
 }
 
-//Add to translations files common.{enumKeyName} if add SortColumn enum
 export enum SortColumn {
   Client = 'Client',
   DateAdded = 'Date added',

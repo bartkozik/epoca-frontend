@@ -11,8 +11,6 @@ const ClientsHarness = (): JSX.Element => {
   const navigate = useNavigate();
   const params = useClientsURLParams();
 
-  // Counts actual URL commits (not renders/keystrokes) so a test can assert the debounced query
-  // write only lands once, instead of once per keystroke.
   const searchChangesRef = useRef(0);
   const prevSearchRef = useRef(location.search);
   if (location.search !== prevSearchRef.current) {
@@ -35,8 +33,8 @@ const ClientsHarness = (): JSX.Element => {
       <button onClick={() => params.setSelectedFilterType(ClientFilterType.Internal)}>set internal</button>
       <button onClick={() => params.updateSort(SortColumn.DateAdded)}>sort by date added</button>
       <button onClick={() => params.resetFilters()}>reset</button>
-      {/* mirrors the real app: clicking into a client's details page is a push navigation away
-          from /clients, unrelated to the replace-based filter updates above */}
+      {
+}
       <button onClick={() => navigate('/clients/client-1/client-details')}>open client details</button>
     </>
   );
@@ -109,7 +107,6 @@ describe('useClientsURLParams', () => {
 
     await user.click(screen.getByRole('button', { name: 'set query' }));
 
-    // query itself (the controlled input's value) updates instantly, ahead of the URL
     expect(screen.getByTestId('query')).toHaveTextContent('acme');
     await waitFor(() => expect(screen.getByTestId('search')).toHaveTextContent('q=acme'));
   });
@@ -133,9 +130,6 @@ describe('useClientsURLParams', () => {
 
     await user.click(screen.getByRole('button', { name: 'sort by date added' }));
 
-    // updateSort toggles direction (default Desc -> Asc) and sets the column together -- a naive
-    // implementation with two separate setters called back-to-back would lose one of these, since
-    // each would build its next params off the same pre-navigate snapshot.
     expect(screen.getByTestId('sort-column')).toHaveTextContent(SortColumn.DateAdded);
     expect(screen.getByTestId('sort-direction')).toHaveTextContent(SortDirection.Asc);
     expect(screen.getByTestId('search')).toHaveTextContent('sortColumn=Date+added');
@@ -152,8 +146,6 @@ describe('useClientsURLParams', () => {
     expect(screen.getByTestId('status')).toHaveTextContent(ClientStatus.Active);
   });
 
-  // Sort isn't one of the "filters" this reset button clears -- matches the pre-migration
-  // ClientsStore, where resetSortBy was a separate method never called by the filter-reset action.
   it('leaves the sort untouched when resetting filters', async () => {
     const user = userEvent.setup();
     renderApp('/clients?status=Archived');
@@ -176,9 +168,6 @@ describe('useClientsURLParams', () => {
     expect(screen.getByTestId('search')).toHaveTextContent('unrelated=keep-me');
   });
 
-  // Regression guard for the reported bug: Clients.tsx used to hold query/status/type in local
-  // useState, so navigating /clients -> /clients/:id/:tab -> back to /clients (a full
-  // unmount/remount of Clients.tsx) reset them to defaults.
   it('restores a selected filter after navigating to client details and back', async () => {
     const user = userEvent.setup();
     renderApp('/clients');
@@ -194,9 +183,6 @@ describe('useClientsURLParams', () => {
     expect(await screen.findByTestId('status')).toHaveTextContent(ClientStatus.Archived);
   });
 
-  // Regression guard for the reported bug: ClientsBoard used to hold sortColumn/sortDirection in
-  // local useState, so navigating /clients -> /clients/:id/:tab -> back to /clients (a full
-  // unmount/remount of Clients.tsx, and with it ClientsBoard) reset the sort to its default.
   it('restores the sort after navigating to client details and back', async () => {
     const user = userEvent.setup();
     renderApp('/clients');
@@ -247,9 +233,7 @@ describe('useClientsURLParams', () => {
       fireEvent.change(input, { target: { value: 'acm' } });
       fireEvent.change(input, { target: { value: 'acme' } });
 
-      // the controlled input/query reflects the last keystroke instantly
       expect(screen.getByTestId('query')).toHaveTextContent('acme');
-      // but nothing has been written to the URL yet
       expect(screen.getByTestId('search')).toHaveTextContent('');
       expect(screen.getByTestId('search-changes')).toHaveTextContent('0');
 

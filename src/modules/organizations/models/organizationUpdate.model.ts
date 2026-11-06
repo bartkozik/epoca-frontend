@@ -1,8 +1,6 @@
 import { MAX_NAME_LENGTH } from '@/core/utils/constants';
 import { z } from 'zod';
 
-// No edit-organization form exists yet in the app -- built ahead of that UI per the ticket's AC,
-// same as organizationCreate.model.ts.
 export const OrganizationUpdateRequestSchema = z.object({
   name: z
     .string()

@@ -1,4 +1,3 @@
-// Explicit release gates are opt-in and deliberately excluded from the ordinary MR/full inventory.
 export const RELEASE_VERIFICATION_COVERAGE = [
   {
     kind: 'gate',

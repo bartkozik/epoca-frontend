@@ -262,7 +262,6 @@ test.describe('invitation recipient', () => {
     const user = JSON.parse(Buffer.from(segments[1], 'base64url').toString()) as { exp: number };
     user.exp = 1;
     const expired = `${segments[0]}.${Buffer.from(JSON.stringify(user)).toString('base64url')}.${segments[2]}`;
-    // Seed after the anonymous fixture has initialized; init script ordering is unspecified.
     await page.goto('/invitations/sign-in?joined=1');
     await expect(page.getByTestId('loginEmailInput')).toBeVisible();
     await page.evaluate(
@@ -274,7 +273,6 @@ test.describe('invitation recipient', () => {
       },
       { expired, user },
     );
-    // Match InvitationAccessRouter: rejected bearer credentials prevent cookie creation.
     await page.route('**/__e2e_api/invitation-access/exchange', async (route) => {
       if (route.request().headers().authorization === `Bearer ${expired}`)
         await route.fulfill({
@@ -316,7 +314,6 @@ test.describe('invitation recipient', () => {
   });
   test('CT-208 @mr recovers normal SSO when refresh token storage fails', async ({ page, runtime }) => {
     await page.addInitScript(() => {
-      // Invoke the saved native method with the original Storage receiver below.
       // eslint-disable-next-line vitest/unbound-method
       const setItem = Storage.prototype.setItem;
       Storage.prototype.setItem = function (key: string, value: string): void {

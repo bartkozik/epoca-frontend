@@ -32,8 +32,8 @@ describe('guarded', () => {
 
     render(
       <MemoryRouter initialEntries={['/owner-only']}>
-        {/* PermissionRoute is lazy() (see permissionRoute/index.ts) so guarded()'s element needs a
-            Suspense boundary here, same as it gets from RouteSuspense in the real route tree. */}
+        {
+}
         <Suspense fallback={null}>
           <RoutesUnderTest />
         </Suspense>

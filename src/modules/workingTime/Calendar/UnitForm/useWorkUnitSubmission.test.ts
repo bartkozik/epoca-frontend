@@ -35,9 +35,6 @@ vi.mock('@/core/utils/helpers/show-toasts-for-error', () => ({
   showToastForError: vi.fn(),
 }));
 
-// useEditUnitMutation's onSuccess (unitEdit.model.ts) calls the real getReportedUnits -- without
-// this mock it hits the requests.ts mock below (no getReportedUnits export) and throws, turning a
-// successful edit into a rejected mutation.
 vi.mock('@/modules/reports/hooks/useReportedUnits', () => ({ getReportedUnits: vi.fn() }));
 
 vi.mock('../../requests', () => ({
@@ -146,8 +143,6 @@ const getAddKey = (callIndex: number): string => addUnitMock.mock.calls[callInde
 const getEditKey = (callIndex: number): string => editUnitMock.mock.calls[callIndex][4];
 
 let queryClient: QueryClient;
-// createElement instead of JSX: this file stays `.ts` so its name matches the `useXxx` hook
-// filename convention (see unitCreate.model.test.ts for the same wrapper).
 const wrapper = ({ children }: { children: ReactNode }): ReactElement =>
   createElement(QueryClientProvider, { client: queryClient }, children);
 
@@ -313,7 +308,6 @@ describe('useWorkUnitSubmission error classification', () => {
     expect(getAddKey(1)).not.toBe(getAddKey(0));
     expect(showToastForErrorMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        // Vitest matchers are intentionally typed as `any`.
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         errorMessageMap: expect.objectContaining({
           400: 'toast_message.working_time.add_new_unit_no_duration_error',
@@ -502,7 +496,6 @@ describe('useWorkUnitSubmission retry blocking', () => {
 
     expect(result.current.isRetryBlocked).toBe(false);
     expect(result.current.retryBlockReason).toBeNull();
-    // The stale session still refreshes and toasts -- only the block state is session-gated.
     expect(onBlocked).toHaveBeenCalledTimes(1);
     expect(showToastForErrorMock).toHaveBeenCalledTimes(1);
     expect(result.current.isSubmitting).toBe(false);

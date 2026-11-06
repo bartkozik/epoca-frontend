@@ -52,10 +52,6 @@ const mockApi = {
   },
 };
 
-// These are populated by the `beforeAll` below. A top-level `await import(...)` isn't supported by
-// this project's `tsconfig.json` (`module: commonjs`, frozen for this migration), so the dynamic
-// imports needed to read back each `vi.mock(...)` factory's exports are scoped inside an async
-// hook instead of at module level.
 let mockCreate: Mock;
 let MockAxiosHeaders: typeof import('axios').AxiosHeaders;
 let mockGetRefreshedAccessToken: Mock;
@@ -344,9 +340,6 @@ describe('Api', () => {
     }
 
     expect(rejectedError).toBe(error);
-    // `error.response.data` has a getter that throws if accessed, so these assertions check
-    // call-argument identity (`toBe`) rather than `toHaveBeenCalledWith`'s deep equality, which
-    // would otherwise traverse into `.data` and trip the getter even though the reference matches.
     expect(mockShouldSendResponseErrorLog).toHaveBeenCalledTimes(1);
     expect(mockShouldSendResponseErrorLog.mock.calls[0][0]).toBe(error);
     expect(readResponseBody).not.toHaveBeenCalled();
@@ -394,8 +387,6 @@ describe('Api', () => {
 
     await expect(invokeResponseErrorInterceptor(error)).rejects.toBe(error);
 
-    // See the identity-check note above: `error.response.data`'s getter throws, so `toBe` is used
-    // instead of `toHaveBeenCalledWith` to avoid a deep-equality traversal into `.data`.
     expect(mockSendErrorLogToServer).not.toHaveBeenCalled();
     expect(mockHandleConnectionError).toHaveBeenCalledTimes(1);
     expect(mockHandleConnectionError.mock.calls[0][0]).toBe(error);

@@ -156,7 +156,6 @@ export const E2E_SUITE_REGISTRY = {
       live: {
         file: 'playwright.invitation-live.config.ts',
         tagPolicy: 'primary-tag',
-        // Explicit local invocation against InvitationBrowserTestMain; never the staging live job.
         targets: [{ project: 'invitation-live-chromium', tier: 'live', ciJob: 'manual-owned-runtime' }],
       },
     },

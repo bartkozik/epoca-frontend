@@ -1,8 +1,4 @@
 import { ApiResponse } from '@/core/api';
-// CT-540: canonical definitions live in core/models/enums (core/theme's status/type selects and
-// core/utils/optionTypes.ts build dropdown options directly off these enums, so core can't just
-// import this file). Re-exported here so every existing `from '@/modules/clients/types'` site keeps
-// working unchanged.
 import { ClientFilterType, ClientStatus, ClientType } from '@/core/models/enums';
 import { Project } from '@/modules/projects/types';
 import { z } from 'zod';

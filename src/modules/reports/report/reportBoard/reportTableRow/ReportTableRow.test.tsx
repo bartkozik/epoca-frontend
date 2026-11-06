@@ -149,8 +149,6 @@ describe('ReportTableRow entry types', () => {
     expect(screen.queryByText('CT-509')).not.toBeInTheDocument();
   });
   it('keeps source-less rows visible with safe unknown effective values and no ordinary edit entry point', () => {
-    // The schema now rejects a null projectClient/effectiveProjectClient; this only
-    // exercises the component's defensive fallback, hence the cast.
     renderRow(
       createUnit({
         projectClient: null,

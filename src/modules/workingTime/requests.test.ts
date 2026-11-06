@@ -16,19 +16,15 @@ vi.mock('@/core/api/Api', () => ({
 
 vi.mock('@/core/providers/toastProvider', () => ({ addToast: vi.fn() }));
 
-// requests.ts calls i18n.t() directly (not through react-i18next's useTranslation), and nothing in
-// this test initializes the real i18n singleton -- stub it to return the key, matching
-// clients/requests.test.ts's precedent for the same reason.
 vi.mock('i18next', () => ({ default: { t: (key: string) => key } }));
 
-// api mock, see src/modules/integrationClients/requests.test.ts for the full rationale.
 // eslint-disable-next-line vitest/unbound-method
 const deleteMock = api.delete as MockedFunction<typeof api.delete>;
-// eslint-disable-next-line vitest/unbound-method -- see deleteMock above.
+// eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
-// eslint-disable-next-line vitest/unbound-method -- see deleteMock above.
+// eslint-disable-next-line vitest/unbound-method
 const patchMock = api.patch as MockedFunction<typeof api.patch>;
-// eslint-disable-next-line vitest/unbound-method -- see deleteMock above.
+// eslint-disable-next-line vitest/unbound-method
 const postMock = api.post as MockedFunction<typeof api.post>;
 const addToastMock = addToast as MockedFunction<typeof addToast>;
 
@@ -62,10 +58,6 @@ const rawUnitResults = {
   draftIds: [],
 };
 
-// RawReportedUnitSchema.projectClient reuses WorkUnitOverrideResponseSchema's
-// WorkUnitProjectClientSchema (see models/unitDto.model.ts), which validates clientId/projectId as
-// CanonicalUuidSchema -- unlike RawUnitSchema's ClientProjectSchema, plain strings like 'client-1'
-// don't pass, so reported-unit fixtures need real UUIDs.
 const rawReportedProjectClient = {
   projectName: 'Epoca',
   clientId: '123e4567-e89b-12d3-a456-426614174000',
@@ -121,8 +113,6 @@ describe('working time requests', () => {
 
     it('drops a unit with a malformed load-bearing field instead of rejecting the whole page', async () => {
       const { projectClient, ...unitWithoutProjectClient } = rawUnit;
-      // mockResolvedValue (not Once): count (2) still exceeds the one valid result after the
-      // malformed entry is dropped, so getUnits retries once against the same data.
       getMock.mockResolvedValue({
         data: {
           ...rawUnitResults,
@@ -169,8 +159,6 @@ describe('working time requests', () => {
 
     it('drops a unit with a malformed load-bearing field instead of rejecting the whole page', async () => {
       const { projectClient, ...unitWithoutProjectClient } = rawReportedUnit;
-      // mockResolvedValue (not Once): count (2) still exceeds the one valid result after the
-      // malformed entry is dropped, so getReportedUnits retries once against the same data.
       getMock.mockResolvedValue({
         data: {
           ...rawReportedUnitResults,
@@ -265,8 +253,6 @@ describe('working time requests', () => {
       );
     });
 
-    // editUnit returns Promise<void> (see requests.ts) -- no caller reads the response body, only
-    // the PATCH request itself and the boundary validation it triggers matter here.
     it('validates the response as a boundary check without throwing', async () => {
       patchMock.mockResolvedValueOnce({ data: rawUnit });
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -277,8 +263,6 @@ describe('working time requests', () => {
       consoleErrorSpy.mockRestore();
     });
 
-    // Regression guard: nobody reads editUnit's resolved value, so a malformed PATCH echo must be
-    // logged, never thrown -- throwing here would fail an edit the backend actually applied.
     it('logs, but does not throw, when the response echo is malformed', async () => {
       patchMock.mockResolvedValueOnce({ data: { garbage: true } });
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);

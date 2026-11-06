@@ -4,11 +4,8 @@ import { shortenTextToLength } from '@/core/utils/helpers';
 import styles from './FilterPanelTag.module.scss';
 
 interface FilterPanelTagProps {
-  /** Filter category, e.g. "User". */
   category: string;
-  /** Selected value(s), e.g. "Adam Jankowski +1". */
   value: string;
-  /** Accessible name of the remove button, e.g. "Remove user filter". */
   removeLabel: string;
   onRemove: () => void;
 }

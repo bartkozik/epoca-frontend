@@ -19,16 +19,7 @@ export const isAccessTokenValid = (session: Session | null): boolean => {
   return dayjs(currentTimeInMs).isSameOrBefore(accessTokenExpTimeInMs, 'minute');
 };
 
-// Never throws: returns null for a malformed JWT (wrong number of segments, invalid base64,
-// invalid UTF-8, or invalid JSON) instead of letting split/atob/decodeURIComponent/JSON.parse
-// throw uncaught. This is the JWT-decode half of decodeSessionFromToken below.
 const decodeJwtPayload = (token: string): unknown => {
-  // Guards the "never throws" guarantee unconditionally, not just for every CURRENT caller: this
-  // function's own `token: string` parameter type only holds at compile time -- the accessToken/
-  // refreshToken values callers pass in ultimately come from an HTTP response body. AuthTokensSchema
-  // (modules/auth/models/authTokensDto.model.ts) validates that those fields are strings, but not
-  // that they're well-formed JWTs, so a malformed backend response reaching here as an unparseable
-  // string is a real, reachable runtime case this type annotation alone cannot prevent.
   if (typeof token !== 'string') return null;
 
   const segments = token.split('.');
@@ -48,21 +39,14 @@ const decodeJwtPayload = (token: string): unknown => {
   }
 };
 
-// JWT -> Session, never throws. Structural failures (missing token/user.id/user.exp) return
-// null; value-level tolerance (unrecognized roles/identity types) is handled inside
-// sessionSchema itself, one level down, and never surfaces as a null here.
 export const decodeSessionFromToken = (token: string): Session | null => {
   const decoded = decodeJwtPayload(token);
   if (decoded === null) return null;
 
-  // Only `user.roles`' per-entry shape and the structural core (token/user.id/user.exp) are
-  // Zod-validated. Every other field is trusted structurally from the real JWT payload, matching
-  // the backend contract this design's spec verified directly against the backend source.
   const validated = sessionSchema.safeParse({ token, user: decoded });
   return validated.success ? validated.data : null;
 };
 
-// Access token
 export const getAPICredentials = (): string | null => {
   return localStorage.getItem(LOCAL_STORAGE_AUTH_NAME.ACCESS_TOKEN);
 };
@@ -98,9 +82,6 @@ export const readStoredSession = (): StoredSessionResult => {
   const validated = sessionSchema.safeParse(parsed);
   if (validated.success) return { status: 'valid', session: validated.data };
 
-  // Recovery, not just rejection: the stored user is a cache of what the signed token already
-  // contains -- if only the cache is bad but the token itself still decodes, re-derive from the
-  // token rather than treating the whole session as unreadable.
   const rawToken = typeof parsed === 'object' && parsed !== null && 'token' in parsed ? parsed.token : undefined;
   if (typeof rawToken === 'string') {
     const recovered = decodeSessionFromToken(rawToken);
@@ -127,7 +108,6 @@ export function handleConnectionError(error: unknown): void {
     showToastForError({ errorMessageMap: { default: i18n.t('toast_message.error.network_error') }, error });
 }
 
-//Refresh Token
 export const saveRefreshToken = (token: string): string => {
   localStorage.setItem(LOCAL_STORAGE_AUTH_NAME.REFRESH_TOKEN, token);
   return token;
@@ -150,7 +130,6 @@ export const sendErrorLogToServer = (correlationId: string, errorMessage: string
   return requests.sendErrorLog(errorData).catch(() => console.error('ERROR log failed'));
 };
 
-//Device ID
 export const getDeviceId = (): string => {
   return localStorage.getItem(LOCAL_STORAGE_AUTH_NAME.DEVICE_ID) || '';
 };

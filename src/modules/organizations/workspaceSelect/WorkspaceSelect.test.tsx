@@ -56,10 +56,6 @@ const useOrganizationsQueryMock = useOrganizationsQuery as unknown as MockedFunc
 
 const emptyResults: RawOrganizationsResults = { count: 0, results: [] };
 
-// classifyOrganizationLoadFailure (real, unmocked) derives `forbidden`/`temporary`/etc. off an
-// axios-shaped error -- WorkspaceSelect computes organizationLoadFailure locally from query.error
-// rather than via a second hook call (see the CT-561 review fix comment in WorkspaceSelect.tsx),
-// so these tests drive it through a real error object instead of mocking the classification.
 const errorForFailureKind = (failure: { kind: 'forbidden' | 'temporary'; status: number }): Error =>
   Object.assign(new Error(failure.kind), { isAxiosError: true, response: { status: failure.status } });
 
@@ -120,9 +116,6 @@ describe('WorkspaceSelect long organization names', () => {
         count: 2,
         results: [
           { id: 'org-1', name: longName, slug: 'long-org', archivedAt: null },
-          // Archived, not rendered by WorkspaceSelect's own filter -- only present so
-          // `organizations.length > 1` makes `hasMoreThanOneOrganization` true (mirroring a
-          // real multi-org account) while keeping exactly one row on screen for these tests.
           { id: 'org-2', name: 'Other org', slug: 'other-org', archivedAt: '2024-01-01T00:00:00.000Z' },
         ],
       },
@@ -167,8 +160,6 @@ describe('WorkspaceSelect long organization names', () => {
     let resizeCallback: ResizeObserverCallback | undefined;
     const observe = vi.fn();
     const disconnect = vi.fn();
-    // A regular `function` (not an arrow function) is required here: `window.ResizeObserver` is
-    // invoked with `new`, and arrow functions aren't constructible.
     window.ResizeObserver = vi.fn(function MockResizeObserver(callback: ResizeObserverCallback) {
       resizeCallback = callback;
       return { disconnect, observe, unobserve: vi.fn() };

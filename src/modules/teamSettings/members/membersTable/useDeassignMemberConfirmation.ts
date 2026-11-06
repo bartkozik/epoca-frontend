@@ -16,9 +16,6 @@ export const useDeassignMemberConfirmation = (): UseDeassignMemberConfirmationRe
   const openConfirmation = (userId: string): void => setUserIdToRemove(userId);
   const closeConfirmation = (): void => setUserIdToRemove(null);
 
-  // Only clears the target (closing the dialog) on success, matching the original
-  // deassignUserFromContextOrganization -- a failed removal leaves the confirmation open so the
-  // user can retry or cancel.
   const confirmDeassign = (): void => {
     if (!userIdToRemove) return;
     mutation.mutate({ userId: userIdToRemove }, { onSuccess: () => setUserIdToRemove(null) });

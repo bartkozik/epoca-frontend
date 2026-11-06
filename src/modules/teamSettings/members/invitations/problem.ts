@@ -61,7 +61,6 @@ export function normalizeInvitationProblem(error: unknown): InvitationProblem {
 
 export function parseInvitationInput<T>(schema: z.ZodType<T, z.ZodTypeDef, unknown>, input: unknown): T {
   const parsed = schema.safeParse(input);
-  // Feature errors are safe discriminated values, never raw Zod or Axios objects.
   // eslint-disable-next-line @typescript-eslint/only-throw-error, no-throw-literal
   if (!parsed.success) throw { kind: 'invalid-input', status: null } satisfies InvitationProblem;
 

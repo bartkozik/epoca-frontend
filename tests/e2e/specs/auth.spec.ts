@@ -46,9 +46,6 @@ test.describe('login', () => {
     const ownerUserId = runtime.state.actors.owner?.userId;
     const ownerUser = runtime.state.users.find(({ id }) => id === ownerUserId);
     if (!ownerUser) throw new Error('owner user missing from world-2 fixture');
-    // A real, inline-loadable image: an https:// avatar URL isn't mocked (no CDN host to route to)
-    // and gets aborted by the mock API's catch-all, which is indistinguishable from a genuinely
-    // broken avatar -- UserInitialsAvatar's onError fallback then (correctly) swaps to initials.
     const syncedAvatar =
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 

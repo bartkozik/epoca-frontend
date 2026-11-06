@@ -92,8 +92,6 @@ describe('sessionSchema', () => {
     expect(result.success).toBe(true);
     if (!result.success) throw new Error('unreachable');
     expect(result.data.user.organizationGrants).toEqual([{ organizationId: 'o1', roles: ['Owner'] }]);
-    // The whole point of .passthrough() here: contextRoles must survive in the output (never read
-    // by anything downstream, but never silently stripped either) -- assert it actually does.
     expect(result.data.user).toHaveProperty('contextRoles', ['Owner']);
   });
 
@@ -119,12 +117,6 @@ describe('sessionSchema', () => {
     if (!firstParse.success) throw new Error('unreachable');
     expect(firstParse.data.user.organizationGrants).toEqual([{ organizationId: 'org-1', roles: ['Owner'] }]);
 
-    // Simulates exactly what readStoredSession does: JSON.stringify the already-transformed
-    // result (as saveSession persists it to localStorage), then JSON.parse it back and re-run it
-    // through this SAME schema on the next page load. The stored blob has organizationGrants, not
-    // roles -- if the schema only ever looked for `roles`, this second parse would silently wipe
-    // organizationGrants to [] (roles is absent, tolerantArray defaults it to [], and the old
-    // transform overwrote organizationGrants with that empty array unconditionally).
     const roundTripped: unknown = JSON.parse(JSON.stringify(firstParse.data));
     const secondParse = sessionSchema.safeParse(roundTripped);
     if (!secondParse.success) throw new Error('unreachable');
@@ -132,10 +124,6 @@ describe('sessionSchema', () => {
   });
 
   it('prefers organizationGrants over roles when both are present, even with different data', () => {
-    // This precedence is the entire point of the fix above -- pin it down explicitly so a future
-    // change can't flip the `??` order (or "simplify" back to a single field) without a test
-    // failing. In practice these two fields are never both present with conflicting data (see the
-    // schema's own comment), but the precedence itself must still be deliberate and tested.
     const result = sessionSchema.safeParse({
       token: 't',
       user: {
@@ -150,9 +138,6 @@ describe('sessionSchema', () => {
   });
 
   it('denies (does not fall back to roles) when organizationGrants is present but malformed', () => {
-    // organizationGrants present-but-malformed resolves to [] via tolerantArray, not undefined --
-    // `?? roles` never reaches roles in this case. Deliberate: a corrupted organizationGrants
-    // fails closed (denies), it does not silently fall back to a possibly-stale roles value.
     const result = sessionSchema.safeParse({
       token: 't',
       user: {

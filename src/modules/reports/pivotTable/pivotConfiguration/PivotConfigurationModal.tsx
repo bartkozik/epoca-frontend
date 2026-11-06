@@ -31,10 +31,6 @@ function PivotConfigurationModal({
   const headingId = useId();
   const [isDragging, setIsDragging] = useState(false);
 
-  // A drag can be abandoned by closing the modal itself (backdrop click or the close button)
-  // instead of finishing through PivotFieldBuilder's own dnd-kit handlers, which are the only
-  // place that otherwise resets isDragging. Routing every close through this handler keeps the
-  // flag from surviving into the next time the modal opens.
   const handleClose = useCallback(() => {
     setIsDragging(false);
     onClose();

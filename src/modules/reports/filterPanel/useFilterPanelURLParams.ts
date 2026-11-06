@@ -11,11 +11,9 @@ interface UseFilterPanelURLParamsProps {
 }
 
 interface UseFilterPanelURLParamsReturn {
-  /** Sets (string) or deletes (null) several params in one navigation; no-op when nothing changes. */
   setURLParams: (updates: Record<string, string | null>) => void;
 }
 
-// Retired params: the PM filters and the contextual-filtering toggle. Old links still open; the param is dropped.
 const LEGACY_KEYS = ['pmFilters', 'pmProjects', 'pmClients', 'isContextualFiltering'];
 
 const parseURLParamsToFilterTagsRecord = (

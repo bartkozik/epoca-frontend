@@ -20,8 +20,6 @@ import type { FormErrors, UnitFormProps } from './types';
 import { useUnitFormDraft } from './useUnitFormDraft';
 import { useWorkUnitSubmission } from './useWorkUnitSubmission';
 
-// The hook returns a cohesive form controller whose exact type is inferred from its state and
-// callbacks; consumers should not duplicate that shape.
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function useUnitForm({
   date,
@@ -70,7 +68,6 @@ export function useUnitForm({
     unitDescription,
     unitFormErrors,
   } = unitWorkspace;
-  // Always called (rules of hooks); unused when a shared `submission` prop is provided instead.
   const ownSubmission = useWorkUnitSubmission();
   const {
     submitAdd,
@@ -139,8 +136,7 @@ export function useUnitForm({
 
     setIsSubmittingForDraft(true);
 
-    // Closing a modal advances this session. Do not let a response from that closed form mutate
-    // the newly opened one (including its local draft-saving indicator).
+    // Ignore responses from a closed form session so they cannot mutate the newly opened form.
     const formSession = getFormSession();
     const onComplete = (): void => {
       if (isActiveWorkUnitFormSession(formSession)) setIsSubmittingForDraft(false);
@@ -149,7 +145,6 @@ export function useUnitForm({
     if (!unit) {
       void submitAdd(createFormData, true)
         .then((result) => {
-          // Falsy means blocked/deduped/handled inside the hook -- only success resolves with a unit.
           if (result && isActiveWorkUnitFormSession(formSession)) {
             onUnitAdded?.(result);
             addToast({ content: t('toast_message.working_time.add_new_unit') });
@@ -194,8 +189,6 @@ export function useUnitForm({
     resetSubmissionState();
   };
 
-  // Mirrors the store's private closeEditModals: closeEditUnitModal also resets the report-view
-  // modal's own isOpen flag, needed when submitted via isFormInReportView.
   const handleEditSuccess = (): void => {
     closeModal();
     closeEditUnitModal();
@@ -243,9 +236,7 @@ export function useUnitForm({
   };
   const createFormData: UnitDto = {
     ...commonFormData,
-    // A new unit without a task id is created with no task id at all rather than an empty string.
-    // Edits keep sending the raw value: the update endpoint ignores null fields, so only '' clears
-    // a task id that was set before.
+    // PATCH ignores null task IDs; only an empty string clears an existing task ID.
     taskId: taskId.trim() ? taskId : null,
     entryType: selectedEntryType,
     ...(isNote ? {} : { duration: formattedDuration }),
@@ -357,8 +348,6 @@ export function useUnitForm({
         setIsNoRequiredFieldsInFormError(false);
         return;
       }
-      // See the draft flow above: a late successful response must belong to this form instance
-      // before it is allowed to close/reset it.
       const formSession = getFormSession();
 
       if (unit) {

@@ -8,9 +8,6 @@ type Options = {
   world: WorldName;
   actor: ActorName;
   failure: WorldFailure['key'] | null;
-  // Opt-in allowlist for the pageerror safety-net below; default [] keeps every test strict. Keep
-  // the value an object, not a bare array -- Playwright's fixture resolver reads a 2-element array
-  // whose 2nd item is itself an object (a RegExp included) as a [value, options] tuple.
   ignoredPageErrors: { patterns: RegExp[] };
 };
 
@@ -21,8 +18,6 @@ type Fixtures = {
 
 const MAX_ATTACHED_REQUESTS = 100;
 
-// WebKit reports any interrupted dynamic import with this generic, module-less message; Firefox
-// names the module instead.
 export const WEBKIT_INTERRUPTED_MODULE_IMPORT_ERROR = /^Importing a module script failed\.$/;
 
 export const test = base.extend<Options & Fixtures>({
@@ -41,11 +36,6 @@ export const test = base.extend<Options & Fixtures>({
     await installActorSession(context, worldData, actor);
     await installMockApi(page, runtime);
     await page.clock.install({ time: new Date(worldData.clock) });
-    // Vite serves the app as native ES modules with no CRA-style single bundle.js; a stray
-    // CommonJS `require()` call (fine under webpack, fatal under Vite), an unhandled promise
-    // rejection, or any other broken module graph surfaces as an uncaught page error rather than a
-    // failed assertion, so every test using this fixture fails on one automatically instead of
-    // silently rendering a blank page.
     const pageErrors: string[] = [];
     page.on('pageerror', (error) => pageErrors.push(error.message));
     await use(page);

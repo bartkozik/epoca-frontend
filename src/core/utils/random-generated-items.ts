@@ -1,4 +1,3 @@
-//to delete after migrations to new BE
 
 export const randomUsers = [
   { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },

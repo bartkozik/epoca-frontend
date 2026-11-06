@@ -26,7 +26,7 @@ export async function withReleaseLock(lockPath, cleanup) {
     holder.once('exit', (code) => {
       resolveExit(code);
       if (acquired && !releasing) {
-        // Never let a cleanup worker continue remote mutations after losing its lock.
+        // Stop remote mutations if this worker loses its release lock.
         process.kill(process.pid, 'SIGKILL');
       }
       if (!acquired) {

@@ -10,7 +10,6 @@ try:
     except BlockingIOError:
         sys.exit(75)
     print("locked", flush=True)
-    # SIGKILL of the Node worker closes this pipe too; no finally/unlink is needed.
     sys.stdin.buffer.read()
 finally:
     os.close(fd)

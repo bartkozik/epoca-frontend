@@ -288,8 +288,6 @@ describe('ReportBoard compact layout', () => {
     const overlayRule = rules.find((rule) => rule.selectorText === '.modalOverlay');
     const modalRule = rules.find((rule) => rule.selectorText === '.modal');
 
-    // jsdom's CSSOM normalizes zero-length values to include their unit (jsdom 16, used by the
-    // prior Jest setup, preserved the unitless `0` as written in the source SCSS).
     expect(overlayRule?.style.getPropertyValue('overflow-y')).toBe('auto');
     expect(overlayRule?.style.getPropertyValue('padding')).toBe('16px 0px');
     expect(modalRule?.style.getPropertyValue('margin')).toBe('auto 0px');

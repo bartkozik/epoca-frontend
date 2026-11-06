@@ -148,7 +148,7 @@ it('starts target SSO using only cookie, raw bearer and summary CSRF with no JSO
   expect(config.data).toBeUndefined();
   expect(config.headers.get('Authorization')).toBe(`Bearer ${bearer}`);
   expect(config.headers.get('X-CSRF-Token')).toBe('csrf-secret');
-  expect(config.headers.has('Origin')).toBe(false); // Browser supplies its real Origin; do not forge it in JavaScript.
+  expect(config.headers.has('Origin')).toBe(false);
 });
 it.each([
   { samlRequest: '', ssoUrl: 'https://idp.example' },

@@ -2,7 +2,6 @@ import { MAX_NAME_LENGTH } from '@/core/utils/constants';
 import { z } from 'zod';
 import { Project } from '../types';
 
-// Message strings are i18n keys, resolved at display time via handle-validation-errors.ts.
 export const ProjectFormSchema = (
   projects: Project[],
   currentProjectId?: string,

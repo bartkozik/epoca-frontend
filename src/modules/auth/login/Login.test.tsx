@@ -49,9 +49,6 @@ vi.mock('@/core/utils/hooks', () => ({
 
 const useSamlAuthCheckQueryMock = useSamlAuthCheckQuery as MockedFunction<typeof useSamlAuthCheckQuery>;
 const loginMock = vi.fn();
-// A top-level `await import(...)` isn't supported by this project's `tsconfig.json`
-// (`module: commonjs`, frozen for this migration), so this is scoped inside a file-level
-// `beforeAll` instead, which still runs once before any test below.
 let helpersMocks: Record<string, Mock>;
 beforeAll(async () => {
   helpersMocks = (await import('@/core/utils/helpers')) as unknown as Record<string, Mock>;

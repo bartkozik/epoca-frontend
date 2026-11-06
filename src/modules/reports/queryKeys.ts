@@ -3,10 +3,6 @@ import { serializePivotLayout } from '@/modules/reports/pivotTable/layout/pivotL
 import type { PivotLayout } from '@/modules/reports/pivotTable/layout/types';
 import type { ReportDateRangeSnapshot } from './filterPanel/reportDateRange';
 
-// Flat, entity-prefixed key: any of organization/layout/filters differing is a genuinely
-// different query -- there is no narrower invalidation target, matching how the removed pivot
-// table store always refetched in full on any layout or filter change rather than patching in
-// place.
 export const pivotTableQueryKey = (
   organizationSlug: string,
   layout: PivotLayout,
@@ -32,9 +28,7 @@ export const workUnitOverrideQueryKey = (
   workUnitId: string,
 ): readonly [string, string, string] => ['workUnitOverride', organizationSlug, workUnitId];
 
-// Keyed on the pinned upToVersion (not just org/work-unit), since two sessions viewing the
-// same work unit at different snapshot versions must never share a cache entry -- matches
-// this hook's existing "pinned upToVersion" invariant.
+// Pin upToVersion in the cache key so different historical snapshots cannot share a response.
 export const workUnitOverrideHistoryQueryKey = (
   organizationSlug: string,
   workUnitId: string,
@@ -58,12 +52,10 @@ export const reportedUnitsQueryKey = (
     ...snapshot,
     fromDate: snapshot.fromDate.toISOString(),
     toDate: snapshot.toDate?.toISOString() ?? null,
-    // An open-ended range means "through today". The day is request context, not a filter.
     today: snapshot.toDate === null ? null : snapshot.today.toISOString(),
   }),
 ];
 
-// Hours per client × project × user for one period; filter selections are applied in the browser.
 export const reportFilterFacetsQueryKey = (
   organizationSlug: string,
   dateFrom: string,

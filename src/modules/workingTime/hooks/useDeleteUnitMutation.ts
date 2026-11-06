@@ -16,7 +16,6 @@ export function useDeleteUnitMutation(): UseMutationResult<void, unknown, Delete
     mutationFn: ({ workUnitId }: DeleteUnitInput) => requests.deleteUnit(organizationSlug, workUnitId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['units'], exact: false });
-      // Refresh the report query after deletion.
       void getReportedUnits();
     },
   });

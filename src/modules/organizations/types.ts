@@ -1,7 +1,4 @@
 import { ApiResponse } from '@/core/api';
-// CT-540: canonical definition lives in core/models/enums (core needs the enum itself for
-// status/role selects) — re-exported below so every existing `from '@/modules/organizations/types'`
-// site keeps working unchanged.
 import { OrganizationUserRole } from '@/core/models/enums';
 import { User } from '@/modules/users/types';
 import { z } from 'zod';

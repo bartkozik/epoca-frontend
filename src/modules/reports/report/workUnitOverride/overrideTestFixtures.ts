@@ -8,10 +8,6 @@ import { createElement, type ReactElement, type ReactNode } from 'react';
 import type { AxiosResponse } from 'axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-/**
- * One isolated cache per test. The client is created outside the wrapper component so a rerender
- * keeps the same cache; `retry: false` matches useWorkUnitOverride's own no-retry load path.
- */
 export const createQueryWrapper = (): {
   queryClient: QueryClient;
   wrapper: ({ children }: { children: ReactNode }) => ReactElement;

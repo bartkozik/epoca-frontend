@@ -16,11 +16,6 @@ import { UnitWorkspaceContext, type UnitWorkspaceState, type UnitWorkspaceValue 
 const EMPTY_MODAL_CONFIG: ModalConfig = { isOpen: false, type: null, date: null, unit: null };
 const CLIENT_COLOR_DEFAULT = colorVariables.clientColorDefault;
 
-// A unit's own project/client may be missing from the project lists (e.g. the user was detached
-// from it); this fallback is built only from data of a unit the user already owns, so it doesn't
-// widen the project picker or any other list, and the backend still enforces assignment rules on
-// save. Shared by selectedClientAndProject (initializeUnitFormData) and its id (getContextualClientProject)
-// so both stay in sync.
 const toDetachedProjectOption = (projectClient: {
   projectId: string;
   clientName: string;

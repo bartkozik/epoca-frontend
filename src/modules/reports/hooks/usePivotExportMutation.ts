@@ -17,10 +17,6 @@ export interface ExportPivotTableInput {
   presentation: PivotExportPresentation;
 }
 
-// One hook instance per format is called from PivotTable.tsx (usePivotExportMutation(CSV) and
-// usePivotExportMutation(XLS) separately), so isPending tracks independently -- matching the
-// removed pivot table store's separate isExportingCsv/isExportingXlsx flags. The caller is
-// responsible for not calling `.mutate()` again on the same instance while `isPending`.
 export function usePivotExportMutation(
   format: SpreadsheetFormat,
 ): UseMutationResult<void, unknown, ExportPivotTableInput> {

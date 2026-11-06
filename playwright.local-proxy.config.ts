@@ -7,7 +7,6 @@ const localBaseURL = 'http://127.0.0.1:5173';
 const inertBaseURL = 'https://e2e.invalid';
 
 const configureProxyTarget = (): void => {
-  // Also backs vite.config.ts's dev-server proxy target, so both stay in sync from one place.
   const proxyTarget = process.env.EPOCA_LOCAL_PROXY_TARGET;
   if (!proxyTarget?.trim()) {
     throw new Error('EPOCA_LOCAL_PROXY_TARGET is required');

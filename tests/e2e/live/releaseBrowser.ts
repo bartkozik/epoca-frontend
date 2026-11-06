@@ -41,7 +41,6 @@ export const verifySamlInitiation = async (page: Page): Promise<void> => {
   const idp = new URL(body.ssoUrl);
   if (idp.protocol !== 'https:' || idp.username || idp.password)
     throw new Error('SAML initiation did not provide a safe IdP URL');
-  // Verify the real initiation payload and form without sending it to an external IdP.
   const form = page.locator('form').filter({ has: page.getByTestId('workspaceLoginButton') });
   await expect(form).toHaveAttribute('action', body.ssoUrl);
   await expect(form.locator('input[name="SAMLRequest"]')).toHaveValue(body.samlRequest);
@@ -114,7 +113,6 @@ export const verifyCompatibilityReads = async (page: Page): Promise<void> => {
   )
     throw new Error('Compatibility fixture readback differs');
   await expect(page.locator('tbody tr').filter({ hasText: fixture.description }).first()).toBeVisible();
-  // Use the report's ordinary export controls; POST exports are explicitly read-only allowlisted.
   await page.locator('tbody tr').filter({ hasText: fixture.description }).first().getByRole('checkbox').check();
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'CSV', exact: true }).click();

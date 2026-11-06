@@ -1,7 +1,3 @@
-// Shared validation primitives for narrowing untrusted JSON (coverage-map entries, API
-// responses, evidence documents) before it's used elsewhere in scripts/e2e. Extracted from
-// scripts/e2e/gate-evidence.mjs (CT-545); scripts/e2e/coverage-validator.mjs still carries its
-// own private copies and is expected to migrate onto this module in a future follow-up.
 
 /**
  * @param {unknown} value

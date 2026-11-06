@@ -14,12 +14,8 @@ vi.mock('@/core/api', () => ({
 
 vi.mock('@/core/providers/toastProvider', () => ({ addToast: vi.fn() }));
 
-// requests.ts calls i18n.t() (via notifyIncompleteList) directly, and nothing in this test
-// initializes the real i18n singleton -- stub it to return the key, matching
-// clients/requests.test.ts's precedent for the same reason.
 vi.mock('i18next', () => ({ default: { t: (key: string) => key } }));
 
-// api mock, see src/modules/integrationClients/requests.test.ts for the full rationale.
 // eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
 // eslint-disable-next-line vitest/unbound-method
@@ -77,7 +73,6 @@ describe('projects requests', () => {
     });
 
     it('drops a project with a malformed load-bearing field instead of rejecting the whole list', async () => {
-      // mockResolvedValue (not Once): the page stays incomplete after the drop, so getProjects retries.
       const { client: _client, ...projectWithoutClient } = validRawProject;
       getMock.mockResolvedValue({
         data: { count: 2, results: [validRawProject, { ...projectWithoutClient, id: 'project-2' }] },
@@ -117,11 +112,6 @@ describe('projects requests', () => {
     });
   });
 
-  // Regression guard: PATCH /organizations/:slug/projects/:id (ProjectRouter ->
-  // ProjectUpdateResult.Updated) returns the flat Project domain object -- clientId, not a nested
-  // client -- unlike GET/POST which return the list/get DTO shape. Parsing this against
-  // RawProjectSchema (which requires client) would throw despite the HTTP 200, leaving the edit
-  // form stuck open. This exercises the real requests.ts boundary, not a mocked requests.editProject.
   it('edits a project and parses the flat PATCH response shape', async () => {
     patchMock.mockResolvedValueOnce({
       data: {

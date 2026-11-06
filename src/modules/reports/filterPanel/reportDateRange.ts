@@ -119,7 +119,6 @@ export const parseReportDateRange = (params: URLSearchParams, today: Dayjs): Rep
 
   const normalizedFromDate = normalizeDay(fromDate);
 
-  // Restore monthly navigation for URLs produced by the former open-ended default.
   if (
     endValue === null &&
     navigationModeValue !== 'fixed-length' &&

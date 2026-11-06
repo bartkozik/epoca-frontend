@@ -40,7 +40,6 @@ export function runReleaseJanitor() {
     } finally {
       closeSync(log);
     }
-    // Remote deletion is permitted only by global-teardown's verified ownership reconciliation.
     if (!existsSync(manifest)) rmSync(directory, { recursive: true });
   }
   return failed ? 1 : 0;

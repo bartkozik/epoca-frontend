@@ -1,4 +1,3 @@
-// scripts/capture-baseline.mjs
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -6,7 +5,6 @@ import { join } from 'node:path';
 
 const run = (command, args) => execFileSync(command, args, { encoding: 'utf8' }).trim();
 
-// Rethrows failures prefixed with the step name so the log makes clear which step broke.
 const runStep = (label, command, args) => {
   console.log(`Running ${label}...`);
   try {
@@ -44,8 +42,6 @@ const lockfileSha = sha256File('yarn.lock');
 const nodeVersion = process.version;
 const yarnVersion = run('node', ['.yarn/releases/yarn-4.18.0.cjs', '--version']);
 
-// Vitest's `json` reporter deliberately mirrors Jest's --json report shape, so this parses the
-// same fields as before.
 runStep('test suite', 'node', [
   '.yarn/releases/yarn-4.18.0.cjs',
   'vitest',
@@ -63,9 +59,6 @@ const jestSuiteCount = jestReport.numTotalTestSuites;
 const jestTestCount = jestReport.numTotalTests;
 const jestSnapshotCount = jestReport.snapshot?.total;
 
-// A test run that collected nothing is exactly as wrong as one whose report is malformed, so
-// fail loudly on a missing/non-integer field rather than writing `undefined` or a misleading 0
-// into the accepted baseline.
 for (const [fieldName, value] of [
   ['numTotalTestSuites', jestSuiteCount],
   ['numTotalTests', jestTestCount],
@@ -91,8 +84,6 @@ let buildFiles, bundleBytes, jsChunks, chunkManifestSha;
 try {
   buildFiles = walk('build');
   bundleBytes = buildFiles.reduce((total, path) => total + statSync(path).size, 0);
-  // build/assets/env.template.js and other passthrough static files also end in .js but
-  // aren't real JS bundle chunks, so scope to the actual code-split output directory.
   jsChunks = walk(join('build', 'static', 'js')).filter((path) => path.endsWith('.js'));
 
   if (jsChunks.length === 0) {

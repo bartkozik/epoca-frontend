@@ -1,7 +1,3 @@
-// CT-540: hoisted out of modules/auth/constants.ts — core/api/utils.ts is the primary owner of
-// this registry (ACCESS_TOKEN, REFRESH_TOKEN, DEVICE_ID all back the token lifecycle it manages);
-// CONTEXT_ORG_SLUG and USER_LANGUAGE are used by modules/organizations and modules/auth
-// respectively, which stay free to import them from core like any other core constant.
 const LOCAL_STORAGE_APP_NAME = 'IteratorsEpoca';
 
 export const LOCAL_STORAGE_AUTH_NAME = {

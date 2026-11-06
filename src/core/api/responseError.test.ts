@@ -270,7 +270,6 @@ describe('shouldSendResponseErrorLog', () => {
   });
 });
 
-// Invitation access and delivery bodies may contain credentials or identity details.
 describe('invitation response telemetry', () => {
   it.each([
     '/organizations/acme/invitations?version=2',

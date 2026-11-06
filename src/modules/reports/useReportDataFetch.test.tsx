@@ -44,7 +44,6 @@ it('keeps report content mounted when an errored users query retries without cac
   state.isLoadingContextOrganizationUsers = true;
   const { result, rerender } = renderHook(useReportDataFetch);
   expect(result.current.isLoadingData).toBe(false);
-  // A focus retry after an initial user-details 403 has no cached data, so Query's isLoading is true again.
   state.isInitialLoadingContextOrganizationUsers = true;
   rerender();
   expect(result.current.isLoadingData).toBe(false);

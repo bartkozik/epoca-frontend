@@ -33,8 +33,6 @@ it('validates project operation DTOs with their existing required and optional f
   expect(AddProjectArgsSchema.safeParse({ ...add, ownerIds: 'user-1' }).success).toBe(false);
 });
 
-// Compile-time guard against drift between this schema and clients/types.ts's ProjectClient
-// interface, since the two are intentionally NOT unified yet (dedup is a follow-up).
 const _typeAssertion: ProjectClient = {} as z.infer<typeof ProjectClientSchema>;
 void _typeAssertion;
 
@@ -174,7 +172,6 @@ describe('RawProjectResultsSchema', () => {
     expect(RawProjectResultsSchema.parse(payload)).toEqual(payload);
   });
 
-  // A project with a missing or malformed client is dropped from the results array.
   it('drops a project with a missing client instead of the whole page rejecting', () => {
     const { client, ...projectWithoutClient } = validRawProject;
     const result = RawProjectResultsSchema.parse({

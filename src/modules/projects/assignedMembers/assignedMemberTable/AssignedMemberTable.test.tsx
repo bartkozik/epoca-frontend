@@ -12,7 +12,6 @@ vi.mock('react-i18next', async () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-// getProjectUserRoleOptions/toast messages read the i18next singleton directly, not the hook.
 vi.mock('i18next', () => ({ __esModule: true, default: { t: (key: string) => key } }));
 
 let testContexts: Record<string, unknown> = {};
@@ -37,8 +36,6 @@ const removeUserMock = requests.removeUser as unknown as ReturnType<typeof vi.fn
 const addToastMock = vi.fn();
 const getProjectByIdMock = vi.fn();
 
-// Fresh objects each render -- useUpdateUserRoleMutation's onSuccess mutates .role in place, so
-// reusing one object across tests would leak a role change from one test into the next.
 const makeUsers = (): Record<
   'member' | 'owner',
   { id: string; role: ProjectUserRole; firstName: string; lastName: string; fullName: string; avatar: string }
@@ -119,7 +116,6 @@ describe('AssignedMemberTable', () => {
     renderTable();
 
     const row = findRow('Anna Nowak');
-    // IconButton doesn't forward aria-label -- its accessible name comes from the visible label.
     fireEvent.click(within(row).getAllByRole('button', { name: /common\.remove/ })[0]);
 
     const dialog = screen.getByRole('dialog');
@@ -127,7 +123,6 @@ describe('AssignedMemberTable', () => {
 
     await waitFor(() => expect(removeUserMock).toHaveBeenCalledWith('acme', 'user-2', 'project-1'));
     await waitFor(() => expect(addToastMock).toHaveBeenCalledWith({ content: 'toast_message.users.user_deassigned' }));
-    // Modal closes immediately on confirm, same as the pre-migration handleRemoveUser.
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -136,7 +131,6 @@ describe('AssignedMemberTable', () => {
     renderTable();
 
     const row = findRow('Jan Kowalski');
-    // Clicking the readonly input bubbles to its wrapping .inputContainer's onClick, opening the menu.
     fireEvent.click(within(row).getAllByRole('combobox')[0]);
     fireEvent.click(within(row).getAllByText('common.owner')[0]);
 
@@ -151,7 +145,6 @@ describe('AssignedMemberTable', () => {
 
     const row = findRow('Jan Kowalski');
     fireEvent.click(within(row).getAllByRole('combobox')[0]);
-    // Jan Kowalski is already Member.
     fireEvent.click(within(row).getAllByText('common.member')[0]);
 
     expect(addUserMock).not.toHaveBeenCalled();

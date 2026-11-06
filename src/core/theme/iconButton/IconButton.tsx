@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import styles from './IconButton.module.scss';
 
 export interface IconButtonProps {
-  /** Accessible name; required when no visible `label` is rendered. */
   ariaLabel?: string;
   className?: string;
   color?: 'primary' | 'primaryLightest' | 'white' | 'black' | 'gray';
@@ -15,7 +14,6 @@ export interface IconButtonProps {
   maxWidth?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   size?: 'small' | 'medium' | 'large';
-  /** Native tooltip, e.g. the action name for an icon-only button. */
   title?: string;
   variant: 'contained' | 'outlined' | 'raw';
 }

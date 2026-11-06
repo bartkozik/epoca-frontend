@@ -12,7 +12,6 @@ import styles from './ReportsTabs.module.scss';
 
 interface ReportTabsProps {
   selectedTab: ReportsViewTabs;
-  /** Controls shown right after the tabs, e.g. the pivot table shape select. */
   children?: ReactNode;
 }
 
@@ -21,7 +20,6 @@ function ReportsTabs({ selectedTab, children }: ReportTabsProps): JSX.Element {
   const { t } = useTranslation();
   const { search } = useLocation();
   const canViewPivotTable = auth.hasAccess(ROLE_PERMISSIONS.Manager);
-  // The pivot rows, columns and values mean nothing on the report tab; filters and dates carry over.
   const reportSearch = useMemo(() => {
     const next = withoutPivotShape(new URLSearchParams(search)).toString();
     return next ? `?${next}` : '';

@@ -19,14 +19,11 @@ export function useUpdateProjectMutation(): UseMutationResult<ProjectPatchResult
       requests.editProject({ organizationSlug, ...input }).then((response) => response.data),
     onSuccess: (data, variables) => {
       void queryClient.invalidateQueries({ queryKey: ['projects'], exact: false });
-      // ProjectDetails.tsx subscribes to this key via useProjectQuery, so invalidation alone
-      // triggers a real refetch (and re-mirrors selectedProject) when it's the mounted page.
       void queryClient.invalidateQueries({
         queryKey: projectQueryKey(organizationSlug, variables.projectId),
         exact: false,
       });
 
-      // Same reasoning as projectCreate.model.ts: client.projects needs an explicit refetch.
       if (client && client.id === data.clientId) {
         void queryClient.invalidateQueries({
           queryKey: clientProjectsQueryKey(organizationSlug, client.id),

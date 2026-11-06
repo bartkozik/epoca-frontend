@@ -147,9 +147,6 @@ describe('useDeassignOrganizationUserMutation', () => {
 
   it('keeps the optimistic removal even when the post-success refetch fails', async () => {
     deassignUserFromOrganizationMock.mockResolvedValueOnce(undefined);
-    // fetchContextOrganizationUsers never actually rejects (its real implementation swallows
-    // errors internally via .catch), so the mock mirrors that contract while still simulating
-    // "the refetch it triggers did not succeed in refreshing the bridge".
     fetchContextOrganizationUsersMock.mockImplementationOnce(() =>
       Promise.reject(new Error('refetch failed')).catch(() => undefined),
     );

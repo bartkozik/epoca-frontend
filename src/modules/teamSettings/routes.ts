@@ -21,7 +21,6 @@ export const teamSettingsRoutes: RouteObject[] = [
   guarded(ROLE_PERMISSIONS.Owner, [
     {
       path: teamSettingsPaths.main,
-      // createElement, not JSX: keeps this a plain .ts file, per the project's PascalCase rule for .tsx.
       element: createElement(Navigate, { replace: true, to: teamSettingsPaths.teamSettings('members', 'list') }),
     },
     { path: teamSettingsPaths.teamSettings(TAB_PARAM), Component: TeamSettings },

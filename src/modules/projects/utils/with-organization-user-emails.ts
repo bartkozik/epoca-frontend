@@ -1,5 +1,3 @@
-// Enrich display models only from the organization users the workspace has already loaded.
-// Project DTOs deliberately do not expose additional email addresses for avatar rendering.
 export function withOrganizationUserEmails<T extends { id: string; email?: string }>(
   users: T[],
   organizationUsers: { id: string; email: string }[],

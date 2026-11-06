@@ -54,8 +54,6 @@ const BackButton = (): JSX.Element => {
   return <button onClick={() => navigate(-1)}>Back</button>;
 };
 
-// Mirrors how a real consumer (Report.tsx/PivotTable.tsx) wires the hook to the component --
-// this is what proves the hydration-race fix actually works end to end, not just in isolation.
 const FilterPanelHarness = ({
   onApplyFilters,
 }: {
@@ -109,9 +107,6 @@ describe('FilterPanel URL hydration integration', () => {
       const snapshot = onApplyFilters.mock.calls[0][0];
       expect(snapshot.fromDate.format('YYYY-MM-DD')).toBe('2026-07-10');
       expect(snapshot.toDate?.format('YYYY-MM-DD')).toBe('2026-07-20');
-      // These three assertions are the ones that actually exercise the hydration-race fix: if the
-      // date-range hydration fired the request before the filter hydration's state had settled,
-      // these would come back empty instead of reflecting the URL.
       expect(snapshot.projectIds).toEqual(['project-1']);
       expect(snapshot.userIds).toEqual(['user-1']);
       expect(snapshot.clientIds).toEqual(['client-1']);

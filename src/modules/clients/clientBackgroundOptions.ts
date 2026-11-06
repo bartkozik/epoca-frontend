@@ -50,25 +50,14 @@ export const CLIENT_TEXTURES = [
   texture10,
 ];
 
-// Anchored with word boundaries so `texture3` matches as a whole segment (e.g. the stable ID
-// itself, or preceded by `/` and followed by `.` in an old asset path) but an unrelated string
-// that merely contains "texture" as a substring (e.g. "faketexture123") does not.
 const CLIENT_TEXTURE_PATTERN = /\btexture(\d+)\b/;
 
-// `Client.texture` is persisted as a plain string, which may be an older build's fully-resolved,
-// content-hashed asset path (hashes that don't exist in this build's output) or the stable
-// `textureN` identifier new selections are saved as (see `getClientTextureId`). Both forms carry
-// the same recognizable `textureN` substring, so resolve either one to this build's real asset
-// URL instead of trusting the stored value to still be a working path.
 export const resolveClientTexture = (rawTexture?: string): string => {
   const match = rawTexture?.match(CLIENT_TEXTURE_PATTERN);
   const index = match ? Number(match[1]) - 1 : -1;
   return CLIENT_TEXTURES[index] ?? CLIENT_TEXTURES[0];
 };
 
-// The inverse of `resolveClientTexture`: turns a currently-selected texture (one of the resolved
-// URLs in `CLIENT_TEXTURES`) into the stable identifier to persist, so a future build changing
-// asset hashes again never invalidates an already-saved selection.
 export const getClientTextureId = (resolvedTexture: string): string => {
   const index = CLIENT_TEXTURES.indexOf(resolvedTexture);
   return `texture${index === -1 ? 1 : index + 1}`;

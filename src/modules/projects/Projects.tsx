@@ -37,24 +37,15 @@ function Projects(): JSX.Element {
 
   useTitle(t('common.projects'));
 
-  // useProjectsQuery has no error toast of its own -- without this a failed fetch looked like an
-  // empty list.
   useEffect(() => {
     if (projectsQuery.isError)
       showModuleErrorToast(projectsQuery.error, { default: t('toast_message.projects.data_fetch_error') });
   }, [projectsQuery.error, projectsQuery.isError, t]);
 
   useEffect(() => {
-    // Shared query keys deduplicate this bootstrap with useProjectsQuery.
-    // Clients and workspace members must also load before the create form is enabled.
     fetchAllProjectsViewData();
   }, []);
 
-  // fetchAllProjectsViewData also fetches clients/org users that ProjectForm's dropdowns need --
-  // without waiting on it too, the projects-list query could resolve first and let "add project"
-  // open the form while clientsOptions is still empty. Search now resyncs via useSyncedState, so a
-  // late-arriving client list no longer gets stuck once the dropdown is open -- this gate is now
-  // just UX, avoiding the brief empty/loading flash while fetchClients is still in flight.
   const isLoading = isLoadingClients || projectsQuery.isLoading || projectsProviderLoading.allProjectsViewData;
 
   const projects = useMemo(

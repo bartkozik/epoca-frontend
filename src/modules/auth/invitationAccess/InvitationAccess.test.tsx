@@ -272,7 +272,6 @@ it('manually retries a rate-limited exchange with its in-memory capability after
 it('keeps the mail token through repeated transient exchange failures until a manual retry succeeds', async () => {
   window.history.replaceState({}, '', '/invitations/accept#token=mail-secret');
   vi.mocked(requests.exchangeInvitation).mockRejectedValue(new InvitationAccessError('unavailable'));
-  // No cookie exists when the failed exchanges never reached the server.
   vi.mocked(requests.getInvitationSummary).mockRejectedValue(new InvitationAccessError('invalid-invitation'));
   mount();
   expect(await screen.findByRole('alert')).toHaveTextContent('auth.invitation.errors.unavailable');

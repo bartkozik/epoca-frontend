@@ -4,8 +4,6 @@ import { SortColumn, SortDirection } from '@/core/utils/sorting';
 const SORT_COLUMN_PARAM = 'membersSortColumn';
 const SORT_DIRECTION_PARAM = 'membersSortDirection';
 
-// Both columns are valid here (unlike useAssignedProjectsSortURLParams' single-column table), so
-// validColumns lists both instead of pinning one.
 const VALID_COLUMNS = [SortColumn.UserName, SortColumn.UserRole];
 const DEFAULT_COLUMN = SortColumn.UserName;
 

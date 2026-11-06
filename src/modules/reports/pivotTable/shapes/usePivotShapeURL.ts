@@ -14,7 +14,6 @@ import type { PivotTableView } from '../usePivotTableView';
 import { PIVOT_SHAPES } from './pivotShapes';
 
 export interface PivotShapeOption {
-  /** Row levels from outer to inner, then column fields; the option's name is built from them. */
   levels: PivotKey[];
   columns: PivotKey[];
   url: string;
@@ -23,14 +22,10 @@ export interface PivotShapeOption {
 interface PivotShapeURL {
   moveField: (move: PivotFieldMove) => PivotMoveResult;
   shapeOptions: PivotShapeOption[];
-  /** The option whose URL describes the current table, or null for a custom layout. */
   selectedShapeURL: string | null;
   selectShape: (url: string) => void;
 }
 
-// The URL holds the table's rows, columns and values (?rows=UserKey&columns=MonthYearKey&values=DurationSum),
-// so any address can be shared. A URL without them gets the current layout written in; a URL that changes
-// them (a link, the select, back and forward) sets the layout.
 export function usePivotShapeURL({ layout, moveField, replaceLayout }: PivotTableView): PivotShapeURL {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -47,7 +42,6 @@ export function usePivotShapeURL({ layout, moveField, replaceLayout }: PivotTabl
   useEffect(() => {
     if (!urlShape) writeShape(layout);
     else if (!samePivotShape(urlShape, pivotShapeOf(layout))) replaceLayout(applyPivotShape(layout, urlShape));
-    // Only a change of the URL's shape should move the layout; layout changes write the URL themselves.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlShapeKey]);
 

@@ -131,9 +131,6 @@ describe('TeamSettings integration tab', () => {
   it('shows members, authentication and integrations tabs in route order', async () => {
     renderSettings({ path: '/team-settings/members/list' });
 
-    // This is the first render in the file, so it pays the full cost of two stacked lazy()
-    // boundaries (guarded()'s PermissionRoute, then TeamSettings itself) -- the default 1000ms
-    // window flaked under a loaded CI runner despite always passing locally.
     const tabs = await screen.findAllByRole('tab', {}, { timeout: 3000 });
     expect(tabs.map((tab) => tab.textContent)).toEqual([
       'team_seatings.tab.members',
@@ -146,8 +143,6 @@ describe('TeamSettings integration tab', () => {
     const user = userEvent.setup();
     renderSettings({ path: '/team-settings/members/list' });
 
-    // TeamSettings is lazy-loaded (CT-547): the first tab must be awaited so this doesn't race
-    // the chunk's Suspense fallback; subsequent tabs are already mounted by then.
     await user.click(await screen.findByRole('tab', { name: 'team_seatings.tab.authentication' }));
     expect(window.location.pathname).toBe(teamSettingsPaths.teamSettings('authentication'));
 

@@ -78,10 +78,6 @@ export const createPivotLabelResolver = ({
       case PIVOT_KEY.YEAR:
         return value;
       case PIVOT_KEY.TASK: {
-        // task_id is unconstrained free text (no length/format limit anywhere in the system) --
-        // sanitize so a pathological value can never fail export label validation. Re-check emptiness
-        // after sanitizing (a control-character-only id would otherwise become a blank label), and
-        // truncate by code point (not UTF-16 code unit) so a surrogate pair is never split.
         // eslint-disable-next-line no-control-regex -- stripping control characters is the point.
         const sanitized = value.replace(/[\u0000-\u001f\u007f-\u009f]/g, ' ');
         if (sanitized.trim() === '') return t('pivot_table.filter.no_task');

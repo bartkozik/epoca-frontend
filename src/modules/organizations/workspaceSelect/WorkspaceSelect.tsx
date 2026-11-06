@@ -41,8 +41,6 @@ const OrganizationName = ({ name }: OrganizationNameProps): JSX.Element => {
     const node = nameRef.current;
     if (!node || typeof ResizeObserver === 'undefined') return undefined;
 
-    // The layout effect above only re-measures on name change; a width change from window/container
-    // resizing needs its own trigger, otherwise isTruncated can go stale relative to the CSS ellipsis.
     const resizeObserver = new ResizeObserver(measureTruncation);
     resizeObserver.observe(node);
     return () => resizeObserver.disconnect();
@@ -71,18 +69,11 @@ const WorkspaceSelect = (): JSX.Element => {
   const { logout } = auth;
   const { getContextOrganizationBySlug } = workspace;
   const query = useOrganizationsQuery();
-  // CT-561 review fix: derived from this component's own `query.error` rather than a second
-  // useOrganizationLoadFailure() hook call, which used to create a second useQuery subscription on
-  // the same key and double-fire the error side effects inside useOrganizationsQuery (duplicate
-  // toast, duplicate logout()). See organizationList.model.ts's comment above useHasMoreThanOneOrganization.
   const organizationLoadFailure = query.error ? classifyOrganizationLoadFailure(query.error) : null;
   const organizations = (query.data?.results ?? []).map(toOrganization);
   const hasMoreThanOneOrganization = organizations.length > 1;
 
   useEffect(() => {
-    // Mirrors the auto-select effect in useOrganizationsQuery (which resolves the context
-    // organization for a single-org account) -- this is the component's own navigate-away side
-    // effect on top of that, reproducing fetchOrganizations().then(navigate) from the old store.
     if (query.data?.results.length === 1) navigate(paths.index);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only the data identity should retrigger this
   }, [query.data]);
@@ -91,8 +82,6 @@ const WorkspaceSelect = (): JSX.Element => {
     void getContextOrganizationBySlug(organization.slug)
       .then(() => navigate(paths.index))
       .catch((error: unknown) => {
-        // The provider observes the active slug, so an unsuccessful selection has no
-        // subscribed query to report its error. Logout/reset cancellation stays silent.
         if (!isCancelledError(error)) {
           showModuleErrorToast(error, { default: t('toast_message.organizations.data_fetch_error') });
         }

@@ -38,7 +38,6 @@ const knownPatterns = Object.freeze([
       /(?:^|[^A-Za-z0-9])["']?(?:client[ _-]?secret|access[ _-]?token|refresh[ _-]?token|password|authorization)["']?\s*[:=]/im,
   },
   { category: 'credential-prefix', pattern: /OAUTH_CLIENT[-_](?:SECRET|CREDENTIAL)[-_]SENTINEL/i },
-  // Retain the legacy signature to quarantine artifacts produced before the naming migration.
   { category: 'credential-prefix', pattern: /CT[-_]?521[-_](?:SECRET|CREDENTIAL)[-_]SENTINEL/i },
 ]);
 

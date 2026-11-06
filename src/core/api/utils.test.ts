@@ -29,10 +29,6 @@ describe('decodeSessionFromToken', () => {
   });
 
   it('returns null without throwing for a non-string token (a malformed backend response reaching this at runtime despite the string type annotation)', () => {
-    // AuthTokensSchema (modules/auth/models/authTokensDto.model.ts) validates that
-    // accessToken/refreshToken are strings, but this function still needs to defend against a
-    // caller that bypasses that boundary (e.g. a directly-constructed malformed value in a test
-    // or a future call site), since the type annotation alone doesn't hold at runtime.
     for (const malformed of [null, undefined, 123, {}, []]) {
       expect(() => decodeSessionFromToken(malformed as string)).not.toThrow();
       expect(decodeSessionFromToken(malformed as string)).toBeNull();
@@ -128,11 +124,6 @@ describe('readStoredSession', () => {
   });
 
   it('returns valid for a well-formed stored session', () => {
-    // Shaped as organizationGrants (not roles) deliberately -- this is what a real browser's
-    // localStorage actually contains, since saveSession only ever persists its own transformed
-    // output, never the raw JWT wire shape. A non-empty grant here means this test would catch a
-    // regression that wipes organizationGrants on re-parse (see sessionSchema.ts/its own test for
-    // the full regression this pins), which an empty-array fixture could not.
     const stored = {
       token: 't',
       user: { id: 'u', exp: 4102444800, organizationGrants: [{ organizationId: 'org-1', roles: ['Owner'] }] },
@@ -164,9 +155,6 @@ describe('readStoredSession', () => {
     expect(readStoredSession()).toEqual({ status: 'unreadable', reason: 'invalid-shape' });
   });
 
-  // Bootstrap-crash regression fixtures named explicitly in the design doc
-  // (docs/specs/2026-09-08-ct-544-session-permission-redesign-design.md) -- each must be handled
-  // without throwing, whatever the resulting status.
   it.each([
     ['a JSON object with only a non-JWT token string', '{"token":"t"}'],
     ['a JSON array', '[]'],

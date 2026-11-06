@@ -26,12 +26,8 @@ vi.mock('@/core/api', () => ({
 
 vi.mock('@/core/providers/toastProvider', () => ({ addToast: vi.fn() }));
 
-// requests.ts calls i18n.t() (via notifyIncompleteList) directly, and nothing in this test
-// initializes the real i18n singleton -- stub it to return the key, matching
-// clients/requests.test.ts's precedent for the same reason.
 vi.mock('i18next', () => ({ default: { t: (key: string) => key } }));
 
-// api mock, see src/modules/integrationClients/requests.test.ts for the full rationale.
 // eslint-disable-next-line vitest/unbound-method
 const getMock = api.get as MockedFunction<typeof api.get>;
 // eslint-disable-next-line vitest/unbound-method
@@ -78,8 +74,6 @@ describe('organizations requests', () => {
   });
 
   it('drops an organization with a malformed load-bearing field instead of rejecting the whole list', async () => {
-    // mockResolvedValue (not Once): count (2) still exceeds the one valid result after the
-    // malformed entry is dropped, so getOrganizations retries once against the same data.
     getMock.mockResolvedValue({
       data: { count: 2, results: [rawOrganization, { ...rawOrganization, slug: undefined }] },
     });
@@ -139,8 +133,6 @@ describe('organizations requests', () => {
     expect(data).toEqual(rawOrganization);
   });
 
-  // editOrganization returns Promise<void> -- no caller reads the response body today, only the
-  // PATCH request itself and the boundary validation it triggers matter here.
   it('edits an organization, validating the response as a boundary check', async () => {
     patchMock.mockResolvedValueOnce({ data: rawOrganization });
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);

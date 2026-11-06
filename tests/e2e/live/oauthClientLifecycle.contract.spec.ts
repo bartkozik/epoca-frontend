@@ -24,8 +24,6 @@ const guardedEnvironment = {
   PLAYWRIGHT_LIVE_EMPLOYEE_PASSWORD: 'contract-password',
 };
 
-// Returns a resolved Promise (not a bare Response) so every fetcher call site below can stay
-// a plain `return jsonResponse(...)` -- fetcher's declared return type is Promise<Response>.
 const jsonResponse = (status: number, body: unknown): Promise<Response> =>
   Promise.resolve(new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }));
 

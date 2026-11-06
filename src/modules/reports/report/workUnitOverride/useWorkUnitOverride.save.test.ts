@@ -34,8 +34,6 @@ vi.mock('./requests', () => ({
   deleteWorkUnitOverride: vi.fn(),
   undoWorkUnitOverride: vi.fn(),
 }));
-// Forwards to the `let refresh` below at call time (not at factory-eval time), so beforeEach can
-// keep reassigning a fresh mock per test the way it always has.
 vi.mock('@/modules/reports/hooks/useReportedUnits', () => ({
   refreshReportedUnits: (...args: unknown[]) => refresh(...(args as [])),
 }));
@@ -114,8 +112,6 @@ describe('correction controller existing save/session behavior', () => {
       retainedDiscard();
       result.current.close();
     });
-    // mutateAsync issues the request a microtask after the synchronous guard above admits it,
-    // so the call has to be awaited into existence before asserting it happened exactly once.
     await waitFor(() => expect(put).toHaveBeenCalled());
     expect(addToastMock).not.toHaveBeenCalled();
     expect(put).toHaveBeenCalledExactlyOnceWith('acme', workUnitId, {
@@ -216,8 +212,6 @@ describe('correction controller existing save/session behavior', () => {
   it('does not write the query cache on a failed save', async () => {
     const { result } = await open();
     act(() => result.current.setTaskId({ mode: 'Set', value: 'proposal' }));
-    // Isolate the mutation: acceptFreshResponse and loadFresh's fetchQuery are the only cache
-    // writers, and a field-level failure runs neither, so anything left here would be optimistic.
     queryClient.clear();
     put.mockRejectedValueOnce(problem('invalid-request', 400, 'taskId'));
     await act(async () => result.current.save());
@@ -301,8 +295,6 @@ describe('correction controller existing save/session behavior', () => {
     const nextId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
     get.mockResolvedValueOnce(apiResponse(overrideFixture({ id: nextId })));
     rerender({ id: nextId, isOpen: true });
-    // The new request must finish before we snapshot its draft. Waiting only for the
-    // request to start races its valid response against the stale callbacks below.
     await waitFor(() => expect(result.current.base?.id).toBe(nextId));
     const before = result.current.draft;
     await act(async () => {

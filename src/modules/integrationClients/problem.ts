@@ -24,12 +24,7 @@ const knownProblems = {
 export const invalidInputProblem: IntegrationClientProblem = Object.freeze({ kind: 'unexpected', status: null });
 
 export function normalizeIntegrationClientProblem(error: unknown): IntegrationClientProblem {
-  // A response that fails IntegrationClientPageSchema/IntegrationClientAuditPageSchema's strict
-  // .parse() (malformed shape, or a sensitive field like clientSecret/secretHash/accessToken/
-  // authorization detected -- see sensitiveFields.model.ts) throws a ZodError, not an AxiosError.
-  // Classify it as its own kind before the AxiosError checks below, and never forward
-  // error.message/.issues -- they can echo back the very input value that failed validation,
-  // including a sensitive one.
+  // Zod failures may echo secrets in message/issues; expose only a controlled error category.
   if (error instanceof ZodError) return { kind: 'validation', status: null };
 
   if (!isAxiosError(error)) return { kind: 'unexpected', status: null };

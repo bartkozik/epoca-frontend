@@ -16,7 +16,6 @@ export async function createGravatarUrl(email: string | undefined): Promise<stri
     const hash = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
     return `https://gravatar.com/avatar/${hash}?s=96&r=g&d=404`;
   } catch {
-    // Browsers without usable Web Crypto still render the local initials fallback.
     return undefined;
   }
 }

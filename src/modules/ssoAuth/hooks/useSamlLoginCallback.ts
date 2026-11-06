@@ -31,8 +31,6 @@ export const useSamlLoginCallback = (): { isPending: boolean } => {
     currentIdentity.current = identity;
   }, [identity]);
 
-  // Capture once in a layout effect: a useState initializer can be discarded by StrictMode.
-  // Remove the capability before exchange or passive effects and retain only its promise.
   useLayoutEffect(() => {
     const { auth, workspace, navigate, mutateAsync, identity } = initial.current;
     mounted.current = true;
@@ -62,7 +60,6 @@ export const useSamlLoginCallback = (): { isPending: boolean } => {
         if (!isCurrent()) return;
         const params = new URLSearchParams({ errorCode, reason });
         if (auth.loggedInUser && !invitationReturn) params.set('sessionRecovery', '1');
-        // Fixed sign-in is reachable even when a different account is already signed in.
         const loginPath = invitationReturn || auth.loggedInUser ? authPaths.invitationSignIn : authPaths.login;
         navigate(`${loginPath}?${params.toString()}`, { replace: true });
       };
@@ -89,16 +86,12 @@ export const useSamlLoginCallback = (): { isPending: boolean } => {
               auth.persistRefreshToken(response.refreshToken);
               workspace.checkIfContextOrganizationSlugIsInLocalStorage();
             } catch {
-              // These synchronous writes follow isCurrent(), but can themselves change its baseline.
-              // Recover before a provider remount, without treating our partial write as a stale response.
               const params = new URLSearchParams({ errorCode: 'unknown', reason: 'unknown' });
               if (!invitationReturn) params.set('sessionRecovery', '1');
               navigate(`${authPaths.invitationSignIn}?${params.toString()}`, { replace: true });
 
               return 'failed';
             }
-            // Persist and navigate in this same action. A new user remounts SessionProviders;
-            // navigating from a later effect/promise subscriber would lose this callback.
             navigate(invitationReturn ? authPaths.invitationAccept : paths.index, { replace: true });
 
             return 'session';
@@ -107,7 +100,7 @@ export const useSamlLoginCallback = (): { isPending: boolean } => {
             const status = axios.isAxiosError(error) ? error.response?.status : undefined;
             failure(status ? String(status) : 'unknown', getCorrelationIdFromError(error));
 
-            // Never store the Axios error (which contains the callback token) in mutation data.
+            // Axios errors include the callback token; never store them in mutation data.
             return 'failed';
           }
         });
@@ -117,7 +110,6 @@ export const useSamlLoginCallback = (): { isPending: boolean } => {
     return () => {
       mounted.current = false;
     };
-    // A local promise survives effect replay. Identity changes invalidate the pending action.
   }, []);
 
   return { isPending: mutation.isPending };

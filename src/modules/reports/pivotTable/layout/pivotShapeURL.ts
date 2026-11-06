@@ -2,7 +2,6 @@ import { PIVOT_KEY, PIVOT_VALUE, type PivotKey, type PivotValue } from '../const
 import { clonePivotLayout } from './pivotLayout';
 import type { PivotLayout } from './types';
 
-/** Rows, columns and values of the pivot table: the part of the layout kept in the URL. */
 export interface PivotShape {
   rows: PivotKey[];
   columns: PivotKey[];
@@ -14,7 +13,6 @@ const SHAPE_PARAMS = ['rows', 'columns', 'values'] as const;
 const isDimension = (value: string): value is PivotKey => Object.values(PIVOT_KEY).some((key) => key === value);
 const isMeasure = (value: string): value is PivotValue => Object.values(PIVOT_VALUE).some((key) => key === value);
 
-/** The shape from ?rows=…&columns=…&values=…, or null when the URL has none or it is not a valid table. */
 export const readPivotShape = (params: URLSearchParams): PivotShape | null => {
   const rows = params.getAll('rows');
   const columns = params.getAll('columns');
@@ -25,7 +23,6 @@ export const readPivotShape = (params: URLSearchParams): PivotShape | null => {
   return { rows: rows.filter(isDimension), columns: columns.filter(isDimension), values: values.filter(isMeasure) };
 };
 
-/** The params with the shape written as repeated rows, columns and values; other params stay. */
 export const writePivotShape = (params: URLSearchParams, shape: PivotShape): URLSearchParams => {
   const next = withoutPivotShape(params);
   shape.rows.forEach((key) => next.append('rows', key));
@@ -45,7 +42,6 @@ export const pivotShapeOf = ({ rows, columns, values }: PivotLayout): PivotShape
 export const samePivotShape = (left: PivotShape, right: PivotShape): boolean =>
   SHAPE_PARAMS.every((key) => left[key].join() === right[key].join());
 
-/** The layout with this shape. A filter on a field the shape now uses as a row or column is dropped. */
 export const applyPivotShape = (layout: PivotLayout, shape: PivotShape): PivotLayout => {
   const next = clonePivotLayout(layout);
   const used = new Set<string>([...shape.rows, ...shape.columns]);

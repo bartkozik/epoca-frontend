@@ -38,7 +38,7 @@ export const runInvitationAccessRequest = async <T>(request: () => Promise<T>): 
   try {
     return await request();
   } catch (error: unknown) {
-    // Only controlled codes and retry delays may leave this boundary, never credentials or raw wire errors.
+    // Return controlled error codes and delays only; wire errors can expose credentials.
     throw normalizeInvitationAccessError(error);
   }
 };

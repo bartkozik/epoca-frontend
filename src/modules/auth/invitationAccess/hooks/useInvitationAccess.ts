@@ -127,7 +127,6 @@ export const useInvitationAccess = (): InvitationAccessState => {
         workspace.checkIfContextOrganizationSlugIsInLocalStorage();
         navigate(paths.index);
       } catch {
-        // Membership is already committed. Recover even if our session write changed the workspace.
         if (mounted.current) navigate(`${authPaths.invitationSignIn}?joined=1`, { replace: true });
       } finally {
         if (mounted.current) setBusy(false);
@@ -136,7 +135,7 @@ export const useInvitationAccess = (): InvitationAccessState => {
       if (!isCurrent()) return;
       const safe = normalizeInvitationAccessError(failure);
       if (safe.code === 'revision-conflict') {
-        // Never reuse old roles/revision/CSRF or submit automatically after a revision change.
+        // Never reuse old roles/revision/CSRF or auto-submit after a revision change.
         setSummary(null);
 
         try {
@@ -178,8 +177,7 @@ export const useInvitationAccess = (): InvitationAccessState => {
       const redirect = await startInvitationSaml(summary.csrfToken, bearer);
       if (!isCurrent()) return;
       setSsoInvitationReturn(false);
-      // Match Login's native GET form convention. The destination comes exclusively
-      // from the invitation context on the server, never from a URL slug or form input.
+      // The native SSO form destination comes only from the server invitation context.
       const form = document.createElement('form');
       form.method = 'get';
       form.action = redirect.ssoUrl;
@@ -195,7 +193,6 @@ export const useInvitationAccess = (): InvitationAccessState => {
       } finally {
         form.remove();
       }
-      // Keep all writes disabled until the browser leaves for the IdP.
     } catch (failure) {
       if (!isCurrent()) return;
       const safe = normalizeInvitationAccessError(failure);

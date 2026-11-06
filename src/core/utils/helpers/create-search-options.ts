@@ -1,8 +1,5 @@
 import { SelectOption } from '@/core/theme/inputs';
 
-// Structurally typed instead of `Item = Project | Client | User | OrganizationUser` — this only
-// ever reads `.name`/`.archived`/`.email`/`.client.name`, so it stays core-pure without needing
-// any module's full entity shape.
 interface SearchableItem {
   archived: boolean;
   name?: string;

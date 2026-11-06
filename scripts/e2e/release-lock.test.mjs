@@ -32,7 +32,6 @@ void test(
       worker.kill('SIGKILL');
       await stopped;
       assert.equal(existsSync(lock), true, 'lock inode remains after interruption');
-      // Lock helper detects the dead worker through pipe EOF; allow bounded OS scheduling delay.
       let acquired = false;
       for (let attempt = 0; attempt < 30 && !acquired; attempt += 1) {
         acquired = await withReleaseLock(lock, cleanup);

@@ -314,11 +314,6 @@ describe('ReportBoard loader ownership', () => {
   ])('delegates %s export with selected rows and a click-time report context', async (buttonName, format) => {
     const user = userEvent.setup();
     createTestState(false, false);
-    // Both useReportExportMutation() call sites (csv/xlsx) return the SAME mock -- asserting on
-    // the `format` argument the component actually passed, rather than distinguishing the two
-    // hook instances by call order, keeps this test immune to ReportBoard.tsx reordering its two
-    // useReportExportMutation() calls (which carries no behavioral meaning; both instances are
-    // functionally interchangeable, dispatched by `format` at click time).
     const mutate = vi.fn<(input: ExportReportInput) => void>();
     useReportExportMutationMock.mockReturnValue({
       isPending: false,

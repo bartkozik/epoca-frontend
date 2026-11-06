@@ -49,9 +49,6 @@ const rawResults = (
   draftIds,
 });
 
-// createElement instead of JSX: this file stays `.ts` (matching this repo's
-// check-file/filename-naming-convention, which only exempts `use*.test.tsx` from PascalCase),
-// so it can't use JSX syntax, which only parses in `.tsx`.
 const wrapper = ({ children }: { children: ReactNode }): ReactElement => {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return createElement(QueryClientProvider, { client: queryClient }, children);
@@ -122,9 +119,6 @@ describe('selectModeledUnits', () => {
 
     const result = selectModeledUnits(data, []);
 
-    // Order for 2026-07-28 lists unit-b before unit-a, so unit-b gets sequenceIndex 0 and unit-a 1
-    // -- the same date, sub-sorted by sequenceIndex, so unit-b sorts first. unit-c is on the later
-    // date and sorts last regardless of its own sequenceIndex.
     expect(result.map((unit) => ({ id: unit.id, date: unit.date, sequenceIndex: unit.sequenceIndex }))).toEqual([
       { id: 'unit-b', date: '2026-07-28', sequenceIndex: 0 },
       { id: 'unit-a', date: '2026-07-28', sequenceIndex: 1 },

@@ -29,9 +29,6 @@ export const useDropdownKeyboardNavigation = <T>({
   }, []);
 
   useEffect(() => {
-    // Plain `new Array(length)` uses the `ArrayConstructor` overload that always returns `any[]`
-    // (only the spread-items overload infers an element type) -- the explicit type argument
-    // selects the generic overload instead, so the result is typed to match `optionRefs.current`.
     optionRefs.current = new Array<HTMLDivElement | HTMLLIElement | null>(searchedOptionsWithTitles.length).fill(null);
   }, [searchedOptionsWithTitles.length]);
 

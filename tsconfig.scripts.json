@@ -2,21 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    // Overrides tsconfig.json's inherited `"@/*": ["./*"]` — relative to this file's baseUrl
-    // (repo root, not "src"), that mapping would resolve `@/x` to `<root>/x` instead of
-    // `<root>/src/x`. No script imports from src/ via `@/` today, but the mapping should point at
-    // the right place regardless.
     "paths": { "@/*": ["./src/*"] },
     "module": "esnext",
-    // "bundler" (not the inherited "node") is required to resolve packages like
-    // @vitejs/plugin-react whose package.json "exports" map "node" resolution can't read —
-    // only surfaced once vite.config.ts got tsconfig coverage here for the first time. Scoped to
-    // this file only; the rest of the app keeps "node" via tsconfig.json.
     "moduleResolution": "bundler",
     "allowJs": true,
-    // `checkJs: false` only turns off tsc's own compile-time diagnostics for these plain-JS
-    // scripts; it doesn't affect the type checker itself, so typescript-eslint's typed rules
-    // (which query the checker directly) work fully once wired up in eslint.config.js.
     "checkJs": false,
     "noEmit": true,
     "types": ["node"]

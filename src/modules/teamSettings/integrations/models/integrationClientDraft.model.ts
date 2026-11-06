@@ -24,10 +24,7 @@ const hasLocalComponents = (
   date.getSeconds() === second &&
   date.getMilliseconds() === millisecond;
 
-// Parses a `datetime-local` input value in the browser's own timezone. Rejects DST-gap values
-// (the local time never occurred) and DST-fold values (the local time is ambiguous) by re-deriving
-// the local components a few hours to either side of the parsed instant and checking the offset
-// actually shifted -- a naive `new Date(y, m, d, h, min)` construction silently normalizes those.
+// Reject DST gaps and folds; Date construction silently normalizes nonexistent or ambiguous local times.
 export const parseLocalDateTime = (value: string): string | null => {
   const match = LOCAL_DATE_TIME_PATTERN.exec(value);
   if (!match) return null;
@@ -96,10 +93,6 @@ export interface ValidatedIntegrationClientDraft {
 
 type DraftFieldErrorCode = 'required' | 'invalid' | 'future';
 
-// Every issue's message IS the exact i18n key IntegrationClientFormModal already builds dynamically
-// (`team_seatings.integrations.form.error.<field>.<code>`) -- see translation.json. Keeping the
-// message and the field/code pair in one string (rather than a separate lookup table) means the two
-// can't drift apart.
 const fieldErrorKey = (field: string, code: DraftFieldErrorCode): string =>
   `team_seatings.integrations.form.error.${field}.${code}`;
 
@@ -116,11 +109,6 @@ const DraftShape = z.object({
   expiresAtLocal: z.string(),
 });
 
-// A concrete schema per validation context rather than a generic "operation" factory: create and
-// edit/renew share every rule below except how expiresAt is sourced -- an update whose local
-// timestamp string is untouched reuses the client's already-valid `expiresAt` instant instead of
-// re-parsing it (see buildUpdateIntegrationClientInput's `preservedExpiresAt`), which a static
-// schema can't express, so it stays a parameter rather than being duplicated into two schemas.
 export const IntegrationClientDraftSchema = (
   activeProjectIds: readonly string[],
   now: Date,

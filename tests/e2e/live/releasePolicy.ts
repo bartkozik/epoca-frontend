@@ -79,7 +79,6 @@ export const assertReleaseRequest = (
   }
   const suffix = url.pathname.slice(apiPrefix.length - 1);
   const org = `/organizations/${encodeURIComponent(policy.organizationSlug)}`;
-  // Login currently discovers SAML via this fixed legacy slug. Never follow the IdP redirect.
   if (method === 'GET' && suffix === '/organizations/iterators/saml/authn') return;
   if (['GET', 'HEAD'].includes(method)) {
     if (

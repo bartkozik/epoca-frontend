@@ -39,9 +39,6 @@ const compareFieldValues = (key: PivotKey, left: PivotFilterValue, right: PivotF
     if (right === null) return -1;
   }
   if (key === PIVOT_KEY.TASK) {
-    // null and any whitespace-only string both render as the same "no task" label
-    // (pivotLabels.ts) -- sort them together at the end instead of letting "   " fall
-    // among ordinary strings, far from its visual twin.
     const leftIsNoTask = left === null || (typeof left === 'string' && left.trim() === '');
     const rightIsNoTask = right === null || (typeof right === 'string' && right.trim() === '');
     if (leftIsNoTask) return rightIsNoTask ? 0 : 1;

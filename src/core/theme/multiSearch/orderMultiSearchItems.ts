@@ -20,11 +20,6 @@ export const groupOf = (
   return inactive ? 'inactive' : 'active';
 };
 
-/**
- * Orders options once, when the list opens: selected first, then options with data in the current
- * context, then options without data, then archived options. The caller keeps this order frozen while
- * the list stays open, so toggling an option never moves a row under the pointer.
- */
 export const orderMultiSearchItems = (
   items: readonly SelectOption[],
   selectedValues: ReadonlySet<string>,

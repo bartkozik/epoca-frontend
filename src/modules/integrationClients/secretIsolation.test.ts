@@ -42,9 +42,6 @@ const mockApi = {
     response: { use: mockResponseUse },
   },
 };
-// A top-level `await import(...)` isn't supported by this project's `tsconfig.json`
-// (`module: commonjs`, frozen for this migration), so these are scoped inside a file-level
-// `beforeAll` instead, which still runs once before any test below.
 let mockSendErrorLogToServer: Mock;
 let mockHandleConnectionError: Mock;
 let responseErrorInterceptor: (error: unknown) => Promise<never>;
@@ -127,11 +124,6 @@ const installIndexedDbTestDouble = (): {
 
 describe('OAuth client secret telemetry isolation', () => {
   beforeEach(() => {
-    // `vi.restoreAllMocks()` below only restores spies created with `vi.spyOn` — it doesn't reset
-    // call history on the plain `vi.fn()` mocks from `vi.mock(...)` factories (e.g.
-    // `mockHandleConnectionError`), so without this they'd otherwise accumulate calls across
-    // `it.each` iterations, which would make a `toHaveBeenCalledTimes(1)` assertion iteration-order
-    // dependent instead of a true per-test check.
     vi.clearAllMocks();
   });
 
@@ -196,9 +188,6 @@ describe('OAuth client secret telemetry isolation', () => {
     expect(rejectedOriginalError).toBe(true);
     expect(readResponseBody).toHaveBeenCalledTimes(eligibleBodyFailure ? 1 : 0);
     expect(mockSendErrorLogToServer).not.toHaveBeenCalled();
-    // `response.data` is a Proxy trap that can throw on access, so this checks call-argument
-    // identity (`toBe`) rather than `toHaveBeenCalledWith`'s deep equality, which would otherwise
-    // traverse into `.data` and trip the trap even though the reference matches.
     expect(mockHandleConnectionError).toHaveBeenCalledTimes(1);
     expect(mockHandleConnectionError.mock.calls[0][0]).toBe(error);
     [...consoleSpies, ...persistenceSpies, ...indexedDb.boundarySpies, ...indexedDb.writeSpies].forEach((spy) => {

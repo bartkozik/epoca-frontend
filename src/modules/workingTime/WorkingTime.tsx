@@ -30,7 +30,6 @@ import { useWeekNavigation } from './useWeekNavigation';
 import WeeklyHoursBar from './WeeklyHoursBar';
 import styles from './WorkingTime.module.scss';
 
-// Matches the dateFrom the old store's (now-deleted) getLoggedUserDrafts used for its drafts fetch.
 const MAX_DATA_FETCH_DATE = '2017-01-01';
 
 function WorkingTime(): JSX.Element {
@@ -69,28 +68,19 @@ function WorkingTime(): JSX.Element {
     userId: loggedInUser ? [loggedInUser.id] : [],
     state: UnitState.Draft,
   };
-  // Drops the store's areUnreportedDrafts gate on this fetch -- an org/user with no drafts just
-  // gets an empty result back.
   const draftsQuery = useUnitsQuery(draftsDto, { enabled: Boolean(loggedInUser) });
 
-  // useQuery's result isn't referentially stable across renders, so closing over it directly here
-  // would give fetchWorkingTimeData a new identity every render, re-triggering the bootstrap effect
-  // below forever. Read the latest query via ref instead.
   const unitsQueryRef = useRef(unitsQuery);
   unitsQueryRef.current = unitsQuery;
   const draftsQueryRef = useRef(draftsQuery);
   draftsQueryRef.current = draftsQuery;
 
-  // Replaces the store's refreshWorkUnitViews(): a permanently blocked submission may already be
-  // applied server-side, so the views need to resync even though no mutation onSuccess fires.
   const onSubmissionBlocked = useCallback((): void => {
     void unitsQueryRef.current.refetch();
     void draftsQueryRef.current.refetch();
     void getReportedUnits();
   }, [getReportedUnits]);
 
-  // Lifted here (not inside UnitForm, which only mounts while its modal is open) so DraftsBoard, a
-  // sibling in a separate modal, can share the same in-flight/loading state.
   const submission = useWorkUnitSubmission(onSubmissionBlocked);
 
   const units = selectModeledUnits(unitsQuery.data, contextOrganizationUsers);
@@ -121,9 +111,6 @@ function WorkingTime(): JSX.Element {
     });
   }, [contextOrganizationSlug, fetchWorkingTimeData, isContextOrganizationSlugInLocalStorage, loggedInUserId]);
 
-  // A failed initial query otherwise has no data and is rendered as an empty calendar. Keep the
-  // previous store's feedback for both queries: drafts are fetched independently, so their
-  // failure must not be mistaken for there being no unreported drafts.
   useEffect(() => {
     if (unitsQuery.isError)
       showModuleErrorToast(unitsQuery.error, { default: t('toast_message.working_time.data_fetch_error') });
@@ -155,8 +142,6 @@ function WorkingTime(): JSX.Element {
     };
   }, [contextOrganizationSlug, loggedInUserId, reminderCheck]);
 
-  // Replaces the store's own openUnreportedDraftsWarning() calls -- re-check whenever a fetch
-  // settles or the drafts/modal state changes.
   useEffect(() => {
     if (!loadingUnits && loggedInUserId && contextOrganizationSlug) {
       openUnreportedDraftsWarning(

@@ -6,9 +6,6 @@ import * as requests from '@/modules/workingTime/requests';
 import { RawUnitResults, Unit, UnitsDto } from '@/modules/workingTime/types';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
-// Cache holds the raw, unmodeled RawUnitResults -- mirrors useClientsQuery returning RawClientResults,
-// not a UI-modeled shape. Modeling/sequencing lives in selectModeledUnits below, kept separate so
-// callers can select it with whatever contextOrganizationUsers snapshot they currently have.
 export function useUnitsQuery(dto: UnitsDto, options?: { enabled?: boolean }): UseQueryResult<RawUnitResults> {
   const workspace = useWorkspace();
   const organizationSlug = workspace.contextOrganizationSlug;

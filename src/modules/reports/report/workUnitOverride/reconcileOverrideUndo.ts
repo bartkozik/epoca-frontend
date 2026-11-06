@@ -9,10 +9,6 @@ export function undoRecorded(entries: WorkUnitOverrideHistoryEntry[], targetEven
   return entries.some((entry) => entry.operation === 'Undo' && entry.revertsEventId === targetEventId);
 }
 
-/**
- * Reads one immutable history snapshot newest-first. Absence is conclusive only
- * after the attempted version boundary or the end of that snapshot is reached.
- */
 export async function reconcileOverrideUndo(
   upToVersion: number,
   attemptedHistoryVersion: number,

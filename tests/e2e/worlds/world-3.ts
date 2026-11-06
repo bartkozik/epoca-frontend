@@ -93,10 +93,6 @@ export const world3: WorldDefinition = {
       name: 'Internal Client',
       type: 'Internal',
       archivedAt: null,
-      // An old build's fully-resolved, differently-hashed asset path -- not the stable `textureN`
-      // id new selections are saved as -- exercising resolveClientTexture's CT-525
-      // backward-compatibility regex path (see src/modules/clients/clientBackgroundOptions.ts). Picked
-      // texture7 arbitrarily; any index would exercise the same code path.
       texture: '/static/media/texture7.oldhash123.png',
       color: '#2e7d32',
     },
@@ -105,7 +101,6 @@ export const world3: WorldDefinition = {
       name: 'External Client',
       type: 'External',
       archivedAt: null,
-      // CT-65: exercises ItemLogo's background-image branch on the client details page title.
       logo: 'https://static.e2e.test/clients/external-logo.png',
     },
   ],

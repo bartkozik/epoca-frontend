@@ -23,8 +23,6 @@ export function WorkUnitOverrideHistoryEvent({
   onUndo?: (entry: WorkUnitOverrideHistoryEntry) => void;
 }): JSX.Element {
   const { t, i18n } = useTranslation();
-  // The future-provenance union includes broad strings. Re-parse the known branches,
-  // rather than asserting that a string comparison narrows arbitrary payloads.
   const current = CurrentWorkUnitOverrideHistoryEntrySchema.or(
     FutureOperationWorkUnitOverrideHistoryEntrySchema,
   ).safeParse(entry);

@@ -14,7 +14,7 @@ type Options = {
 };
 
 export const useInvitationInitialization = (options: Options): void => {
-  // Account/workspace changes remount the caller. Token refresh alone must not rotate CSRF.
+  // Token refresh must not rotate CSRF; account/workspace changes remount the caller.
   const initial = useRef(options);
   const initialRequest = useRef<Promise<InvitationSummary>>();
 
@@ -24,7 +24,6 @@ export const useInvitationInitialization = (options: Options): void => {
     if (!initialRequest.current) {
       exchangeToken.current ??= new URLSearchParams(window.location.hash.slice(1)).get('token');
       const token = exchangeToken.current;
-      // Remove the capability from the URL before making any request; retain it only in memory.
       if (window.location.hash)
         window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search);
       if (!isCurrent()) {
@@ -37,7 +36,7 @@ export const useInvitationInitialization = (options: Options): void => {
       }
       initialRequest.current = token ? exchangeInvitation(token, bearer) : getInvitationSummary(bearer);
     }
-    // Cancel only this effect's callbacks, keeping the shared request alive during StrictMode replay.
+    // StrictMode replay cancels these callbacks, not the shared request.
     const controller = new AbortController();
     void initialRequest.current
       .then(
@@ -50,7 +49,6 @@ export const useInvitationInitialization = (options: Options): void => {
         (failure: unknown) => {
           if (!controller.signal.aborted && isCurrent()) {
             const safe = normalizeInvitationAccessError(failure);
-            // A transient failure may precede cookie creation; keep the capability for manual retry.
             if (!['rate-limited', 'unavailable'].includes(safe.code)) exchangeToken.current = null;
             onError(safe);
           }

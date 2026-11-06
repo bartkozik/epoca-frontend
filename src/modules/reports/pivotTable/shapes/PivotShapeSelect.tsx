@@ -13,7 +13,6 @@ interface PivotShapeSelectProps {
 
 function PivotShapeSelect({ options, selectedURL, onSelect }: PivotShapeSelectProps): JSX.Element {
   const { t } = useTranslation();
-  // "Clients → projects × months": arrows join row levels, × introduces the column fields.
   const nameOf = ({ levels, columns }: PivotShapeOption): string => {
     const levelName = (key: PivotKey): string => t(`pivot_table.shapes.levels.${key}`);
     const rows = levels.map(levelName).join(' → ');

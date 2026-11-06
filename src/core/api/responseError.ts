@@ -142,7 +142,7 @@ const areCandidatesCoherent = (candidates: RequestCandidate[]): boolean => {
 
 const shouldSendCandidateResponse = (candidate: RequestCandidate): boolean => {
   if (isLegacyExcludedPath(candidate.pathname)) return false;
-  // Invitation management/access and SAML errors can carry credentials or identity details.
+  // Invitation and SAML errors can contain credentials or identity details.
   const segments = candidate.pathname.split('/');
   if (segments.includes('invitations') || segments.includes('invitation-access')) return false;
   if (/\/saml\/login\/?$/.test(candidate.pathname)) return false;

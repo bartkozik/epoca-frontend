@@ -153,7 +153,6 @@ describe('invitation transport boundary', () => {
   });
 });
 
-// Treat the upstream type as data, never as an inherited property of the lookup object.
 it.each(['__proto__', 'constructor', 'toString'])('normalizes unrecognized problem type %s safely', async (type) => {
   vi.mocked(api.get).mockRejectedValue({
     isAxiosError: true,

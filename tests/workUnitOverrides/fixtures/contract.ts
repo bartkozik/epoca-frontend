@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-// Deliberately independent wire-contract mirror: importing app models pulls the browser
-// module graph into Playwright's Node process. Keep exact fields, not permissive DTO stubs.
 const uuid = z
   .string()
   .uuid()

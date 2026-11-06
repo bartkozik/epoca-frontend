@@ -33,16 +33,6 @@ export const FetchProjectsDtoSchema = z
   })
   .strip();
 
-// id/name strict so a malformed OR missing client drops the whole project (see
-// RawProjectSchema.client below, which is required, not .nullable()); other fields tolerant,
-// mirroring clientDto.model.ts's RawClientSchema.
-//
-// client: null is not a legitimate "no client" state -- it's a dangling
-// reference. Backend Project.clientId is a required ClientId, never Option (Project.scala);
-// ProjectDtoService produces client: None only via a clientMap.get(project.clientId) miss, and
-// ClientRepository has no hard-delete (archived clients are included too), so this should be
-// structurally impossible. Treat it like any other malformed load-bearing field: drop the record
-// (surfaced via fetchPaginatedWithRetry's incomplete-page notice).
 export const ProjectClientSchema = z
   .object({
     color: z.string().catch(''),
@@ -53,9 +43,6 @@ export const ProjectClientSchema = z
   })
   .strip();
 
-// id strict (malformed id drops the user via the enclosing tolerantArray). role is NOT .catch()'d:
-// it gates canUserEditProject, so a malformed role should drop the user rather than be silently
-// reinterpreted as a real one.
 export const RawProjectUserSchema = z
   .object({
     avatar: z.string().catch(''),
@@ -86,10 +73,6 @@ export const RawProjectSchema = z
 
 export const RawProjectResultsSchema = PaginatedResultSchema(RawProjectSchema);
 
-// PATCH /organizations/:slug/projects/:id returns the flat Project domain object (ProjectRouter ->
-// ProjectUpdateResult.Updated), not the list/get DTO shape RawProjectSchema expects: it carries
-// clientId instead of a nested client, and has no projectUsers/userCount/userIds. id/name/clientId
-// strict, everything else tolerant with a '' fallback.
 export const ProjectPatchResultSchema = z
   .object({
     archivedAt: z.string().catch(''),
@@ -106,7 +89,6 @@ export const ProjectPatchResultSchema = z
   })
   .strip();
 
-// Catches to [] -- worst case the UI just doesn't mark a project as changed, never wrongly.
 export const AssignUserToAllProjectsResultSchema = z
   .object({
     changedProjectIds: z.array(z.string()).catch([]),

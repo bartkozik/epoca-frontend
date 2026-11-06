@@ -2,8 +2,6 @@ import { OrganizationUser, OrganizationUserRole } from '@/modules/organizations/
 import { modelUnit } from './modelUnit';
 import { RawUnit, UnitState, WorkUnitEntryType } from './types';
 
-// boundaries/ignore excludes test files from the module -> module lint rule (eslint.config.js), so
-// importing OrganizationUser here directly is fine even though modelUnit.ts itself can't.
 const createOrganizationUser = (overrides: Partial<OrganizationUser> = {}): OrganizationUser => ({
   archived: false,
   avatar: '',
@@ -57,8 +55,6 @@ describe('modelUnit', () => {
     expect(unit.userFullName).toBe('user@example.com');
   });
 
-  // Preserves the API snapshot when a historical user is no longer in the organization directory
-  // -- moved from WorkingTimeStore.test.ts (CT-560), now exercising the pure function directly.
   it('preserves the API snapshot userFullName when the user is not in the org directory', () => {
     const unit = modelUnit(
       createRawUnit({ userId: 'archived-user', userFullName: 'Archived Historical User' }),

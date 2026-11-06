@@ -44,13 +44,7 @@ export interface UnitFormProps {
     onSubmit: (dto: UnitEditDto) => Promise<void>;
     extraActions?: React.ReactNode;
   };
-  // Optional so ReportBoard.tsx's report-view usage (out of scope here) keeps compiling: its daily-
-  // hours cap check just degrades to "no other units known" when omitted.
   units?: Unit[];
-  // Optional so ReportBoard.tsx keeps compiling unchanged; falls back to this component's own hook
-  // instance below when omitted. Calendar.tsx passes its shared instance so DraftsBoard's loading
-  // indicator reflects the same submission.
   submission?: UseWorkUnitSubmissionResult;
-  // Only meaningful for a genuinely new add; ReportBoard.tsx's report-view usage never adds units.
   onUnitAdded?: (unit: RawUnit) => void;
 }

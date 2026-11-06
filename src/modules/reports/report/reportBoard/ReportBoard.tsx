@@ -34,7 +34,6 @@ interface ReportBoardProps {
   filteredUnitsDurationSum: string;
   isNotLoadingAndHasNoFilteredUnits: boolean;
   loadingReportedUnits: boolean;
-  /** New filters are loading; the current rows stay visible but dimmed. */
   refreshing?: boolean;
 }
 
@@ -48,7 +47,6 @@ const ReportBoard = ({
 }: ReportBoardProps): JSX.Element => {
   const { t, i18n } = useTranslation();
   const [viewportWidth] = useWindowSize();
-  // ≥1200px shows every column; narrower layouts hide columns and keep their own widths.
   const isWideLayout = viewportWidth >= 1200;
   const workspace = useWorkspace();
   const { addToast } = useToast();
@@ -130,7 +128,6 @@ const ReportBoard = ({
 
   const handleExport = (format: SpreadsheetFormat): void => {
     const mutation = format === SpreadsheetFormat.CSV ? csvExportMutation : xlsxExportMutation;
-    // Ignore further exports of this format once the pending state has rendered.
     if (mutation.isPending) return;
     const snapshot = createReportDateRangeSnapshot({ fromDate: selectedFromDate, toDate: selectedToDate }, dayjs());
     if (!snapshot) {
@@ -149,7 +146,7 @@ const ReportBoard = ({
   const table = (
     <>
       <table className={clsx('table', styles.tableCustom, { [styles.tableCustomPl]: isPolishLanguage })}>
-        {/* Explicit widths: with table-layout: fixed the header's ::before row would otherwise split columns evenly. */}
+        { }
         {isWideLayout && (
           <colgroup>
             <col className={styles.colSelect} />

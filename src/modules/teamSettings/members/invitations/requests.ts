@@ -47,8 +47,6 @@ export async function listAllInvitations(slug: string, signal?: AbortSignal): Pr
   const first = await listInvitations(slug, { pageSize, pageNumber: 1 }, signal);
   const results = [...first.results];
   let latest = first;
-  // Bound the scan by the initial count even if concurrent creates keep increasing it.
-  // Parsed rows may be empty when every wire item was malformed; still read later pages.
   const pageCount = Math.ceil(first.count / pageSize);
   for (let pageNumber = 2; pageNumber <= pageCount; pageNumber++) {
     // eslint-disable-next-line @typescript-eslint/only-throw-error, no-throw-literal

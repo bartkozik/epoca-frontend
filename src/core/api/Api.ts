@@ -47,22 +47,12 @@ const api = axios.create({
   paramsSerializer: serializeParams,
 });
 
-// A plain client with neither of api's interceptors attached, used only for reporting errors
-// detected inside api's own request interceptor (e.g. an unreadable stored session). The request
-// interceptor below is what detects that condition in the first place, so posting the report
-// through `api` would re-enter this same interceptor, see the same unreadable session again, and
-// send another report -- an unbounded loop of requests instead of the single intended one.
+// A separate client avoids recursively reporting errors from api's request interceptor.
 export const errorLoggingApi = axios.create({
   baseURL: env.backendUrl,
   paramsSerializer: serializeParams,
 });
 
-// errorLoggingApi's headers, built synchronously and independently of api's request interceptor
-// (deliberately -- reusing that interceptor here is exactly the recursion this client exists to
-// avoid). Still attaches device-id/Correlation-Id/Authorization like every other request so
-// error-log telemetry stays attributable on the backend, but never waits on a token refresh: if
-// there's no currently-valid session, the report is simply sent unauthenticated rather than
-// queuing behind (or triggering) a refresh exchange.
 export const buildErrorLoggingHeaders = (): Record<string, string> => {
   const storedSession = readStoredSession();
   const session = storedSession.status === 'valid' ? storedSession.session : null;
@@ -89,15 +79,13 @@ api.interceptors.request.use(
         const { token } = config.authPolicy;
         const session = token ? decodeSessionFromToken(token) : null;
         const resolved = mergeHeaders(config, defaultHeaders);
-        // The explicit choice also overrides inherited Authorization and Axios Basic auth.
         resolved.headers.delete('Authorization');
         delete resolved.auth;
         if (session && isAccessTokenValid(session)) resolved.headers.set('Authorization', `Bearer ${token}`);
         return resolve(resolved);
       }
 
-      // The refresh exchange must keep its own Bearer token and must never
-      // trigger another refresh while preparing the request.
+      // Refresh requests must use their own token without triggering another refresh.
       if (config.url === '/auth/refresh-token') {
         return resolve(mergeHeaders(config, defaultHeaders));
       }
@@ -107,9 +95,6 @@ api.interceptors.request.use(
 
       if (storedSession.status === 'unreadable') {
         void sendErrorLogToServer(correlationId, `Unreadable stored session: ${storedSession.reason}`);
-        // Without this, the same corrupt credential stays in storage and every subsequent request
-        // re-reads it as 'unreadable' and reports it again -- turning one bad write into an
-        // unbounded stream of identical error-log reports instead of the single one intended.
         removeAPICredentials();
       }
 

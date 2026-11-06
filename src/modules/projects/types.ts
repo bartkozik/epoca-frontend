@@ -1,6 +1,4 @@
 import { ApiResponse } from '@/core/api';
-// CT-540: canonical definitions live in core/models/enums — re-exported below so every existing
-// `from '@/modules/projects/types'` site keeps working unchanged.
 import { ProjectStatus, ProjectUserRole } from '@/core/models/enums';
 import { z } from 'zod';
 import {

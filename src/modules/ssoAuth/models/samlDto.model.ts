@@ -9,8 +9,6 @@ export const SamlAuthCheckSchema = z.object({
 
 export type SamlAuthCheck = z.infer<typeof SamlAuthCheckSchema>;
 
-// Tolerant only on fields the Authentication form does not edit. The editable fields must
-// remain valid so a malformed response cannot silently populate the form with wrong values.
 export const RawSamlConfigSchema = z.object({
   allowAccountInit: z.boolean(),
   createdAt: z.string().catch(''),

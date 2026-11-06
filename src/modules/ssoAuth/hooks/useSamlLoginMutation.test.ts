@@ -7,7 +7,7 @@ vi.mock('@/core/api', () => ({
   default: { post: vi.fn() },
 }));
 
-// eslint-disable-next-line vitest/unbound-method -- api.post is a vi.fn() mock, see vi.mock above.
+// eslint-disable-next-line vitest/unbound-method
 const postMock = api.post as MockedFunction<typeof api.post>;
 
 describe('samlLogin', () => {
@@ -24,8 +24,6 @@ describe('samlLogin', () => {
     expect(result).toEqual({ accessToken: 'access-1', refreshToken: 'refresh-1' });
   });
 
-  // organizationSlug comes straight from the SSO callback's URL query string -- attacker
-  // controlled -- so it must be percent-encoded into the path, not interpolated raw.
   it('percent-encodes a slug containing path-traversal characters instead of interpolating it raw', async () => {
     postMock.mockResolvedValueOnce({ data: { accessToken: 'access-1', refreshToken: 'refresh-1' } });
 
